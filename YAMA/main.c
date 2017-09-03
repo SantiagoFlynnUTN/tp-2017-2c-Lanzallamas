@@ -17,6 +17,7 @@
 #include <pthread.h>
 #include "conexiones.h"
 
+
 void manejarDatos(int buffer, int socket){
 	switch(buffer){
 	case OK:
@@ -38,8 +39,7 @@ void nuevoCliente(char* remoteHost, int newfd){
 
 
 void conectarAFileSystem(){
-
-	for(;;);
+	//rutina de conexion al FS
 }
 
 int main(){
@@ -47,5 +47,6 @@ int main(){
 	inicializarServer();
 	conectarAFileSystem();
 
+	for(;;);
 	return 0;
 }

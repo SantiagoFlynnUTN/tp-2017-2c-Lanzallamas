@@ -42,20 +42,6 @@ void comprobarConexion(int numbytes, int socket){
 	 }
 }
 
-void manejarDatos(int buf, int socket){
-	switch(buf){
-	case OK:
-		printf("socket %i dice OK\n", socket);
-		break;
-	case ESTRUCTURA:
-		printf("crear funcion para deserializar struct\n");
-		break;
-	case ARCHIVO:
-		printf("crear funcion para deserializar archivo\n");
-		break;
-	}
-}
-
 void manejarCliente(int newfd){
 
 	int numbytes;
