@@ -5,4 +5,7 @@
  *      Author: utnso
  */
 
+int main(){
+	return 0;
+}
 

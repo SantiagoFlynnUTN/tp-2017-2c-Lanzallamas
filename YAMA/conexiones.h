@@ -1,16 +1,18 @@
 /*
  * conexiones.h
  *
- *  Created on: 7/8/2017
+ *  Created on: 3/9/2017
  *      Author: utnso
  */
 
-#ifndef CONECCIONES_H_
-#define CONECCIONES_H_
+#ifndef CONEXIONES_H_
+#define CONEXIONES_H_
+
+enum tipoMensaje {OK = 1, ESTRUCTURA, ARCHIVO};
 
 #define PORT 9034   // puerto en el que escuchamos
 #define MAXCLIENTES 100
 
 void inicializarServer();
 
-#endif /* CONECCIONES_H_ */
+#endif /* CONEXIONES_H_ */
