@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "chat.h"
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -59,29 +60,28 @@ int funcionTest(){
 								perror("send");
 		}
 	}
+	return 0;
 }
 
-
-void enviarMensajeCorto(){
-	mensajeCorto msj;
-	msj.tipoMensaje = 2;
-	printf("Escribe algo: ");
-	memset(&msj.mensaje, 0, 100);
-	gets(msj.mensaje);
-
-	void* mensajeAEnviar = (void*) malloc(sizeof(mensajeCorto));
-	memset(mensajeAEnviar, 0, sizeof(mensajeCorto));
-	memcpy(mensajeAEnviar, &msj, sizeof(mensajeCorto));
-
-	if (send(sockfd, mensajeAEnviar, sizeof(mensajeCorto), 0) ==-1)
-		printf("No puedo enviar\n");
-	free (mensajeAEnviar);
+void manejarDatos(int buf, int socket){
+	switch(buf){
+	case OK:
+		printf("socket %i dice OK\n", socket);
+		break;
+	case ESTRUCTURA:
+		//por ahora manejamos solo mensajes
+		leerMensaje(socket);
+		break;
+	case ARCHIVO:
+		printf("crear funcion para deserializar archivo\n");
+		break;
+	}
 }
+
 
 int main(int argc, char *argv[])
 {
-	int numbytes;
-	char buf[MAXDATASIZE];
+
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
 
@@ -101,11 +101,12 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	enviarMensajeCorto();
+	escribir_chat(sockfd);
+	//escuchar_chat(sockfd);
 
 	//funcionTest();
+	for(;;);
 
 	close(sockfd);
-
 	return 0;
 }
