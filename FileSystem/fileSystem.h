@@ -22,7 +22,7 @@ typedef struct t_DataNode{
 	DescriptorNodo descriptor;
 	int bloquesTotales;
 	int bloquesLibres;
-};
+} DataNode;
 
 typedef struct t_Ubicacion{
 	int nodeId;
