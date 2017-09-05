@@ -29,11 +29,15 @@ typedef struct t_Ubicacion{
 	int numeroBloque;
 } Ubicacion;
 
+typedef struct t_DescriptorBloque{
+	int numeroBloque;
+	long bytes;
+} DescriptorBloque;
+
 typedef struct t_Bloque{
 	DescriptorBloque descriptor;
 	Ubicacion copia0;
 	Ubicacion copia1;
-	long bytes;
 } Bloque;
 
 typedef struct t_Archivo{
