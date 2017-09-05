@@ -22,6 +22,12 @@ typedef struct t_DescriptorNodo{
 	int puerto;
 } DescriptorNodo;
 
+// Está repetido sacar de acá cuando hagamos una librería común
+typedef struct t_DescriptorBloque{
+	int numeroBloque;
+	long bytes;
+} DescriptorBloque;
+
 typedef struct t_Worker{
 	DescriptorNodo descriptor;
 	int tareasRealizadas; // agregué estos campos porque me pareció que está bueno tenerlos disponibles 
