@@ -1,3 +1,6 @@
+#ifndef YAMA_H_
+#define YAMA_H_
+
 typedef enum{TRANSFORMACION, REDUCCIONLOCAL, REDUCCIONGLOBAL} TipoOperacion;
 typedef enum{ENPROCESO, ERROR, FINALIZADO} Estado;
 typedef enum{ROUNDROBIN, WEIGHTEDROUNDROBIN} AlgoritmoBalanceo;
@@ -24,3 +27,5 @@ typedef struct t_Worker{
 	int tareasRealizadas; // agregué estos campos porque me pareció que está bueno tenerlos disponibles 
 	int tareasEnProceso; // sino el load balancer tiene que recorrer la tabla cada vez
 } Worker;
+
+#endif /* YAMA_H_ */

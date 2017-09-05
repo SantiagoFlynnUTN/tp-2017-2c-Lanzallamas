@@ -1,5 +1,8 @@
 #import stdbool.h
 
+#ifndef FILESYSTEM_H_
+#define FILESYSTEM_H_
+
 typedef enum{TEXTO, BINARIO} TipoArchivo;
 
 typedef struct t_Directorio{
@@ -41,6 +44,11 @@ typedef struct t_Archivo{
 	int directorioPadre;
 	long long MD5; // long long es de al menos 64 bits, el MD5 tiene que ser de 128 bits. hay que buscar un int 128
 } Archivo;
+
+#endif /* FILESYSTEM_H_ */
+
+
+
 
 
 
