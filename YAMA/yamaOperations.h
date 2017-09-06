@@ -14,13 +14,13 @@ typedef struct t_OperacionTransformacion{
 
 typedef struct t_OperacionReduccionLocal{
 	DescriptorNodo descriptor;
-	char * archivosTemporales; //ver como poner esto es un array de punteros
+	char ** archivosTemporales;
 	char * archivoReducido;
 } OperacionReduccionLocal;
 
 typedef struct t_OperacionReduccionGlobal{
 	DescriptorNodo descriptor;
-	char * archivosTemporales; //ver como poner esto es un array de punteros
+	char ** archivosTemporales;
 	char * archivoReducido;
 } OperacionReduccionGlobal;
 
