@@ -3,9 +3,6 @@
 // leftrotate function definition
 #define LEFTROTATE(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
  
-// Contienen el Hash => como son 128 bits lo divido en 4 valores de 32 bits
-uint32_t hash0, hash1, hash2, hash3;
-
 // Note: All variables are unsigned 32 bit and wrap modulo 2^32 when calculating
  
 // r specifies the per-round shift amounts
@@ -36,7 +33,8 @@ uint32_t k[] = {
 
  
 void md5(char *initial_msg, size_t initial_len, char * MD5) {
-
+    // Contienen el Hash => como son 128 bits lo divido en 4 valores de 32 bits
+    uint32_t hash0, hash1, hash2, hash3;
     // Message (to prepare)
     uint8_t *msg = NULL;
  
