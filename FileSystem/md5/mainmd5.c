@@ -1,5 +1,5 @@
 #include "md5.h"
-int main(int argc, char **argv) {
+/*int main(int argc, char **argv) {
     if (argc < 2) {
         printf("usage: %s 'string'\n", argv[0]);
         return 1;
@@ -18,4 +18,4 @@ int main(int argc, char **argv) {
 
     free(MD5String);
     return 0;
-}
+}*/

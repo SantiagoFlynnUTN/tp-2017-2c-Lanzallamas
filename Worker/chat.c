@@ -18,11 +18,6 @@
 #include <pthread.h>
 #include "main.h"
 
-typedef struct {
-	int tipoMensaje;
-	char mensaje[100];
-} __attribute__((packed))
-mensajeCorto;
 
 void leerMensaje(int socket){
 	char buffer[100];

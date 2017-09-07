@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-void apareo(char * rutaArchivo1, char * rutaArchivo2, char * rutaArchivoDefinitivo);
+#include "apareo.h"
 
 void apareo(char * rutaArchivo1, char * rutaArchivo2, char * rutaArchivoDefinitivo){
 	char * lineaFile1, * lineaFile2;
