@@ -14,6 +14,9 @@
 #include <arpa/inet.h>
 #include "servidor.h"
 #include "chat.h"
+#include "main.h"
+#include "conexiones.h"
+#include "serializacion.h"
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -21,12 +24,19 @@
 
 int yama_socket;
 
+
 void nuevoCliente(char* remoteHost, int newfd){
 	printf("new conection from %s on socket %d\n", remoteHost, newfd);
 	//Y acá hacer algo con el nuevo cliente conectado
 }
 
+void inicializarFileSystem(){
+	nodos = dictionary_create();
+}
+
 int main(int argc, char *argv[]){
+	inicializarFileSystem();
 	inicializarServer();
+
 	for(;;);
 }

@@ -19,6 +19,8 @@
 #include "serializacion.h"
 #include "servidor.h"
 #include "chat.h"
+#include "conexiones.h"
+#include "fileSystem.h"
 
 
 
@@ -32,12 +34,14 @@ void manejarDatos(int buf, int socket){
 	case OK:
 		printf("socket %i dice OK\n", socket);
 		break;
-	case ESTRUCTURA:
-		manejarStructs(socket);
-		//por ahora manejamos solo mensajes
+	case CONEXIONNODO:
+		asociarNodo(socket);
 		break;
-	case ARCHIVO:
-		printf("crear funcion para deserializar archivo\n");
+	case CONEXIONYAMA:
+		break;
+	case SOLICITUDARCHIVOYAMA:
+		break;
+	case ERRORGUARDARBLOQUE:
 		break;
 	}
 }

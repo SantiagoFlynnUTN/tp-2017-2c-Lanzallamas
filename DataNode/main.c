@@ -25,6 +25,14 @@
 
 int sockfd;
 
+typedef struct t_handshake{
+	int tipomensaje;
+	int nombreLen;
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+} __attribute__((packed))
+HandshakeNodo;
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -41,14 +49,30 @@ void manejarDatos(int buf, int socket){
 	}
 }
 
+void enviarStructFileSystem(int socket){
+	HandshakeNodo a;
+	a.tipomensaje = 2;
+	a.nombreLen = 5;
+	strcpy(a.nombreNodo, "hola");
+
+	struct sockaddr_in address;
+	socklen_t addr_size = sizeof(struct sockaddr_in);
+	getpeername(socket, (struct sockaddr *)&address, &addr_size);
+	memset(a.ip, 0, 20);
+	strcpy(a.ip, inet_ntoa(address.sin_addr));
+	a.puerto = address.sin_port;
+
+	send(socket, &a, sizeof(a), 0);
+}
+
 int main(int argc, char *argv[])
 {
-	iniciarConexionAServer(sockfd, PORT);
-	escribir_chat(sockfd);
+	iniciarConexionAServer(&sockfd, PORT);
+	//escribir_chat(sockfd);
+	enviarStructFileSystem(sockfd);
 
 	//escuchar_chat(sockfd);
 
-	//funcionTest();
 	for(;;);
 
 	close(sockfd);
