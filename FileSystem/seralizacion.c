@@ -41,6 +41,8 @@ void manejarDatos(int buf, int socket){
 		break;
 	case SOLICITUDARCHIVOYAMA:
 		break;
+    case RECEPCIONBLOQUE:
+        break;
 	case ERRORGUARDARBLOQUE:
 		break;
 	}
