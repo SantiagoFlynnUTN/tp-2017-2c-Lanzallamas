@@ -6,11 +6,11 @@
  */
 
 
-#ifndef MAIN_H_
-#define MAIN_H_
+#ifndef MAINDN_H_
+#define MAINDN_H_
 
 
 void nuevoCliente(char* remoteHost, int newfd);
 void manejarDatos(int buf, int socket);
 
-#endif /* MAIN_H_ */
+#endif /* MAINDN_H_ */

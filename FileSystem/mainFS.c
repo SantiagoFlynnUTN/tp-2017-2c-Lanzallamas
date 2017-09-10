@@ -2,6 +2,8 @@
     ** client.c -- Ejemplo de cliente de sockets de flujo
     */
 
+#include "mainFS.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,7 +16,6 @@
 #include <arpa/inet.h>
 #include "servidor.h"
 #include "chat.h"
-#include "main.h"
 #include "conexiones.h"
 #include "serializacion.h"
 

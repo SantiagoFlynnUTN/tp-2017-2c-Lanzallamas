@@ -5,10 +5,10 @@
  *      Author: utnso
  */
 
-#ifndef MAIN_H_
-#define MAIN_H_
+#ifndef MAINYAMA_H_
+#define MAINYAMA_H_
 
 void nuevoCliente(char* remoteHost, int newfd);
 void manejarDatos(int buf, int socket);
 
-#endif /* MAIN_H_ */
+#endif /* MAINYAMA_H_ */

@@ -5,8 +5,8 @@
  *      Author: utnso
  */
 
-#ifndef MAIN_H_
-#define MAIN_H_
+#ifndef MAINWORKER_H_
+#define MAINWORKER_H_
 
 typedef struct {
 	int tipoMensaje;
@@ -17,4 +17,4 @@ mensajeCorto;
 void nuevoCliente(char* remoteHost, int newfd);
 void manejarDatos(int buf, int socket);
 
-#endif /* MAIN_H_ */
+#endif /* MAINWORKER_H_ */

@@ -2,6 +2,8 @@
     ** client.c -- Ejemplo de cliente de sockets de flujo
     */
 
+#include "mainMaster.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,7 +16,6 @@
 #include <arpa/inet.h>
 #include "chat.h"
 #include "cliente.h"
-#include "main.h"
 #include <commons/config.h>
 
 #define PORT 9034 // puerto al que vamos a conectar

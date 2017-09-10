@@ -16,8 +16,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include "main.h"
 #include "chat.h"
+#include "mainFS.h"
 
 
 void leerMensaje(int socket){

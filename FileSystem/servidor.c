@@ -16,7 +16,8 @@
 #include <pthread.h>
 #include "serializacion.h"
 #include "servidor.h"
-#include "main.h"
+
+#include "mainFS.h"
 
 
 fd_set master;   // conjunto maestro de descriptores de fichero

@@ -16,7 +16,8 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include "conexiones.h"
-#include "main.h"
+
+#include "mainYAMA.h"
 
 //a desarrollar
 void enviarMensaje(){

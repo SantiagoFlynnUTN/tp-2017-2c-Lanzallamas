@@ -16,7 +16,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include "main.h"
+
+#include "mainYAMA.h"
 
 typedef struct {
 	int tipoMensaje;
