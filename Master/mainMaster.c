@@ -16,7 +16,6 @@
 #include <arpa/inet.h>
 #include "chat.h"
 #include "cliente.h"
-#include <commons/config.h>
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -25,22 +24,8 @@
 #define OK 1
 #define ESTRUCTURA 2
 #define ARCHIVO 3
-#define ARCHIVOCFG "masterConfig.conf"
-#define YAMA_IP "YAMA_IP"
-#define YAMA_PUERTO "YAMA_PUERTO"
 
 int sockfd;
-
-void configs(){
-	t_config * cfg;
-	cfg = config_create(ARCHIVOCFG);
-	if (!config_has_property(cfg, YAMA_IP) || !config_has_property(cfg, YAMA_PUERTO)){
-		printf("badConfig 120");
-		exit(120);
-	}
-	conexion.ip = config_get_string_value(cfg, YAMA_IP);
-	conexion.puerto = config_get_int_value(cfg, YAMA_PUERTO);
-}
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -57,8 +42,8 @@ void manejarDatos(int buf, int socket){
 	}
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
+	inicializarMaster();
 	//cargarConfig();
 	//iniciarConexionAServer(sockfd, PORT);
 	/* asociarAYAMA();
@@ -70,8 +55,7 @@ int main(int argc, char *argv[])
 	 *
 	 */
 
-	configs();
-	printf("La IP y puerto de YAMA son: %s:%d", conexion.ip, conexion.puerto);
+	printf("La IP y puerto de YAMA son: %s:%d", conexionYAMA.ip, conexionYAMA.puerto);
 /*
 	for(;;);
 

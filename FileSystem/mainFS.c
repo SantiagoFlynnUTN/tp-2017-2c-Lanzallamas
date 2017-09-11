@@ -18,6 +18,7 @@
 #include "chat.h"
 #include "conexiones.h"
 #include "serializacion.h"
+#include "fileSystem.h"
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -31,9 +32,7 @@ void nuevoCliente(char* remoteHost, int newfd){
 	//Y acá hacer algo con el nuevo cliente conectado
 }
 
-void inicializarFileSystem(){
-	nodos = dictionary_create();
-}
+
 
 int main(int argc, char *argv[]){
 	inicializarFileSystem();

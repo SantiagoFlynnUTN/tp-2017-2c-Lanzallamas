@@ -17,6 +17,7 @@
 #include <pthread.h>
 #include "servidor.h"
 #include "chat.h"
+#include "yama.h"
 
 
 void nuevoCliente(char* remoteHost, int newfd){
@@ -30,7 +31,7 @@ void conectarAFileSystem(){
 }
 
 int main(){
-
+	inicializarYAMA();
 	inicializarServer();
 	conectarAFileSystem();
 

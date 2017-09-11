@@ -14,16 +14,13 @@
 #include <arpa/inet.h>
 #include "chat.h"
 #include "cliente.h"
-
-#define PORT 9034 // puerto al que vamos a conectar
+#include "dataNode.h"
 
 #define MAXDATASIZE 100 // máximo número de bytes que se pueden leer de una vez
 
 #define OK 1
 #define ESTRUCTURA 2
 #define ARCHIVO 3
-
-int sockfd;
 
 typedef struct t_handshake{
 	int tipomensaje;
@@ -33,6 +30,8 @@ typedef struct t_handshake{
 	uint16_t puerto;
 } __attribute__((packed))
 HandshakeNodo;
+
+int sockfd;
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -50,24 +49,24 @@ void manejarDatos(int buf, int socket){
 }
 
 void enviarStructFileSystem(int socket){
-	HandshakeNodo a;
-	a.tipomensaje = 2;
-	a.nombreLen = 5;
-	strcpy(a.nombreNodo, "hola");
+	HandshakeNodo handshake;
+	handshake.tipomensaje = 2;
+	handshake.nombreLen = infoNodo.nombreLen;
+	strcpy(handshake.nombreNodo, infoNodo.nombreNodo);
 
 	struct sockaddr_in address;
 	socklen_t addr_size = sizeof(struct sockaddr_in);
 	getpeername(socket, (struct sockaddr *)&address, &addr_size);
-	memset(a.ip, 0, 20);
-	strcpy(a.ip, inet_ntoa(address.sin_addr));
-	a.puerto = address.sin_port;
+	memset(handshake.ip, 0, 20);
+	strcpy(handshake.ip, inet_ntoa(address.sin_addr));
+	handshake.puerto = infoNodo.puerto;
 
-	send(socket, &a, sizeof(a), 0);
+	send(socket, &handshake, sizeof(handshake), 0);
 }
 
-int main(int argc, char *argv[])
-{
-	iniciarConexionAServer(&sockfd, PORT);
+int main(int argc, char *argv[]){
+	inicializarDataNode();
+	iniciarConexionAServer(&sockfd);
 	//escribir_chat(sockfd);
 	enviarStructFileSystem(sockfd);
 

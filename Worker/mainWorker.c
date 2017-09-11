@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "chat.h"
+#include "worker.h"
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -77,7 +78,7 @@ void manejarDatos(int buf, int socket){
 
 int main(int argc, char *argv[])
 {
-
+	inicializarWorker();
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
 

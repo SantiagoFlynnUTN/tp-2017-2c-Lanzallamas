@@ -1,11 +1,14 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <commons/collections/dictionary.h>
 
 #ifndef FILESYSTEM_H_
 #define FILESYSTEM_H_
 
+/* ENUMS */
 typedef enum{TEXTO, BINARIO} TipoArchivo;
 
+/* ESTRUCTURAS */
 typedef struct t_Directorio{
 	int id;
 	char nombre[255];	
@@ -51,7 +54,14 @@ typedef struct t_Archivo{
 	long long MD5; // long long es de al menos 64 bits, el MD5 tiene que ser de 128 bits. hay que buscar un int 128
 } Archivo;
 
+/* VARIABLES GLOBALES */
+t_dictionary* nodos;
+
+
+/* FUNCIONES */
 void asociarNodo(int socket);
+void inicializarFileSystem();
+
 
 #endif /* FILESYSTEM_H_ */
 
