@@ -3,6 +3,7 @@
 	<name>YAMA</name>
 	<comment></comment>
 	<projects>
+		<project>Z-Commons</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

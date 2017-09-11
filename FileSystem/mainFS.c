@@ -2,7 +2,7 @@
     ** client.c -- Ejemplo de cliente de sockets de flujo
     */
 
-#include "mainFS.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +18,8 @@
 #include "chat.h"
 #include "conexiones.h"
 #include "serializacion.h"
+#include "mainFS.h"
+#include <prueba.h>
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -35,7 +37,12 @@ void inicializarFileSystem(){
 	nodos = dictionary_create();
 }
 
+void pruebaZCommons(){
+	myfunc();
+}
+
 int main(int argc, char *argv[]){
+	pruebaZCommons();
 	inicializarFileSystem();
 	inicializarServer();
 
