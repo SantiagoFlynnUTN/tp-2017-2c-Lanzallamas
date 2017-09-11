@@ -30,7 +30,6 @@ void _cargarConfiguracion(){
 		printf("badConfig 120");
 		exit(120);
 	}
-	printf("estoy aca\n");
 
 	conexionFileSystem.puerto = htons(config_get_int_value(config, PUERTO_FILESYSTEM));
 	infoNodo.puerto = htons(config_get_int_value(config, PUERTO_DATANODE));
