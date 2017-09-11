@@ -21,6 +21,7 @@ void inicializarDataNode(){
 
 void _cargarConfiguracion(){
 	config = config_create(ARCHIVO_CONFIGURACION);
+
 	if (!config_has_property(config, IP_FILESYSTEM) ||
 		!config_has_property(config, PUERTO_FILESYSTEM) ||
 		!config_has_property(config, NOMBRE_NODO) ||
@@ -29,6 +30,7 @@ void _cargarConfiguracion(){
 		printf("badConfig 120");
 		exit(120);
 	}
+	printf("estoy aca\n");
 
 	conexionFileSystem.puerto = htons(config_get_int_value(config, PUERTO_FILESYSTEM));
 	infoNodo.puerto = htons(config_get_int_value(config, PUERTO_DATANODE));
@@ -36,6 +38,8 @@ void _cargarConfiguracion(){
 	_copiarNombreNodo();
 	_copiarRutaDataBin();
 }
+
+
 
 void _copiarFileSystemIP(){
 	char * ip;
