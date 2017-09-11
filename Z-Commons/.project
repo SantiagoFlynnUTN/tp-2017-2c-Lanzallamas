@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Worker</name>
+	<name>Z-Commons</name>
 	<comment></comment>
 	<projects>
-		<project>Z-Commons</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

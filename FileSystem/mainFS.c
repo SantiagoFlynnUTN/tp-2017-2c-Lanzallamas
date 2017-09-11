@@ -2,8 +2,6 @@
     ** client.c -- Ejemplo de cliente de sockets de flujo
     */
 
-#include "mainFS.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,11 +12,14 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <prueba.h>
 #include "servidor.h"
 #include "chat.h"
 #include "conexiones.h"
 #include "serializacion.h"
 #include "fileSystem.h"
+#include "mainFS.h"
+
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -32,9 +33,12 @@ void nuevoCliente(char* remoteHost, int newfd){
 	//Y acá hacer algo con el nuevo cliente conectado
 }
 
-
+void pruebaZCommons(){
+	myfunc();
+}
 
 int main(int argc, char *argv[]){
+	pruebaZCommons();
 	inicializarFileSystem();
 	inicializarServer();
 
