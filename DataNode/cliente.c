@@ -16,8 +16,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "cliente.h"
+#include "dataNode.h"
 
-void iniciarConexionAServer(int* sockfd, int port){
+void iniciarConexionAServer(int* sockfd){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
@@ -28,8 +29,8 @@ void iniciarConexionAServer(int* sockfd, int port){
 	}
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = htons(port);  // short, Ordenación de bytes de la red
-	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	their_addr.sin_port = conexionFileSystem.puerto;  // short, Ordenación de bytes de la red
+	their_addr.sin_addr.s_addr = inet_addr(conexionFileSystem.ip);
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,

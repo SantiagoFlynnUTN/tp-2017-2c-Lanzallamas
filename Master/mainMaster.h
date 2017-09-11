@@ -11,6 +11,4 @@
 void nuevoCliente(char* remoteHost, int newfd);
 void manejarDatos(int buf, int socket);
 
-YamaConexion conexion;
-
 #endif /* MAIN_H_ */

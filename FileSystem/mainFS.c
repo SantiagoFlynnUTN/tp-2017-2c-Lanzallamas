@@ -2,8 +2,6 @@
     ** client.c -- Ejemplo de cliente de sockets de flujo
     */
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,12 +12,14 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <prueba.h>
 #include "servidor.h"
 #include "chat.h"
 #include "conexiones.h"
 #include "serializacion.h"
+#include "fileSystem.h"
 #include "mainFS.h"
-#include <prueba.h>
+
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -31,10 +31,6 @@ int yama_socket;
 void nuevoCliente(char* remoteHost, int newfd){
 	printf("new conection from %s on socket %d\n", remoteHost, newfd);
 	//Y acá hacer algo con el nuevo cliente conectado
-}
-
-void inicializarFileSystem(){
-	nodos = dictionary_create();
 }
 
 void pruebaZCommons(){
