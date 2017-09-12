@@ -19,10 +19,6 @@
 
 #define MAXDATASIZE 100 // máximo número de bytes que se pueden leer de una vez
 
-#define OK 1
-#define ESTRUCTURA 2
-#define ARCHIVO 3
-
 int sockfd;
 
 //https://es.wikibooks.org/wiki/Programaci%C3%B3n_en_C/Estructuras_y_Uniones
@@ -59,22 +55,6 @@ int funcionTest(){
 	}
 	return 0;
 }
-
-void manejarDatos(int buf, int socket){
-	switch(buf){
-	case OK:
-		printf("socket %i dice OK\n", socket);
-		break;
-	case ESTRUCTURA:
-		//por ahora manejamos solo mensajes
-		leerMensaje(socket);
-		break;
-	case ARCHIVO:
-		printf("crear funcion para deserializar archivo\n");
-		break;
-	}
-}
-
 
 int main(int argc, char *argv[])
 {

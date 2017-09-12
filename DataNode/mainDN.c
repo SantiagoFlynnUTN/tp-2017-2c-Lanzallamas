@@ -18,10 +18,6 @@
 
 #define MAXDATASIZE 100 // máximo número de bytes que se pueden leer de una vez
 
-#define OK 1
-#define ESTRUCTURA 2
-#define ARCHIVO 3
-
 typedef struct t_handshake{
 	int tipomensaje;
 	int nombreLen;
@@ -32,21 +28,6 @@ typedef struct t_handshake{
 HandshakeNodo;
 
 int sockfd;
-
-void manejarDatos(int buf, int socket){
-	switch(buf){
-	case OK:
-		printf("socket %i dice OK\n", socket);
-		break;
-	case ESTRUCTURA:
-		//por ahora manejamos solo mensajes
-		leerMensaje(socket);
-		break;
-	case ARCHIVO:
-		printf("crear funcion para deserializar archivo\n");
-		break;
-	}
-}
 
 void enviarStructFileSystem(int socket){
 	HandshakeNodo handshake;
@@ -59,7 +40,7 @@ void enviarStructFileSystem(int socket){
 	getpeername(socket, (struct sockaddr *)&address, &addr_size);
 	memset(handshake.ip, 0, 20);
 	strcpy(handshake.ip, inet_ntoa(address.sin_addr));
-	handshake.puerto = infoNodo.puerto;
+	handshake.puerto = infoNodo.puertoWorker;
 
 	send(socket, &handshake, sizeof(handshake), 0);
 }

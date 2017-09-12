@@ -54,8 +54,6 @@ int main(int argc, char *argv[]){
 	 *
 	 *
 	 */
-
-	printf("La IP y puerto de YAMA son: %s:%d", conexionYAMA.ip, conexionYAMA.puerto);
 /*
 	for(;;);
 

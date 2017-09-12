@@ -11,9 +11,10 @@
 
 
 void _cargarConfiguracion();
+void _crearLogger();
 
 void printNodo(DescriptorNodo * a){
-	printf("lenNombre: %d Nombre %s, direccion: %s:%u\n", a->nombreLen, a->nombreNodo, a->ip, a->puerto);
+	log_info(logger, "Nodo Conectado\nNombre: %s\nDireccion Worker: %s:%u\n", a->nombreNodo, a->ip, a->puerto);
 }
 
 void asociarNodo(int socket){
@@ -32,4 +33,9 @@ void _cargarConfiguracion(){
 
 void inicializarFileSystem(){
 	nodos = dictionary_create();
+	_crearLogger();
+}
+
+void _crearLogger(){
+	logger = log_create(ARCHIVO_LOGGER, MODULO, true, LOG_LEVEL_INFO);
 }

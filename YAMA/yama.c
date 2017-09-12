@@ -7,14 +7,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <netinet/in.h>
 #include "yama.h"
 
 void _cargarConfiguracion();
 void _copiarFileSystemIP();
 void _definirAlgoritmoBalanceo();
+void _crearLogger();
+void _logConfig();
 
 void inicializarYAMA(){
+	_crearLogger();
+	_cargarConfiguracion();
+	_logConfig();
+}
+
+void recargarConfiguracion(){
+	 // destruyo la config original ya que el config_create hace un malloc
+	config_destroy(config);
 	_cargarConfiguracion();
 }
 
@@ -24,7 +35,7 @@ void _cargarConfiguracion(){
 		!config_has_property(config, FS_PUERTO) ||
 		!config_has_property(config, RETARDO_PLANIFICACION) ||
 		!config_has_property(config, ALGORITMO_BALANCEO)){
-		printf("badConfig 120");
+		log_error(logger, "Bad Config");
 		exit(120);
 	}
 
@@ -62,4 +73,16 @@ void _definirAlgoritmoBalanceo(){
 		printf("ALGORITMO DE PLANIFICACION DESCONOCIDO\n");
 		exit(121);
 	}
+}
+
+void _crearLogger(){
+	logger = log_create(ARCHIVO_LOGGER, MODULO, true, LOG_LEVEL_INFO);
+}
+
+void _logConfig(){
+	log_debug(logger, "Config:\nFS_IP: %s\nFS_PUERTO: %d\nRETARDO_PLANIFICACION: %d\nALGORITMO_BALANCEO: %s",
+			config_get_string_value(config, FS_IP),
+			config_get_int_value(config, FS_PUERTO),
+			config_get_int_value(config, RETARDO_PLANIFICACION),
+			config_get_string_value(config, ALGORITMO_BALANCEO));
 }

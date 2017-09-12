@@ -14,10 +14,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include "serializacion.h"
 #include "servidor.h"
 
 #include "mainFS.h"
+#include "serializacionFileSystem.h"
 
 
 fd_set master;   // conjunto maestro de descriptores de fichero

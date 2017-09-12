@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <netinet/in.h>
 #include "worker.h"
 
@@ -14,9 +15,13 @@ void _cargarConfiguracion();
 void _copiarFileSystemIP();
 void _copiarNombreNodo();
 void _copiarRutaDataBin();
+void _crearLogger();
+void _logConfig();
 
 void inicializarWorker(){
+	_crearLogger();
 	_cargarConfiguracion();
+	_logConfig();
 }
 
 void _cargarConfiguracion(){
@@ -24,14 +29,12 @@ void _cargarConfiguracion(){
 	if (!config_has_property(config, IP_FILESYSTEM) ||
 		!config_has_property(config, PUERTO_FILESYSTEM) ||
 		!config_has_property(config, NOMBRE_NODO) ||
-		!config_has_property(config, PUERTO_WORKER) ||
 		!config_has_property(config, RUTA_DATABIN)){
-		printf("badConfig 120");
+		log_error(logger, "Bad Config");
 		exit(120);
 	}
 
 	conexionFileSystem.puerto = htons(config_get_int_value(config, PUERTO_FILESYSTEM));
-	infoNodo.puerto = htons(config_get_int_value(config, PUERTO_WORKER));
 	_copiarFileSystemIP();
 	_copiarNombreNodo();
 	_copiarRutaDataBin();
@@ -82,5 +85,17 @@ void _copiarRutaDataBin(){
 		ruta++;
 		i++;
 	}
+}
+
+void _crearLogger(){
+	logger = log_create(ARCHIVO_LOGGER, MODULO, true, LOG_LEVEL_INFO);
+}
+
+void _logConfig(){
+	log_debug(logger, "Config:\nIP_FILESYSTEM: %s\nPUERTO_FILESYSTEM: %d\nNOMBRE_NODO: %s\nRUTA_DATABIN: %s",
+			config_get_string_value(config, IP_FILESYSTEM),
+			config_get_int_value(config, PUERTO_FILESYSTEM),
+			config_get_string_value(config, NOMBRE_NODO),
+			config_get_string_value(config, RUTA_DATABIN));
 }
 

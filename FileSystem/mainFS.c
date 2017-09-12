@@ -14,12 +14,11 @@
 #include <arpa/inet.h>
 #include <prueba.h>
 #include "servidor.h"
-#include "chat.h"
-#include "conexiones.h"
-#include "serializacion.h"
-#include "fileSystem.h"
 #include "mainFS.h"
-
+#include "chat.h"
+#include "conexionesFileSystem.h"
+#include "fileSystem.h"
+#include "serializacionFileSystem.h"
 
 #define PORT 9034 // puerto al que vamos a conectar
 

@@ -1,5 +1,6 @@
 #include <commons/collections/dictionary.h>
 #include <commons/config.h>
+#include <commons/log.h>
 #include <stdint.h>
 
 #ifndef YAMA_H_
@@ -47,6 +48,8 @@ typedef struct {
 
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
+#define ARCHIVO_LOGGER "yama.log"
+#define MODULO "YAMA"
 #define FS_IP "FS_IP"
 #define FS_PUERTO "FS_PUERTO"
 #define RETARDO_PLANIFICACION "RETARDO_PLANIFICACION"
@@ -55,6 +58,7 @@ typedef struct {
 #define WEIGHTED_ROUND_ROBIN "WEIGHTED_ROUND_ROBIN"
 
 t_config * config;
+t_log * logger;
 ConexionFileSystem conexionFileSystem;
 AlgoritmoBalanceo algoritmoBalanceo;
 int retardoPlanificacion;
@@ -63,5 +67,6 @@ int retardoPlanificacion;
 
 /* FUNCIONES */
 void inicializarYAMA();
+void recargarConfiguracion();
 
 #endif /* YAMA_H_ */

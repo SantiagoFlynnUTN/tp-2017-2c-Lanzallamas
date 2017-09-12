@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <commons/log.h>
 #include <commons/collections/dictionary.h>
 
 #ifndef FILESYSTEM_H_
@@ -54,8 +55,12 @@ typedef struct t_Archivo{
 	long long MD5; // long long es de al menos 64 bits, el MD5 tiene que ser de 128 bits. hay que buscar un int 128
 } Archivo;
 
-/* VARIABLES GLOBALES */
+/* VARIABLES GLOBALES y DEFINES*/
+#define ARCHIVO_LOGGER "fileSystem.log"
+#define MODULO "FILESYSTEM"
+
 t_dictionary* nodos;
+t_log * logger;
 
 
 /* FUNCIONES */
