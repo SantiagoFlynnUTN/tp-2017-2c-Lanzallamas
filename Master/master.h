@@ -17,12 +17,28 @@ typedef struct {
 	uint16_t puerto;
 } YamaConexion;
 
+typedef struct {
+	int tipoMensaje;
+	char rutaArchivo[100];
+} SolicitudJob;
+
+typedef struct {
+	char nombreNodo[100];
+	char ipWorker[20];
+	uint16_t puertoWorker;
+	int numBloque;
+	int bytesOcupados;
+	char rutaArchivo[100];
+}workerTransformacion;
+
 /* VARIABLES GLOBALES Y DEFINES */
 #define ARCHIVOCFG "master.conf"
 #define ARCHIVO_LOGGER "master.log"
 #define MODULO "MASTER"
 #define YAMA_IP "YAMA_IP"
 #define YAMA_PUERTO "YAMA_PUERTO"
+
+enum codOps {SOLICITUDJOB = 1};
 
 YamaConexion conexionYAMA;
 t_log * logger;

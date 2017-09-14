@@ -8,6 +8,6 @@
 #ifndef CLIENTE_H_
 #define CLIENTE_H_
 
-void iniciarConexionAServer(int *sockfd, int port);
+void iniciarConexionAYAMA(int *sockfd, int port);
 
 #endif /* CLIENTE_H_ */

@@ -17,7 +17,7 @@
 #include <arpa/inet.h>
 #include "cliente.h"
 
-void iniciarConexionAServer(int *sockfd, int port){
+void iniciarConexionAYAMA(int *sockfd, int port){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 

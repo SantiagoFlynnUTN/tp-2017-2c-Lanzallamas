@@ -26,6 +26,8 @@
 #define ARCHIVO 3
 
 int sockfd;
+int cantidadWorkers;
+workerTransformacion* tablaTransformacion[];
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -42,11 +44,56 @@ void manejarDatos(int buf, int socket){
 	}
 }
 
+void solicitudJob(int* sockfd /* , rutaArch*/){
+	int socket_yama = *sockfd;
+	SolicitudJob sol;
+	sol.tipoMensaje = SOLICITUDJOB;
+	//sol.rutaArchivo = ...
+	if (send(socket_yama, &sol, sizeof(SolicitudJob), 0) == -1)
+		printf("No se puedo enviar el mensaje.\n");
+}
+
+void respuestaSolicitud(){
+
+	int nbytesReceived = 0;
+	while(nbytesReceived == 0){		//Tanto FS, como memoria, y cpu saben solo escuchar mensajes por el momento, asi q quedamos en bucle hasta la muerte.
+		cantidadWorkers = 0;
+
+		if((nbytesReceived = recv(sockfd, &cantidadWorkers, sizeof(int), 0)) <= 0)				//recibo y compruebo q recibí correctamente
+			printf("No puedo recibir información, o el servidor colgó\n");
+
+		else{
+			int i;
+			for(i=0; i<cantidadWorkers; i++){
+				recv(sockfd, tablaTransformacion[i], sizeof(workerTransformacion), 0);
+			}
+		}
+	}
+}
+
+void* iniciarTransfWorker(){
+
+}
+
+void crearHilosTransformacion(){
+	int i;
+	int rc[cantidadWorkers];
+	pthread_t tid[cantidadWorkers];
+	for(i=0; i<cantidadWorkers; i++){
+		rc[i] = pthread_create(&tid[i], NULL, iniciarTransfWorker, NULL);
+			if(rc[i]) printf("no pudo crear el hilo %d", i);
+	}
+
+}
+
 int main(int argc, char *argv[]){
 	inicializarMaster();
-	//cargarConfig();
-	iniciarConexionAServer(&sockfd, PORT);
-	escribir(&sockfd);
+	iniciarConexionAYAMA(&sockfd, PORT);
+	solicitudJob(&sockfd);
+	respuestaSolicitud();
+	crearHilosTransformacion();
+
+
 	/* asociarAYAMA();
 	 * ingresarComando();
 	 * esperarIndicaciones();
