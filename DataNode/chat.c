@@ -33,7 +33,7 @@ void enviarMensajeCorto(int sockfd){
 	msj.tipoMensaje = 2;
 	printf("Escribe algo: ");
 	memset(&msj.mensaje, 0, 100);
-	gets(msj.mensaje);
+	//gets(msj.mensaje);
 
 	void* mensajeAEnviar = (void*) malloc(sizeof(mensajeCorto));
 	memset(mensajeAEnviar, 0, sizeof(mensajeCorto));

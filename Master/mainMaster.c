@@ -45,7 +45,8 @@ void manejarDatos(int buf, int socket){
 int main(int argc, char *argv[]){
 	inicializarMaster();
 	//cargarConfig();
-	//iniciarConexionAServer(sockfd, PORT);
+	iniciarConexionAServer(&sockfd, PORT);
+	escribir(&sockfd);
 	/* asociarAYAMA();
 	 * ingresarComando();
 	 * esperarIndicaciones();

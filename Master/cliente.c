@@ -17,12 +17,12 @@
 #include <arpa/inet.h>
 #include "cliente.h"
 
-void iniciarConexionAServer(int sockfd, int port){
+void iniciarConexionAServer(int *sockfd, int port){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
 
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+	if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket");
 		exit(1);
 	}
@@ -32,7 +32,7 @@ void iniciarConexionAServer(int sockfd, int port){
 	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
-	if (connect(sockfd, (struct sockaddr *)&their_addr,
+	if (connect(*sockfd, (struct sockaddr *)&their_addr,
 										  sizeof(struct sockaddr)) == -1) {
 		perror("connect");
 		exit(1);
