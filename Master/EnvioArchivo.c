@@ -1,10 +1,12 @@
 #include "EnvioArchivo.h"
+#include "master.h"
+#include <archivos.h>
 
 int enviarArchivo(int kernel_fd, char* path){
 
 	//Verifico existencia archivo (Aguante esta funcion loco!)
  	if( !verificarExistenciaDeArchivo(path) ){
- 		return -1;
+		return -1;
  	}
 
  	FILE* sourceFile;
@@ -24,7 +26,6 @@ int enviarArchivo(int kernel_fd, char* path){
  	file_size = stats.st_size;
  	header_t header;
  	char* buffer = malloc(file_size + 1 + sizeof(header_t));
- 	memset(buffer,'@',file_size + 1 + sizeof(header_t));
  	int offset = 0;
 
  	if(buffer == NULL){
@@ -33,10 +34,6 @@ int enviarArchivo(int kernel_fd, char* path){
  		return -1;
  	}
 
- 	header.type = ENVIO_CODIGO;
- 	header.length = file_size + 1;
- 	memcpy(buffer, &(header.type),sizeof(header.type)); offset+=sizeof(header.type);
- 	memcpy(buffer + offset, &(header.length),sizeof(header.length)); offset+=sizeof(header.length);
 
  	if(fread(buffer + offset,file_size,1,sourceFile) < 1){
  		log_error(logger, "No es posible leer el archivo");
@@ -44,19 +41,9 @@ int enviarArchivo(int kernel_fd, char* path){
  		fclose(sourceFile);
  		return -1;
  	}
-
- 	//Agrego \0
- 	(buffer + offset)[file_size] = '\0';
-
- 	FILE* dumpFile = fopen("Dump","w");
-
- 	write(fileno(dumpFile),buffer,file_size + sizeof(header_t) + 1);
-
- 	fclose(dumpFile);
-
  	/*Esto lo hago asi porque de la otra forma habría que reservar MAS espacio para
  	 * enviar el paquete */
- 	if(sendAll(kernel_fd, buffer, file_size + sizeof(header_t) + 1, 0) <= 0){
+ 	if(sendAll(kernel_fd, buffer, file_size, 0) <= 0){
  		log_error(logger, "Error al enviar archivo");
  		free(buffer);
  		fclose(sourceFile);

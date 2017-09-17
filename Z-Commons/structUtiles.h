@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include "collections/list.h"
-#include "collections/queue.h"
-#include "config.h"
-#include "log.h"
-#include "collections/dictionary.h"
+#include <commons/collections/list.h>
+#include <commons/collections/queue.h>
+#include <commons/config.h>
+#include <commons/log.h>
+#include <commons/collections/dictionary.h>
 
 typedef struct{
 	uint32_t pagina;

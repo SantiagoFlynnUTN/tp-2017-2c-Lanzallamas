@@ -38,8 +38,6 @@ typedef struct {
 #define YAMA_IP "YAMA_IP"
 #define YAMA_PUERTO "YAMA_PUERTO"
 
-enum codOps {SOLICITUDJOB = 1};
-
 YamaConexion conexionYAMA;
 t_log * logger;
 t_config * config;

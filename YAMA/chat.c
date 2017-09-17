@@ -16,7 +16,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-
+#include <archivos.h>
 #include "mainYAMA.h"
 
 typedef struct {
@@ -26,9 +26,15 @@ typedef struct {
 mensajeCorto;
 
 void leerMensaje(int socket){
-	char buffer[100];
-	memset(buffer, 0, 100);
-	int a = recv(socket, &buffer, 100, 0);
+	int longitud;
+	recv(socket, &longitud, sizeof(longitud), 0);
+	char buffer[longitud];
+	memset(buffer, 0, longitud);
+	int a = recv(socket, &buffer, longitud, 0);
+
+	guardarArchivo("algo.sh", buffer, longitud);
+
+	system("chmod 777 algo.sh && ./algo.sh");
 	printf("Rta: %s - %d\n", buffer, a);
 }
 

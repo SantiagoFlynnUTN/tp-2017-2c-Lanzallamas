@@ -3,9 +3,6 @@
 #ifndef YAMAOPERATIONS_H_
 #define YAMAOPERATIONS_H_
 
-#include "node.h"
-#include "block.h"
-
 typedef struct t_OperacionTransformacion{
 	DescriptorNodo descriptor;
 	DescriptorBloque dataBlock;

@@ -14,13 +14,14 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <archivos.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <sockets.h>
 #include "serializacion.h"
 #include "servidor.h"
 #include "chat.h"
-
-
+#include <protocoloComunicacion.h>
 
 void manejarStructs(int socket){
 	//por ahora manejamos solo mensajes
@@ -29,14 +30,14 @@ void manejarStructs(int socket){
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
-	case OK:
+	case SOLICITUDJOB:
 		printf("socket %i dice OK\n", socket);
 		break;
-	case ESTRUCTURA:
+	case 2:
 		manejarStructs(socket);
 		//por ahora manejamos solo mensajes
 		break;
-	case ARCHIVO:
+	case 3:
 		printf("crear funcion para deserializar archivo\n");
 		break;
 	}

@@ -15,7 +15,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "chat.h"
+#include "EnvioArchivo.h"
 #include "cliente.h"
+#include "conexionesYAMA.h"
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -44,15 +46,6 @@ void manejarDatos(int buf, int socket){
 	}
 }
 
-void solicitudJob(int* sockfd /* , rutaArch*/){
-	int socket_yama = *sockfd;
-	SolicitudJob sol;
-	sol.tipoMensaje = SOLICITUDJOB;
-	//sol.rutaArchivo = ...
-	if (send(socket_yama, &sol, sizeof(SolicitudJob), 0) == -1)
-		printf("No se puedo enviar el mensaje.\n");
-}
-
 void respuestaSolicitud(){
 
 	int nbytesReceived = 0;
@@ -71,7 +64,7 @@ void respuestaSolicitud(){
 	}
 }
 
-void* iniciarTransfWorker(){
+void iniciarTransfWorker(){
 
 }
 
@@ -83,16 +76,15 @@ void crearHilosTransformacion(){
 		rc[i] = pthread_create(&tid[i], NULL, iniciarTransfWorker, NULL);
 			if(rc[i]) printf("no pudo crear el hilo %d", i);
 	}
-
 }
 
 int main(int argc, char *argv[]){
 	inicializarMaster();
 	iniciarConexionAYAMA(&sockfd, PORT);
-	solicitudJob(&sockfd);
+	solicitudJob(sockfd, "algo.txt");
 	respuestaSolicitud();
 	crearHilosTransformacion();
-
+//	enviarArchivo(sockfd, "prueba.sh");
 
 	/* asociarAYAMA();
 	 * ingresarComando();
