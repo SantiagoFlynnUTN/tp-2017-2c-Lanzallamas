@@ -32,8 +32,8 @@ void enviarMensajeCorto(int sockfd){
 	mensajeCorto msj;
 	msj.tipoMensaje = 2;
 	printf("Escribe algo: ");
-	memset(&msj.mensaje, 0, 100);
-	scanf("%s *[^\n]", &msj.mensaje);
+	memset(msj.mensaje, 0, 100);
+	scanf("%s *[^\n]", msj.mensaje);
 
 	void* mensajeAEnviar = (void*) malloc(sizeof(mensajeCorto));
 	memset(mensajeAEnviar, 0, sizeof(mensajeCorto));

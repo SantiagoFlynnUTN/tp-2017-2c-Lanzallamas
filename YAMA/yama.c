@@ -11,11 +11,11 @@
 #include <netinet/in.h>
 #include "yama.h"
 
-void _cargarConfiguracion();
-void _copiarFileSystemIP();
-void _definirAlgoritmoBalanceo();
-void _crearLogger();
-void _logConfig();
+void _cargarConfiguracion(void);
+void _copiarFileSystemIP(void);
+void _definirAlgoritmoBalanceo(void);
+void _crearLogger(void);
+void _logConfig(void);
 
 void inicializarYAMA(){
 	_crearLogger();

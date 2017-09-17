@@ -15,10 +15,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <commons/string.h>
-#include <commons/sockets.h>
+#include <sockets.h>
 #include <commons/log.h>
 #include <commons/config.h>
-#include <commons/interface.h>
+#include <archivos.h>
 #include <ctype.h>
 #include <pthread.h>
 #include <sys/types.h>
