@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-void nuevoCliente(char* remoteHost, int newfd);
+void nuevoCliente(int socket_cliente);
 void manejarDatos(int buf, int socket);
 
 #endif /* MAIN_H_ */

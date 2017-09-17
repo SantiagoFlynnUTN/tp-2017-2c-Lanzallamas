@@ -38,7 +38,7 @@ typedef struct {
 #define YAMA_IP "YAMA_IP"
 #define YAMA_PUERTO "YAMA_PUERTO"
 
-enum codOps {SOLICITUDJOB = 1};
+enum codOps {SOLICITUDJOB = 1, TRANSFORMACIONWORKER};
 
 YamaConexion conexionYAMA;
 t_log * logger;

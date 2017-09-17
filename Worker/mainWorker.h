@@ -16,5 +16,6 @@ mensajeCorto;
 
 void nuevoCliente(char* remoteHost, int newfd);
 void manejarDatos(int buf, int socket);
+void forkear(int socket_master);
 
 #endif /* MAINWORKER_H_ */

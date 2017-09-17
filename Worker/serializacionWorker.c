@@ -6,10 +6,12 @@
  */
 #include "serializacionWorker.h"
 #include "conexionesWorker.h"
+#include "transformacionWorker.h"
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
 	case TRANSFORMACION:
+		forkear(socket);
 		break;
 	case REDUCCIONLOCAL:
 		break;

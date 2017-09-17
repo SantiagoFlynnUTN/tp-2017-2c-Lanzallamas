@@ -3,7 +3,7 @@
     */
 
 #include "mainMaster.h"
-
+#include "master.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -16,6 +16,8 @@
 #include <arpa/inet.h>
 #include "chat.h"
 #include "cliente.h"
+#include "servidorMaster.h"
+
 
 #define PORT 9034 // puerto al que vamos a conectar
 
@@ -31,7 +33,7 @@ workerTransformacion* tablaTransformacion[];
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
-	case OK:
+	case TRANSFORMACIONWORKER:
 		printf("socket %i dice OK\n", socket);
 		break;
 	case ESTRUCTURA:
@@ -71,19 +73,31 @@ void respuestaSolicitud(){
 	}
 }
 
-void* iniciarTransfWorker(){
+void iniciarTransfWorker(void* socket_cliente){
+	int socketWorker = (int)* socket_cliente;
+
+	manejarCliente(socketWorker);
+
+	if (send(socket_cliente, &socket_cliente, sizeof(int), 0) ==-1)
+			printf("No puedo enviar\n");
+
 
 }
 
-void crearHilosTransformacion(){
+void crearHiloTransformacion(socket_cliente){
 	int i;
 	int rc[cantidadWorkers];
 	pthread_t tid[cantidadWorkers];
 	for(i=0; i<cantidadWorkers; i++){
-		rc[i] = pthread_create(&tid[i], NULL, iniciarTransfWorker, NULL);
+		rc[i] = pthread_create(&tid[i], NULL, iniciarTransfWorker, &socket_cliente);
 			if(rc[i]) printf("no pudo crear el hilo %d", i);
 	}
+}
 
+void nuevoCliente(int socket_cliente){
+	if(esWorker(socket_cliente)){
+		crearHiloTransformacion(socket_cliente);
+	}
 }
 
 int main(int argc, char *argv[]){
