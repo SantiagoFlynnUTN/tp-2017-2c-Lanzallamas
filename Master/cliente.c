@@ -61,5 +61,4 @@ void iniciarConexionANodo(int *sockfd){
 		perror("connect");
 		exit(1);
 	}
-	else printf("me conecte bien\n");
 }

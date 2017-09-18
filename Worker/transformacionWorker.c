@@ -27,7 +27,7 @@ void handshake(int *sock){
 	h.handshake = 1;
 	h.parentPid = getppid();
 	h.childPid = getpid();
-	printf("%d %d %d\n", h.handshake, h.parentPid, h.childPid);
+	printf("parentPid %d, childPid %d\n", h.parentPid, h.childPid);
 	if (send(*sock, &h, sizeof(h), 0) == -1) printf("No puedo enviar\n");
 }
 
@@ -36,6 +36,7 @@ void hiloTransformacion(){
 	conectarAHiloMaster(&socket_master);
 	handshake(&socket_master);
 	sleep(10);
+	printf("%d: %d (killed)\n", getppid(), getpid());
 	exit(1);
 	//termina la transformacion, ya no necesito seguir el hilo
 }

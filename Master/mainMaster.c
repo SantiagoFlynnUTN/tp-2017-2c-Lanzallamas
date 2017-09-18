@@ -32,13 +32,16 @@ workerTransformacion* tablaTransformacion[];
 int main(int argc, char *argv[]){
 
 	inicializarMaster();
+	printf("Conectando a YAMA...\n");
 	iniciarConexionAYAMA(&socket_yama);
+	printf("Enviando solicitud de Job\n");
 	solicitudJob(socket_yama, "algo.txt");
 
 	int cantidadWorkersEjemplo;
 	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);
-
+	printf("Conectando al Worker...\n");
 	iniciarConexionANodo(&socket_nodo);
+	printf("Empezando transformación...\n");
 	mandarTransformacionNodo(socket_nodo, cantidadWorkersEjemplo);
 
 	inicializarServer();
