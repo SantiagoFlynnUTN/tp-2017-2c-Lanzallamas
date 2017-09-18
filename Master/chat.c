@@ -63,7 +63,7 @@ void escuchar(int* socket){
 		if((nbytesReceived = recv(sockfd, &buf, 1, 0)) <= 0)				//recibo y compruebo q recibí correctamente
 			printf("No puedo recibir información, o el servidor colgó\n");
 
-		else manejarDatos(buf, sockfd);
+		//else manejarDatos(buf, sockfd);
 	}
 }
 

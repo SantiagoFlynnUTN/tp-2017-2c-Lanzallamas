@@ -23,22 +23,21 @@
 #include "chat.h"
 #include <protocoloComunicacion.h>
 
-void manejarStructs(int socket){
-	//por ahora manejamos solo mensajes
-	leerMensaje(socket);
+void enviarTablaTransformacion(int socket_master){
+	char nombArch[100];
+	recv(socket_master, nombArch, sizeof(char)* 100, 0);
+	int cantidadWorkersEjemplo = 5;
+
+	if (send(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0) == -1){
+			printf("No se puedo enviar el mensaje.\n");
+	}
+
 }
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
 	case SOLICITUDJOB:
-		printf("socket %i dice OK\n", socket);
-		break;
-	case 2:
-		manejarStructs(socket);
-		//por ahora manejamos solo mensajes
-		break;
-	case 3:
-		printf("crear funcion para deserializar archivo\n");
+		enviarTablaTransformacion(socket);
 		break;
 	}
 }

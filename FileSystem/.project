@@ -3,7 +3,7 @@
 	<name>FileSystem</name>
 	<comment></comment>
 	<projects>
-		<project>Z-Commons</project>
+		<project>z-commons</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

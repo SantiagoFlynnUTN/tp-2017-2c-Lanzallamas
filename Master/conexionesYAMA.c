@@ -11,10 +11,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "conexionesYAMA.h"
+#include "mainMaster.h"
 
 void solicitudJob(int socket, char * archivoTransformar){
 	SolicitudJob sol;
-	sol.tipoMensaje = SOLICITUDJOB;
+	sol.tipoMensaje = 1;
 	memset(sol.rutaArchivo, 0, 100);
 	strcpy(sol.rutaArchivo, archivoTransformar);
 	//sol.rutaArchivo = ...

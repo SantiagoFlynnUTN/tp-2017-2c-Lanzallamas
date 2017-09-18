@@ -9,6 +9,6 @@
 #define MAIN_H_
 
 void nuevoCliente(int socket_cliente);
-void manejarDatos(int buf, int socket);
+void atenderConexion(int socket);
 
 #endif /* MAIN_H_ */

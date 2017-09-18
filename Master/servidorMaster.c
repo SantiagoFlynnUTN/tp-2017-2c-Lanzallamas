@@ -17,6 +17,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include "mainMaster.h"
+#include <protocoloComunicacion.h>
 
 
 fd_set master;   // conjunto maestro de descriptores de fichero
@@ -40,20 +41,8 @@ void comprobarConexion(int numbytes, int socket){
 	 }
 }
 
-void manejarCliente(int newfd){
 
-	int numbytes;
-	int buf;
-
-	buf = 0;
-	numbytes = recv(newfd, &buf, sizeof(int), 0); //leo el primer byte. Me dirá el tipo de paquete. (es un int)
-
-	comprobarConexion(numbytes, newfd); //Me fijo si lo que recibí esta todo ok.
-
-	manejarDatos(buf, newfd); //Si llegamos hasta acá manejamos los datos que recibimos.
-}
-
-void gestionarNuevaConexion(){
+void gestionarNuevaConexion() {
 	// gestionar nuevas conexiones
 
 	int newfd;        // descriptor de socket de nueva conexión aceptada
@@ -62,8 +51,8 @@ void gestionarNuevaConexion(){
 
 	addrlen = sizeof(remoteaddr);
 
-	if ((newfd = accept(listener, (struct sockaddr *)&remoteaddr,
-											 &addrlen)) == -1) {
+	if ((newfd = accept(listener, (struct sockaddr *) &remoteaddr, &addrlen))
+			== -1) {
 		perror("accept");
 		exit(1);
 	}
@@ -73,18 +62,10 @@ void gestionarNuevaConexion(){
 		if (newfd > fdmax) {    // actualizar el máximo
 			fdmax = newfd;
 		}
-
-		nuevoCliente(newfd);
-
-		/*Esto sirve para crear un hilo por cada conexión. Por el momento no lo necesitamos.
-		int rc;
-		pthread_t tid[MAXCLIENTES];
-		rc = pthread_create(&tid[contador], NULL, manejarCliente, newfd);
-				if(rc) printf("no pudo crear el hilo");
-		contador++;
-		*/
-		//verificar contadorde hilos (para cuando cerramos hilos)
+		atenderConexion(newfd);
 	}
+
+
 }
 
 void doSelect(){
@@ -107,7 +88,7 @@ void doSelect(){
 
 				if (actualfd == listener) gestionarNuevaConexion();
 
-				else manejarCliente(actualfd);
+				//else manejarCliente(actualfd);
 			}
 		}
 	}
@@ -131,7 +112,7 @@ void setListener(){
 		struct sockaddr_in myaddr;     // dirección del servidor
 		myaddr.sin_family = AF_INET;
 		myaddr.sin_addr.s_addr = INADDR_ANY;
-		myaddr.sin_port = htons(PORT);
+		myaddr.sin_port = htons(PORTMASTER);
 		memset(&(myaddr.sin_zero), '\0', 8);
 		if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
 			perror("bind");

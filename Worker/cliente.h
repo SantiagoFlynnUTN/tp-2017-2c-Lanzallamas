@@ -8,7 +8,6 @@
 #ifndef CLIENTE_H_
 #define CLIENTE_H_
 
-void iniciarConexionAYAMA(int *socket_yama);
-void iniciarConexionANodo(int *socket_nodo);
+void conectarAHiloMaster(int* sockfd);
 
 #endif /* CLIENTE_H_ */

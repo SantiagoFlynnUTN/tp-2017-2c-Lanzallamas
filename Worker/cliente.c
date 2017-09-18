@@ -18,7 +18,7 @@
 #include "cliente.h"
 #include <protocoloComunicacion.h>
 
-void iniciarConexionAYAMA(int *sockfd){
+void conectarAHiloMaster(int* sockfd){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
@@ -29,7 +29,7 @@ void iniciarConexionAYAMA(int *sockfd){
 	}
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = htons(PORTYAMA);  // short, Ordenación de bytes de la red
+	their_addr.sin_port = htons(PORTMASTER);  // short, Ordenación de bytes de la red
 	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
@@ -38,28 +38,4 @@ void iniciarConexionAYAMA(int *sockfd){
 		perror("connect");
 		exit(1);
 	}
-}
-
-void iniciarConexionANodo(int *sockfd){
-
-	struct sockaddr_in their_addr; // información de la dirección de destino
-
-
-	if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		perror("socket");
-		exit(1);
-	}
-
-
-	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = htons(PORTNODO);  // short, Ordenación de bytes de la red
-	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
-
-	if (connect(*sockfd, (struct sockaddr *)&their_addr,
-										  sizeof(struct sockaddr)) == -1) {
-		perror("connect");
-		exit(1);
-	}
-	else printf("me conecte bien\n");
 }

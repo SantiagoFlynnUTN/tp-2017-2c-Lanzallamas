@@ -20,10 +20,6 @@
 #include "fileSystem.h"
 #include "serializacionFileSystem.h"
 
-#define PORT 9034 // puerto al que vamos a conectar
-
-#define MAXDATASIZE 100 // máximo número de bytes que se pueden leer de una vez
-
 int yama_socket;
 
 

@@ -10,7 +10,7 @@
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
-	case TRANSFORMACION:
+	case TRANSFORMACIONWORKER:
 		forkear(socket);
 		break;
 	case REDUCCIONLOCAL:

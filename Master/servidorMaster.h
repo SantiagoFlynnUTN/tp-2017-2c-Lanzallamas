@@ -10,9 +10,7 @@
 
 enum tipoMensaje {OK = 1, ESTRUCTURA, ARCHIVO};
 
-#define PORT 9034   // puerto en el que escuchamos
-
 void inicializarServer();
-void manejarCliente(int socket);
+void comprobarConexion(int numbytes, int socket);
 
 #endif /* SERVIDORMASTER_H_ */

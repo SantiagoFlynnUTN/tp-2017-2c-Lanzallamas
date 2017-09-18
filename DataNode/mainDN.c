@@ -16,7 +16,6 @@
 #include "cliente.h"
 #include "dataNode.h"
 
-#define MAXDATASIZE 100 // máximo número de bytes que se pueden leer de una vez
 
 typedef struct t_handshake{
 	int tipomensaje;

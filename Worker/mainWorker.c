@@ -17,8 +17,6 @@
 #include "conexionesWorker.h"
 #include <sys/wait.h>
 
-#define PORT 9034 // puerto al que vamos a conectar
-
 
 void nuevoCliente(char* remoteHost, int newfd){
 	printf("new conection from %s on socket %d\n", remoteHost, newfd);
@@ -28,8 +26,8 @@ void nuevoCliente(char* remoteHost, int newfd){
 
 int main(int argc, char *argv[])
 {
-	inicializarWorker();
-	inicializarServer();
+	//inicializarWorker();
+	iniciarServer();
 
 	for(;;);
 

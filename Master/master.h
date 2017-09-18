@@ -12,6 +12,17 @@
 #define MASTER_H_
 
 /* ESTRUCTURAS */
+
+typedef struct {
+	pid_t parentPid;
+	pid_t childPid;
+}Handshake;
+
+typedef struct{
+	int transformacion;
+	int cantidadWorkers;
+}Transformacion;
+
 typedef struct {
 	char ip[20];
 	uint16_t puerto;
@@ -38,8 +49,6 @@ typedef struct {
 #define YAMA_IP "YAMA_IP"
 #define YAMA_PUERTO "YAMA_PUERTO"
 
-
-enum codOps {SOLICITUDJOB = 1, TRANSFORMACIONWORKER};
 
 YamaConexion conexionYAMA;
 t_log * logger;

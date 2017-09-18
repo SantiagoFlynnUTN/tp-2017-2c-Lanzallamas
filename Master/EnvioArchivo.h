@@ -15,7 +15,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <commons/string.h>
-#include <sockets.h>
 #include <commons/log.h>
 #include <commons/config.h>
 #include <archivos.h>

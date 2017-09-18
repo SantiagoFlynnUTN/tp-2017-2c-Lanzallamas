@@ -16,6 +16,12 @@
 /* ESTRUCTURAS */
 
 typedef struct {
+	int handshake;
+	pid_t parentPid;
+	pid_t childPid;
+}Handshake;
+
+typedef struct {
 	char ip[20];
 	uint16_t puerto;
 } ConexionFileSystem;

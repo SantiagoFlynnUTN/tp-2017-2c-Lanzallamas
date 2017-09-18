@@ -17,6 +17,7 @@
 #include "serializacionWorker.h"
 #include "servidor.h"
 #include "mainWorker.h"
+#include <protocoloComunicacion.h>
 
 
 fd_set master;   // conjunto maestro de descriptores de fichero
@@ -131,7 +132,7 @@ void setListener(){
 		struct sockaddr_in myaddr;     // dirección del servidor
 		myaddr.sin_family = AF_INET;
 		myaddr.sin_addr.s_addr = INADDR_ANY;
-		myaddr.sin_port = htons(PORT);
+		myaddr.sin_port = htons(PORTNODO);
 		memset(&(myaddr.sin_zero), '\0', 8);
 		if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
 			perror("bind");
