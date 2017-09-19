@@ -5,9 +5,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include "dataNode.h"
 
 void getBloque(int bloque, char data[MB]){
-    int fd = open("../data.bin", O_RDONLY);
+    int fd = open(infoNodo.rutaDataBin, O_RDONLY);
 
     if(fd == -1){
         return -1;
@@ -31,7 +32,7 @@ void getBloque(int bloque, char data[MB]){
 }
 
 int setBloque(int bloque, char data[MB]){
-    int fd = open("../data.bin", O_RDWR);
+    int fd = open(infoNodo.rutaDataBin, O_RDWR);
 
     if(fd == -1){
         return -1;
