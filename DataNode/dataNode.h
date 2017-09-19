@@ -36,7 +36,6 @@ InfoNodo;
 #define NOMBRE_NODO "NOMBRE_NODO"
 #define PUERTO_WORKER "PUERTO_WORKER"
 #define RUTA_DATABIN "RUTA_DATABIN"
-#define CHARSPORMB 1 // cambiar por la cantidad de chars que entran en 1MB
 
 t_config * config;
 t_log * logger;
@@ -45,7 +44,5 @@ InfoNodo infoNodo;
 
 /* FUNCIONES */
 void inicializarDataNode();
-void getBloque(int socket);
-void setBloque(int socket);
 
 #endif /* DATANODE_H_ */

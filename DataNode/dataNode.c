@@ -104,24 +104,3 @@ void _logConfig(){
 			config_get_int_value(config, PUERTO_WORKER),
 			config_get_string_value(config, RUTA_DATABIN));
 }
-
-void getBloque(int socket){
-	int bloque;
-	recv(socket, &bloque, sizeof(bloque), 0);
-
-	// Leer data.bin y devolver al File System
-}
-
-void setBloque(int socket){
-	int bloque;
-	char * datos;
-
-	datos = (char *)malloc(sizeof(datos) * CHARSPORMB);
-
-	recv(socket, &bloque, sizeof(bloque), 0);
-	recv(socket, datos, sizeof(datos) * CHARSPORMB, 0);
-
-	// Guardar en data.bin y enviar al File System el status
-
-	free(datos);
-}

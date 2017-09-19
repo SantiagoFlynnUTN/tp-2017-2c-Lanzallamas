@@ -7,8 +7,9 @@
 #include <stdlib.h>
 #include "dataNode.h"
 
-void getBloque(int bloque, char data[MB]){
+int getBloque(int bloque, char data[MB]){
     int fd = open(infoNodo.rutaDataBin, O_RDONLY);
+    int i;
 
     if(fd == -1){
         return -1;
@@ -21,7 +22,7 @@ void getBloque(int bloque, char data[MB]){
     }
 
     /* copio el contenido del bloque en data; lo copio porque hay que liberar el mapeo y cerrar el archivo */
-    for(int i = 0; i < MB; ++i){
+    for(i = 0; i < MB; ++i){
         data[i] = map[i];
     }
 
@@ -33,6 +34,7 @@ void getBloque(int bloque, char data[MB]){
 
 int setBloque(int bloque, char data[MB]){
     int fd = open(infoNodo.rutaDataBin, O_RDWR);
+    int i;
 
     if(fd == -1){
         return -1;
@@ -45,7 +47,7 @@ int setBloque(int bloque, char data[MB]){
     }
 
     /* copio la data en el mapeo del bloque */
-    for(int i = 0; i < MB; ++i){
+    for(i = 0; i < MB; ++i){
         map[i] = data[i];
     }
 
@@ -60,6 +62,7 @@ int setBloque(int bloque, char data[MB]){
 }
 
 /*int main(int argc, char *argv[]){
+    inicializarDataNode();
     char data[MB];
     memset(data, 'a', MB);
 
