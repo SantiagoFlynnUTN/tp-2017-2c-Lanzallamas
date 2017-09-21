@@ -55,9 +55,12 @@ typedef struct t_Archivo{
 	long long MD5; // long long es de al menos 64 bits, el MD5 tiene que ser de 128 bits. hay que buscar un int 128
 } Archivo;
 
+Directorio tabla_Directorios [100];
+
 /* VARIABLES GLOBALES y DEFINES*/
 #define ARCHIVO_LOGGER "fileSystem.log"
 #define MODULO "FILESYSTEM"
+#define MAX_LENGTH 255
 
 t_dictionary* nodos;
 t_log * logger;
