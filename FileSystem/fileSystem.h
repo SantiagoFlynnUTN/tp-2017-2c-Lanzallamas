@@ -61,6 +61,7 @@ Directorio tabla_Directorios [100];
 #define ARCHIVO_LOGGER "fileSystem.log"
 #define MODULO "FILESYSTEM"
 #define MAX_LENGTH 255
+#define MAX_DIRECTORIOS 100
 
 t_dictionary* nodos;
 t_log * logger;

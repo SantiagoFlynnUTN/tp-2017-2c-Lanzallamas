@@ -20,7 +20,37 @@
 #include "fileSystem.h"
 #include "errno.h"
 #include "commons/string.h"
+#include "funcionesConsolaFS.h"
 #include "commons/collections/queue.h"
+#include <readline/readline.h>
+
+
+void hiloConsola(){
+	printf("holamundo! soy un hilo gay\n");
+	while(1){
+
+		char * linea;
+		linea = readline(">");
+
+	    if (!linea) {
+	      break;
+	    }
+	    printf("%s\n", linea);
+	    free(linea);
+
+	}
+	pthread_exit(NULL);
+}
+
+
+void crear_hilo_consola(){
+	int rc;
+	pthread_t tid;
+	rc = pthread_create(&tid, NULL, hiloConsola, NULL);
+		if(rc) printf("no pudo crear el hilo");
+}
+
+
 
 
 void format(){
@@ -31,9 +61,9 @@ void rm(char* path_archivo){
 	//A desarrollar (-d y -b)
 }
 
-void rename(char* path_original, char nombre_final){
+//void rename(char* path_original, char nombre_final){
 
-}
+//}
 
 void mv(char* path_original, char* path_final){
 
@@ -43,12 +73,12 @@ void cat(char* path_archivo){
 
 }
 
-int mkdir(char* path_dir){
+int yama_mkdir(char* path_dir){
 
-	log_debug(logger, "accediendo poke_mkdir: %s", path_dir);
+	log_debug(logger, "accediendo mkdir: %s", path_dir);
 
 		char *dupPath = strdup(path_dir);
-		char *fname = getNombreFile(dupPath);
+		char *fname = yamaGetNFile(dupPath);
 		free(dupPath);
 
 		//Verifico que el nombre no sea mas largo de lo permitido
@@ -71,11 +101,11 @@ int mkdir(char* path_dir){
 		}
 
 		//Obtengo el nombre del padre
-		char *dpath = getPathPadre(path_dir);
+		char *dpath = yamaGetPathPadre(path_dir);
 		dupPath = strdup(dpath);
-		char *dname = getNombreFile(dupPath);
+		char *dname = yamaGetNFile(dupPath);
 		free(dupPath);
-		//Obtener datos padre y asignar todo a la tabla
+		//Obtener datos padre
 		existe = 0;
 		int p = 0;
 		if(existe == 0){
@@ -84,7 +114,13 @@ int mkdir(char* path_dir){
 		   		p++;
 			}
 			existe = 1;
+		}
+		//Creo el nuevo Directorio y asigno a la tabla
+		//Chequear si hay espacio en la tabla?
+		Directorio newDir = yamaCrearDirectorio(i, fname, tabla_Directorios[p].id);
+		asignarEspacioEnTabla(newDir);
 
+	return 0;
 }
 
 void cpfrom(char* path_archivo_origen, char* directorio_yamafs){
@@ -99,9 +135,9 @@ void cpblock(char* path_archivo, int nro_bloque, int id_nodo){
 
 }
 
-void md5(char* path_archivo_yamafs){
+//void md5(char* path_archivo_yamafs){
 
-}
+//}
 
 void ls(char* path_directorio){
 
@@ -115,7 +151,7 @@ void info(char* path_archivo){
 
 //FUNCIONES AUXILIARES//
 
-char *getNombreFile(char *path){
+char *yamaGetNFile(char *path){
 
 	char *nombreFile = string_new();
 	char** subpath = string_split(path, "/");
@@ -139,7 +175,7 @@ char *getNombreFile(char *path){
 	return nombreFile;
 }
 
-char *getPathPadre(char *path){
+char *yamaGetPathPadre(char *path){
 
 	char** subpath = string_split(path, "/");
 
@@ -167,4 +203,19 @@ char *getPathPadre(char *path){
 	return pathPadre;
 }
 
+Directorio yamaCrearDirectorio(int id, char* nombre, int id_padre){
 
+	Directorio newDir;
+	newDir.id = id;
+	strcpy(newDir.nombre , nombre);
+	newDir.padre = id_padre;
+
+	return newDir;
+}
+
+void asignarEspacioEnTabla(Directorio newDir){
+
+	tabla_Directorios[newDir.id].id = newDir.id;
+	strcpy(tabla_Directorios[newDir.id].nombre, newDir.nombre);
+	tabla_Directorios[newDir.id].padre = newDir.padre;
+}

@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <prueba.h>
+//#include <prueba.h>
 #include "servidor.h"
 #include "mainFS.h"
 #include "chat.h"
@@ -29,13 +29,17 @@ void nuevoCliente(char* remoteHost, int newfd){
 }
 
 void pruebaZCommons(){
-	myfunc();
+	//myfunc();
 }
 
 int main(int argc, char *argv[]){
-	pruebaZCommons();
+
 	inicializarFileSystem();
 	inicializarServer();
+	crear_hilo_consola();
 
 	for(;;);
+
+
+
 }
