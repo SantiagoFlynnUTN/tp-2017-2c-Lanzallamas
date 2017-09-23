@@ -23,6 +23,7 @@
 #include "commons/collections/queue.h"
 
 
+/*
 void format(){
 	//A desarrollar
 }
@@ -31,7 +32,7 @@ void rm(char* path_archivo){
 	//A desarrollar (-d y -b)
 }
 
-void rename(char* path_original, char nombre_final){
+void yamarename(char* path_original, char nombre_final){
 
 }
 
@@ -112,9 +113,9 @@ void info(char* path_archivo){
 }
 
 
-
+*/
 //FUNCIONES AUXILIARES//
-
+/*
 char *getNombreFile(char *path){
 
 	char *nombreFile = string_new();
@@ -166,5 +167,5 @@ char *getPathPadre(char *path){
 
 	return pathPadre;
 }
-
+*/
 

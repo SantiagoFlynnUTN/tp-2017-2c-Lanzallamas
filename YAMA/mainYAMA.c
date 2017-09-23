@@ -19,6 +19,8 @@
 #include "chat.h"
 #include "yama.h"
 
+int sock_fs;
+
 
 void nuevoCliente(char* remoteHost, int newfd){
 	printf("new conection from %s on socket %d\n", remoteHost, newfd);
@@ -34,7 +36,7 @@ int main(){
 	inicializarYAMA();
 	inicializarServer();
 	conectarAFileSystem();
-
+	iniciarConexionAFS(&sock_fs);
 
 	for(;;);
 	return 0;
