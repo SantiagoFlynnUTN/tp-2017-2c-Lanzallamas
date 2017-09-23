@@ -71,11 +71,20 @@ int mkdir(char* path_dir){
 		}
 
 		//Obtengo el nombre del padre
-			char *dpath = getPathPadre(path_dir);
-			dupPath = strdup(dpath);
-			char *dname = getNombreFile(dupPath);
-			free(dupPath);
+		char *dpath = getPathPadre(path_dir);
+		dupPath = strdup(dpath);
+		char *dname = getNombreFile(dupPath);
+		free(dupPath);
 		//Obtener datos padre y asignar todo a la tabla
+		existe = 0;
+		int p = 0;
+		if(existe == 0){
+
+			while(!tabla_Directorios[p].nombre == dname){
+		   		p++;
+			}
+			existe = 1;
+
 }
 
 void cpfrom(char* path_archivo_origen, char* directorio_yamafs){
