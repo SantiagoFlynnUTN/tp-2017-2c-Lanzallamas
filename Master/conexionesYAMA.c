@@ -16,7 +16,7 @@
 void solicitudJob(int socket, char * archivoTransformar){
 	SolicitudJob sol;
 	sol.tipoMensaje = 1;
-	memset(sol.rutaArchivo, 0, 100);
+	memset(sol.rutaArchivo, 0, 255);
 	strcpy(sol.rutaArchivo, archivoTransformar);
 	//sol.rutaArchivo = ...
 	if (send(socket, &sol, sizeof(SolicitudJob), 0) == -1){

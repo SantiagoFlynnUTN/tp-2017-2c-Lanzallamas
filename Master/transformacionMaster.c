@@ -103,8 +103,8 @@ void iniciarConexionAWorker(int *sockfd, workerTransformacion t){
 	}
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = htons(PORTNODO);  // short, Ordenación de bytes de la red
-	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
+	their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
 	/*their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
 	their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);*/
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
@@ -124,6 +124,7 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	mensaje.tipoMensaje = 1;
 	mensaje.cantidadBytes = t->bytesOcupados;
 	mensaje.bloque = t->numBloque;
+	printf("numBloque: %d\n", t->numBloque);
 	strcpy(mensaje.nombreTemp, t->rutaArchivo);
 
 	if (send(socketWorker, &mensaje, sizeof(mensaje), 0) ==-1)
@@ -141,13 +142,13 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 }
 
 
-void mandarTransformacionNodo(int socket_nodo, int cantidadWorkers){
+void mandarTransformacionNodo(int socket_nodo, int socket_yama, int cantidadWorkers){
 	workerTransformacion t[cantidadWorkers];
 	pthread_t tid[cantidadWorkers];
 	int rc[cantidadWorkers];
 
 	while(cantidadWorkers--){
-		pthread_create(&tid[cantidadWorkers], NULL, mandarSolicitudTransformacion, &t[cantidadWorkers]);
-
+		recv(socket_yama, &t[cantidadWorkers], sizeof(workerTransformacion), 0);
+		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL, mandarSolicitudTransformacion, &t[cantidadWorkers]);
 	}
 }

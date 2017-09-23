@@ -30,7 +30,7 @@ typedef struct {
 
 typedef struct {
 	int tipoMensaje;
-	char rutaArchivo[100];
+	char rutaArchivo[255];
 } SolicitudJob;
 
 typedef struct {
@@ -39,7 +39,7 @@ typedef struct {
 	uint16_t puertoWorker;
 	int numBloque;
 	int bytesOcupados;
-	char rutaArchivo[100];
+	char rutaArchivo[255];
 } __attribute__((packed))
 workerTransformacion;
 
