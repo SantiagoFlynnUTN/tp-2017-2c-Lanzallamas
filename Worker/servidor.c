@@ -20,11 +20,8 @@
 #include <protocoloComunicacion.h>
 
 
-fd_set master;   // conjunto maestro de descriptores de fichero
+int socketFork;
 int listener;    // descriptor de socket a la escucha
-int fdmax;       // número máximo de descriptores de fichero
-fd_set read_fds; // conjunto temporal de descriptores de fichero para select()
-
 
 
 void comprobarConexion(int numbytes, int socket){
@@ -37,7 +34,6 @@ void comprobarConexion(int numbytes, int socket){
 			perror("recv");
 		}
 		close(socket); // bye!
-		FD_CLR(socket, &master); // eliminar del conjunto maestro
 	 }
 }
 
@@ -54,68 +50,12 @@ void manejarCliente(int newfd){
 	manejarDatos(buf, newfd); //Si llegamos hasta acá manejamos los datos que recibimos.
 }
 
-void gestionarNuevaConexion(){
-	// gestionar nuevas conexiones
 
-	int newfd;        // descriptor de socket de nueva conexión aceptada
+void setServer(){
+
 	struct sockaddr_in remoteaddr; // dirección del cliente
 	int addrlen;
 
-	addrlen = sizeof(remoteaddr);
-
-	if ((newfd = accept(listener, (struct sockaddr *)&remoteaddr,
-											 &addrlen)) == -1) {
-		perror("accept");
-		exit(1);
-	}
-
-	else {
-		FD_SET(newfd, &master); // añadir al conjunto maestro
-		if (newfd > fdmax) {    // actualizar el máximo
-			fdmax = newfd;
-		}
-
-		nuevoCliente(inet_ntoa(remoteaddr.sin_addr), newfd);
-
-		/*Esto sirve para crear un hilo por cada conexión. Por el momento no lo necesitamos.
-		int rc;
-		pthread_t tid[MAXCLIENTES];
-		rc = pthread_create(&tid[contador], NULL, manejarCliente, newfd);
-				if(rc) printf("no pudo crear el hilo");
-		contador++;
-		*/
-		//verificar contadorde hilos (para cuando cerramos hilos)
-	}
-}
-
-void doSelect(){
-
-	FD_ZERO(&read_fds);
-
-	//Bucle Principal
-	for(;;) {
-
-		read_fds = master; // cópialo
-		if (select((fdmax)+1, &read_fds, NULL, NULL, NULL) == -1) {
-			perror("select");
-			exit(1);
-		}
-
-		// explorar conexiones existentes en busca de datos que leer
-		int actualfd;
-		for(actualfd = 0; actualfd <= fdmax; actualfd++) {
-			if (FD_ISSET(actualfd, &read_fds)) { // ¡¡tenemos datos!!
-
-				if (actualfd == listener) gestionarNuevaConexion();
-
-				else manejarCliente(actualfd);
-			}
-		}
-	}
-}
-
-
-void setListener(){
 	// obtener socket a la escucha
 	if ((listener = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 			perror("socket");
@@ -143,25 +83,24 @@ void setListener(){
 			perror("listen");
 			exit(1);
 		}
-}
 
-void iniciarServer(){
+		for(;;) {  // main accept() loop
+			addrlen = sizeof(struct sockaddr_in);
+			if ((socketFork = accept(listener, (struct sockaddr *)&remoteaddr,
+														   &addrlen)) == -1) {
+				perror("accept");
+				continue;
+			}
+			printf("server: got connection from %s\n",
+											   inet_ntoa(remoteaddr.sin_addr));
+			if (!fork()) { // Este es el proceso hijo
+				close(listener); // El hijo no necesita este descriptor
 
-	FD_ZERO(&master);    		// borra los conjuntos maestro y temporal
+				manejarCliente(socketFork);
 
-	setListener();
-
-	FD_SET(listener, &master);	// añadir listener al conjunto maestro
-
-	// seguir la pista del descriptor de fichero mayor
-	fdmax = listener; 			// por ahora es éste
-
-    doSelect();// bucle principal
-}
-
-void inicializarServer(){
-	int rc;
-	pthread_t tid;
-	rc = pthread_create(&tid, NULL, iniciarServer, NULL);
-		if(rc) printf("no pudo crear el hilo");
+				close(socketFork);
+				exit(0);
+			}
+			close(socketFork);  // El proceso padre no lo necesita
+		}
 }

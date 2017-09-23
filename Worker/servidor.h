@@ -9,6 +9,6 @@
 #define SERVIDOR_H_
 
 void inicializarServer();
-void iniciarServer();
+void setServer();
 
 #endif /* SERVIDOR_H_ */

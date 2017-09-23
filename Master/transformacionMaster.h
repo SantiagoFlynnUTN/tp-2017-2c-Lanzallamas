@@ -8,6 +8,14 @@
 #ifndef TRANSFORMACIONMASTER_H_
 #define TRANSFORMACIONMASTER_H_
 
+typedef struct{
+	int tipoMensaje;
+	int cantidadBytes;
+	int bloque;
+	char nombreTemp[255];
+}__attribute__((packed))
+mensajeTransformacion;
+
 int respuestaSolicitud(int socket_yama);
 void mandarTransformacionNodo(int socket_nodo, int cantidadWorkers);
 void atenderConexion(int socket);

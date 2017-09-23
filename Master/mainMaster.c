@@ -16,7 +16,6 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include "chat.h"
-#include "EnvioArchivo.h"
 #include "cliente.h"
 #include "servidorMaster.h"
 #include "conexionesYAMA.h"
@@ -39,9 +38,7 @@ int main(int argc, char *argv[]){
 
 	int cantidadWorkersEjemplo;
 	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);
-	printf("Conectando al Worker...\n");
-	iniciarConexionANodo(&socket_nodo);
-	printf("Empezando transformación...\n");
+
 	mandarTransformacionNodo(socket_nodo, cantidadWorkersEjemplo);
 
 	inicializarServer();

@@ -40,7 +40,8 @@ typedef struct {
 	int numBloque;
 	int bytesOcupados;
 	char rutaArchivo[100];
-}workerTransformacion;
+} __attribute__((packed))
+workerTransformacion;
 
 /* VARIABLES GLOBALES Y DEFINES */
 #define ARCHIVOCFG "master.conf"

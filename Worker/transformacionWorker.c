@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <archivos.h>
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
@@ -22,51 +23,32 @@
 #include <sys/wait.h>
 #include "cliente.h"
 
-void handshake(int *sock){
-	Handshake h;
-	h.handshake = 1;
-	h.parentPid = getppid();
-	h.childPid = getpid();
-	printf("parentPid %d, childPid %d\n", h.parentPid, h.childPid);
-	if (send(*sock, &h, sizeof(h), 0) == -1) printf("No puedo enviar\n");
+void recibirArchivo(int socket, char * ruta){
+	int longitud;
+	recv(socket, &longitud, sizeof(longitud), 0);
+	char buffer[longitud];
+	memset(buffer, 0, longitud);
+	int a = recv(socket, &buffer, longitud, 0);
+
+	guardarArchivo(ruta, buffer, longitud);
 }
 
-void hiloTransformacion(){
-	int socket_master;
-	conectarAHiloMaster(&socket_master);
-	handshake(&socket_master);
-	sleep(10);
-	printf("%d: %d (killed)\n", getppid(), getpid());
+void iniciarTransformacion(int socket){
+	mensajeTransf t;
+	recv(socket, &t, sizeof(t), 0);
+	char * ruta = (char *)malloc(sizeof(char) * 255);
+	sprintf(ruta, "scripts/transformacion%d.sh", getpid());
+	recibirArchivo(socket, ruta);
+	char * command =  (char *)malloc(sizeof(char) * 255);
+	sprintf(command, "chmod 777 %s && ./%s\n", ruta, ruta);
+	printf(command);
+	system(command);
+
+	int num = 4;
+	send(socket, &num, sizeof(int), 0);
+	free(ruta);
+	free(command);
 	exit(1);
-	//termina la transformacion, ya no necesito seguir el hilo
-}
-
-void forkear(int socket_master){
-	int cantidadWorkers = 0;
-	pid_t childPid = 1;
-	recv(socket_master, &cantidadWorkers, sizeof(int), 0);
-
-	printf("cantidadWorkers: %d\n", cantidadWorkers);
-	int hijos[cantidadWorkers];
-
-	while(cantidadWorkers && childPid){
-		childPid = fork();
-		hijos[cantidadWorkers] = childPid;
-		cantidadWorkers--;
-		sleep(1);  //averiguar si hay problemas de concurrencia.
-	}
-	//hijo
-	if(!childPid){
-		close(socket_master);
-		hiloTransformacion();
-	}
-
-	//padre
-	else {
-		int i;
-		for(i = 0; i < cantidadWorkers; i++)
-			printf("Hijo %d: pid %d\n", i,  hijos[i]);
-	}//sigue con el select
 }
 
 

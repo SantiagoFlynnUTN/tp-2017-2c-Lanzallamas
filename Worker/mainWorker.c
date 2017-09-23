@@ -15,6 +15,7 @@
 #include "chat.h"
 #include "worker.h"
 #include "conexionesWorker.h"
+#include "servidor.h"
 #include <sys/wait.h>
 
 
@@ -26,8 +27,7 @@ void nuevoCliente(char* remoteHost, int newfd){
 
 int main(int argc, char *argv[])
 {
-	//inicializarWorker();
-	iniciarServer();
+	setServer();
 
 	for(;;);
 
