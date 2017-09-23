@@ -1,8 +1,9 @@
-#include "EnvioArchivo.h"
+#include "enviarArchivo.h"
 #include "master.h"
 #include <archivos.h>
+#include <sockets.h>
 
-int enviarArchivo(int kernel_fd, char* path){
+int enviarArchivo(int socket, char* path){
 
 	//Verifico existencia archivo (Aguante esta funcion loco!)
  	if( !verificarExistenciaDeArchivo(path) ){
@@ -24,8 +25,7 @@ int enviarArchivo(int kernel_fd, char* path){
 
  	fstat(file_fd, &stats);
  	file_size = stats.st_size;
- 	header_t header;
- 	char* buffer = malloc(file_size + 1 + sizeof(header_t));
+ 	char* buffer = malloc(file_size + 1);
  	int offset = 0;
 
  	if(buffer == NULL){
@@ -43,7 +43,7 @@ int enviarArchivo(int kernel_fd, char* path){
  	}
  	/*Esto lo hago asi porque de la otra forma habría que reservar MAS espacio para
  	 * enviar el paquete */
- 	if(sendAll(kernel_fd, buffer, file_size, 0) <= 0){
+ 	if(sendAll(socket, buffer, file_size, 0) <= 0){
  		log_error(logger, "Error al enviar archivo");
  		free(buffer);
  		fclose(sourceFile);

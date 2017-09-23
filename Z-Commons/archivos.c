@@ -6,6 +6,8 @@
  */
 #include "archivos.h"
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 bool verificarExistenciaDeArchivo(char* path) {
 	FILE * archivoConfig = fopen(path, "r");
@@ -17,9 +19,9 @@ bool verificarExistenciaDeArchivo(char* path) {
 }
 
 void guardarArchivo(char * path, char * datos, int longitud){
-	FILE * archivo = fopen(path, "w");
+    int archivo = creat(path, S_IRWXU | S_IRWXG | S_IRWXO);
 
-	fwrite(datos, sizeof(*datos) * longitud, 1, archivo);
-
-	fclose(archivo);
+	write(archivo, datos, sizeof(*datos) * longitud);
+	fsync(archivo);
+	close(archivo);
 }

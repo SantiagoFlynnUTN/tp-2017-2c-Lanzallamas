@@ -53,15 +53,18 @@ void crear_hilo_consola(){
 
 
 
+/*
 void format(){
 	//A desarrollar
 }
 
 void rm(char* path_archivo){
 	//A desarrollar (-d y -b)
-}
+}*/
 
-//void rename(char* path_original, char nombre_final){
+
+//void yama_rename(char* path_original, char nombre_final){
+
 
 //}
 

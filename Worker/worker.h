@@ -34,6 +34,12 @@ typedef struct {
 } __attribute__((packed))
 InfoNodo;
 
+typedef struct{
+	int cantidadBytes;
+	int bloque;
+	char nombreTemp[255];
+}mensajeTransf;
+
 /* VARIABLES GLOBALES Y DEFINES */
 #define ARCHIVO_CONFIGURACION "worker.conf"
 #define ARCHIVO_LOGGER "worker.log"

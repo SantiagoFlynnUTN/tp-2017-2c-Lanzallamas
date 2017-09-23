@@ -686,7 +686,6 @@ int sendAll(int fd, char *cosa, int size, int flags){
 	int aux;
 
 	int mensaje = 2;
-	aux = send(fd, &mensaje, sizeof(mensaje), flags);
 	aux = send(fd, &size, sizeof(size), flags);
 
 	while(cant_enviada < size){
