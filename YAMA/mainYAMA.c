@@ -35,8 +35,8 @@ void conectarAFileSystem(){
 int main(){
 	inicializarYAMA();
 	inicializarServer();
-	conectarAFileSystem();
-	iniciarConexionAFS(&sock_fs);
+	//conectarAFileSystem();
+	//iniciarConexionAFS(&sock_fs);
 
 	for(;;);
 	return 0;
