@@ -28,9 +28,10 @@ void recibirArchivo(int socket, char * ruta){
 	recv(socket, &longitud, sizeof(longitud), 0);
 	char buffer[longitud];
 	memset(buffer, 0, longitud);
+	printf("entre\n");
 	int a = recv(socket, &buffer, longitud, 0);
-
-	guardarArchivo(ruta, buffer, longitud);
+	printf("sali\n");
+	//guardarArchivo(ruta, buffer, longitud);
 }
 
 void iniciarTransformacion(int socket){
@@ -40,10 +41,10 @@ void iniciarTransformacion(int socket){
 	sprintf(ruta, "scripts/transformacion%d.sh", getpid());
 	recibirArchivo(socket, ruta);
 	char * command =  (char *)malloc(sizeof(char) * 255);
-	sprintf(command, "chmod 777 %s && ./%s\n", ruta, ruta);
+	sprintf(command, "./%s\n", ruta);
 	printf(command);
-	system(command);
-
+	//system(command);
+	printf("bloque: %d\n", t.bloque);
 	int num = 4;
 	send(socket, &num, sizeof(int), 0);
 	free(ruta);

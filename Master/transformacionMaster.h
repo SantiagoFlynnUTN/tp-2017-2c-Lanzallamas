@@ -17,7 +17,7 @@ typedef struct{
 mensajeTransformacion;
 
 int respuestaSolicitud(int socket_yama);
-void mandarTransformacionNodo(int socket_nodo, int cantidadWorkers);
+void mandarTransformacionNodo(int socket_nodo, int socket_yama, int cantidadWorkers);
 void atenderConexion(int socket);
 
 #endif /* TRANSFORMACIONMASTER_H_ */

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
 	int cantidadWorkersEjemplo;
 	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);
 
-	mandarTransformacionNodo(socket_nodo, cantidadWorkersEjemplo);
+	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo);
 
 	inicializarServer();
 

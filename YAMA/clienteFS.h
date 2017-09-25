@@ -8,7 +8,7 @@
 #ifndef CLIENTE_H_
 #define CLIENTE_H_
 
-void iniciarConexionAFS(int *socket_fs);
+void iniciarConexionAFS(int *sockfd);
 
 
 #endif /* CLIENTE_H_ */

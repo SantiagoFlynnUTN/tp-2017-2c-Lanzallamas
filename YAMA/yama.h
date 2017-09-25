@@ -1,4 +1,5 @@
 #include <commons/collections/dictionary.h>
+#include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/log.h>
 #include <stdint.h>
@@ -8,7 +9,7 @@
 
 /* ENUMS */
 typedef enum{TRANSFORMACION=1, REDUCCIONLOCAL, REDUCCIONGLOBAL} TipoOperacion;
-typedef enum{ENPROCESO=1, ERROR, FINALIZADO} Estado;
+typedef enum{ENPROCESO=1, ERRORYAMA, FINALIZADO} Estado;
 typedef enum{ROUNDROBIN=1, WEIGHTEDROUNDROBIN} AlgoritmoBalanceo;
 
 /* ESTRUCTURAS */
@@ -20,7 +21,16 @@ typedef struct t_TablaEstado{
 	TipoOperacion etapa;
 	char * archivoTemporal;
 	Estado estado;
-} TablaEstado;
+} entradaTablaEstado;
+
+typedef struct{
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+	int bloque;
+	int bytes;
+	char ruta[255];
+} __attribute__((packed)) operacionTransformacion;
 
 // Está repetido sacar de acá cuando hagamos una librería común
 typedef struct t_DescriptorNodo{
@@ -63,7 +73,7 @@ ConexionFileSystem conexionFileSystem;
 AlgoritmoBalanceo algoritmoBalanceo;
 int retardoPlanificacion;
 
-
+t_list* tablaEstado;
 
 /* FUNCIONES */
 void inicializarYAMA();

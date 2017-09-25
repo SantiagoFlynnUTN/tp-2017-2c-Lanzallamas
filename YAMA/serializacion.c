@@ -22,14 +22,27 @@
 #include "servidor.h"
 #include "chat.h"
 #include <protocoloComunicacion.h>
+#include "yama.h"
+
+
 
 void enviarTablaTransformacion(int socket_master){
-	char nombArch[100];
-	recv(socket_master, nombArch, sizeof(char)* 100, 0);
-	int cantidadWorkersEjemplo = 5;
+	char nombArch[255];
+	recv(socket_master, nombArch, sizeof(char)* 255, 0);
+	int cantidadWorkersEjemplo = 2;
 
 	if (send(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0) == -1){
 			printf("No se puedo enviar el mensaje.\n");
+	}
+	while(cantidadWorkersEjemplo--){
+		operacionTransformacion op;
+		strcpy(op.nombreNodo, "nodo1");
+		op.bloque = cantidadWorkersEjemplo +2;
+		op.bytes = 10;
+		strcpy(op.ip, "127.0.0.1");
+		op.puerto = htons(9002);
+		strcpy(op.ruta, "temp/algo.txt");
+		send(socket_master, &op, sizeof(op), 0);
 	}
 
 }
