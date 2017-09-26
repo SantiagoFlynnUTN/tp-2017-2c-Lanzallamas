@@ -16,12 +16,12 @@ void _setBloque(int socket);
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
-	case GETBLOQUE:
-		_getBloque(socket);
-		break;
-	case SETBLOQUE:
-		_setBloque(socket);
-		break;
+		case GETBLOQUE:
+			_getBloque(socket);
+			break;
+		case SETBLOQUE:
+			_setBloque(socket);
+			break;
 	}
 }
 
@@ -42,7 +42,7 @@ void _getBloque(int socket){
 }
 
 void _setBloque(int socket){
-	int bloque, status;
+	int bloque, status,mensaje;
 	char data[MB];
 
 	recv(socket, &bloque, sizeof(bloque), 0);
@@ -52,9 +52,10 @@ void _setBloque(int socket){
 
 	if(status == -1){
 		log_error(logger, "Hubo un error guardando el bloque\n");
-	}
-
-	if(send(socket, OK, sizeof(OK), 0) == -1){
-		log_error(logger, "No se pudo enviar el mensaje.\n");
+	}else{
+		mensaje = DATANODEOK;
+		if(send(socket, &mensaje, sizeof(mensaje), 0) == -1){
+			log_error(logger, "No se pudo enviar el mensaje.\n");
+		}
 	}
 }

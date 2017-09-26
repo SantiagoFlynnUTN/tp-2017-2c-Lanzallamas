@@ -8,6 +8,6 @@
 #ifndef CONEXIONESDATANODE_H_
 #define CONEXIONESDATANODE_H_
 
-enum tipoMensaje {GETBLOQUE=1, SETBLOQUE};
+typedef enum {GETBLOQUE=1, SETBLOQUE} tipoMensaje;
 
 #endif /* CONEXIONESDATANODE_H_ */

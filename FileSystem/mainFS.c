@@ -18,13 +18,14 @@
 #include "chat.h"
 #include "conexionesFileSystem.h"
 #include "fileSystem.h"
+#include "funcionesConsolaFS.h"
 #include "serializacionFileSystem.h"
 
 int yama_socket;
 
 
 void nuevoCliente(char* remoteHost, int newfd){
-	printf("new conection from %s on socket %d\n", remoteHost, newfd);
+	log_info(logger, "New conection from %s on socket %d\n", remoteHost, newfd);
 	//Y acá hacer algo con el nuevo cliente conectado
 }
 
@@ -39,7 +40,4 @@ int main(int argc, char *argv[]){
 	crear_hilo_consola();
 
 	for(;;);
-
-
-
 }

@@ -8,6 +8,8 @@
 #ifndef SERIALIZACIONDATANODE_H_
 #define SERIALIZACIONDATANODE_H_
 
+typedef enum {DATANODEOK = 1} CODIGOSFILESYSTEM;
+
 void manejarDatos(int buf, int socket);
 
 #endif /* SERIALIZACIONDATANODE_H_ */
