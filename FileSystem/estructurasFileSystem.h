@@ -1,0 +1,16 @@
+#include "fileSystem.h"
+
+#ifndef TP_2017_2C_LANZALLAMAS_ESTRUCTURASFILESYSTEM_H
+#define TP_2017_2C_LANZALLAMAS_ESTRUCTURASFILESYSTEM_H
+
+#define TAMANIO "TAMANIO"
+#define LIBRE "LIBRE"
+#define Libre "Libre"
+#define TOTAL "Total"
+#define NODOS "NODOS"
+
+void guardarTablaNodos();
+void agregarNodoEnTabla(DescriptorNodo * newNodo);
+void crearBitMap(DescriptorNodo * newNodo);
+
+#endif //TP_2017_2C_LANZALLAMAS_ESTRUCTURASFILESYSTEM_H

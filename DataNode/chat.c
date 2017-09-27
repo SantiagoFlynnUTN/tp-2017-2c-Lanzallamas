@@ -18,7 +18,7 @@
 #include <pthread.h>
 #include "chat.h"
 #include "mainDN.h"
-
+#include "dataNode.h"
 
 void leerMensaje(int socket){
 	char buffer[100];

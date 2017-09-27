@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <commons/log.h>
+#include <commons/config.h>
 #include <commons/bitarray.h>
 #include <commons/collections/dictionary.h>
 
@@ -61,13 +62,17 @@ Directorio tabla_Directorios [100];
 
 /* VARIABLES GLOBALES y DEFINES*/
 #define ARCHIVO_LOGGER "fileSystem.log"
+#define ARCHIVO_CONFIGURACION "fileSystem.conf"
 #define MODULO "FILESYSTEM"
 #define MAX_LENGTH 255
 #define MAX_DIRECTORIOS 100
+#define PUERTO_FILESYSTEM "PUERTO_FILESYSTEM"
+#define PATH_TABLA_NODOS "PATH_TABLA_NODOS"
+#define PATH_BITMAPS "PATH_BITMAPS"
 
 t_dictionary* nodos;
 t_log * logger;
-
+t_config * config;
 
 /* FUNCIONES */
 void asociarNodo(int socket);

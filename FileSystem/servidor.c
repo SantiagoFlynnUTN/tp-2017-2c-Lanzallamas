@@ -29,7 +29,7 @@ void comprobarConexion(int numbytes, int socket){
 		// error o conexión cerrada por el cliente
 		if (numbytes == 0) {
 			// conexión cerrada
-			printf("selectserver: socket %d hung up\n", socket);
+			log_info(logger, "selectserver: socket %d hung up\n", socket);
 		} else {
 			perror("recv");
 		}
@@ -129,7 +129,7 @@ void setListener(){
 	struct sockaddr_in myaddr;     // dirección del servidor
 	myaddr.sin_family = AF_INET;
 	myaddr.sin_addr.s_addr = INADDR_ANY;
-	myaddr.sin_port = htons(PORT);
+	myaddr.sin_port = htons(config_get_int_value(config, PUERTO_FILESYSTEM));
 	memset(&(myaddr.sin_zero), '\0', 8);
 	if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
 		perror("bind");

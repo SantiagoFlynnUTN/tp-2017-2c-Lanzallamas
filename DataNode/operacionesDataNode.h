@@ -6,4 +6,4 @@
 int getBloque(int bloque, char data[MB]);
 int setBloque(int bloque, char data[MB]);
 
-#endif OPERACIONESDATANODE_H
+#endif /*OPERACIONESDATANODE_H*/
