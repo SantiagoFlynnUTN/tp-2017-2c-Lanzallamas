@@ -62,7 +62,6 @@ void gestionarNuevaConexion() {
 		if (newfd > fdmax) {    // actualizar el máximo
 			fdmax = newfd;
 		}
-		atenderConexion(newfd);
 	}
 
 

@@ -21,6 +21,7 @@
 #include "conexionesYAMA.h"
 #include <protocoloComunicacion.h>
 #include "transformacionMaster.h"
+#include "reduccionMaster.h"
 
 
 int socket_yama;
@@ -41,10 +42,7 @@ int main(int argc, char *argv[]){
 
 	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo);
 
-	inicializarServer();
-
-	//enviarArchivo(sockfd, "prueba.sh");
-
+	solicitudReduccion(socket_yama);
 
 
 
@@ -59,7 +57,6 @@ int main(int argc, char *argv[]){
 	 */
 
 	for(;;);
-/*
-	close(sockfd);*/
+
 	return 0;
 }
