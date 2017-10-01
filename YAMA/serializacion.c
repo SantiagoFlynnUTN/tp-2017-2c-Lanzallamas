@@ -71,6 +71,7 @@ void enviarSolicitudReduccion(int socket) {
 	if (send(socket, &op, sizeof(op), 0) == -1) {
 		printf("No se puedo enviar el mensaje.\n");
 	}
+
 	while (op.cantidadTemporales--) {
 		if (send(socket, &rutas[op.cantidadTemporales], sizeof(rutaArchivo), 0)
 				== -1) {

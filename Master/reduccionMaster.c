@@ -6,6 +6,8 @@
  */
 #include <protocoloComunicacion.h>
 #include "master.h"
+#include <sys/types.h>
+#include <sys/socket.h>
 
 void solicitudReduccion(int socket_yama){
 
@@ -18,9 +20,9 @@ void solicitudReduccion(int socket_yama){
 
 	rutaArchivo rutas[op.cantidadTemporales];
 
-	recv(socket_yama, &rutas, sizeof(rutaArchivo) * op.cantidadTemporales, 0);
-
-	while(op.cantidadTemporales--) {
+	while (op.cantidadTemporales--) {
+		recv(socket_yama, &rutas[op.cantidadTemporales], sizeof(rutaArchivo),
+				0);
 		printf("ruta: %s\n", &rutas[op.cantidadTemporales]);
 	}
 }
