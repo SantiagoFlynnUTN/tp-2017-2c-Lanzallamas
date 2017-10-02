@@ -47,10 +47,48 @@ void enviarTablaTransformacion(int socket_master){
 
 }
 
+void enviarSolicitudReduccion(int socket) {
+	int i;
+
+	operacionReduccion op;
+	strcpy(op.nombreNodo, "nombrePrueba");
+	strcpy(op.ip, "127.0.0.1");
+	op.puerto = htons(9002);
+	op.cantidadTemporales = 4;
+	strcpy(op.archivoReducido, "archivoReducido");
+
+	rutaArchivo rutas[op.cantidadTemporales];
+
+	strcpy(&rutas[0], "ruta1");
+	strcpy(&rutas[1], "ruta2");
+	strcpy(&rutas[2], "ruta3");
+	strcpy(&rutas[3], "ruta4");
+
+	for(i=0; i<op.cantidadTemporales; i++){
+			printf("ruta %s\n", &rutas[i]);
+		}
+
+	if (send(socket, &op, sizeof(op), 0) == -1) {
+		printf("No se puedo enviar el mensaje.\n");
+	}
+
+	while (op.cantidadTemporales--) {
+		if (send(socket, &rutas[op.cantidadTemporales], sizeof(rutaArchivo), 0)
+				== -1) {
+			printf("No se puedo enviar el mensaje.\n");
+		}
+
+	}
+
+}
+
 void manejarDatos(int buf, int socket){
 	switch(buf){
 	case SOLICITUDJOB:
 		enviarTablaTransformacion(socket);
+		break;
+	case PEDIDOREDUCCION:
+		enviarSolicitudReduccion(socket);
 		break;
 	}
 }

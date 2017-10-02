@@ -24,6 +24,18 @@ typedef struct t_TablaEstado{
 } entradaTablaEstado;
 
 typedef struct{
+	char ruta[255];
+}rutaArchivo;
+
+typedef struct{
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+	int cantidadTemporales;
+	char archivoReducido[255];
+} __attribute__((packed)) operacionReduccion;
+
+typedef struct{
 	char nombreNodo[100];
 	char ip[20];
 	uint16_t puerto;
