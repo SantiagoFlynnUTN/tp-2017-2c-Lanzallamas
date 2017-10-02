@@ -13,7 +13,20 @@ void _crearLogger();
 void _logConfig();
 void _cargarFileSystem();
 
-void _crearDirectoriosPrueba();
+void inicializarFileSystem(){
+    nodos = dictionary_create();
+    archivos = dictionary_create();
+    _crearLogger();
+    _cargarConfiguracion();
+    _cargarFileSystem();
+    _logConfig();
+}
+
+void persistirFileSystem(){
+    guardarTablaNodos();
+    guardarTablaDirectorio();
+    guardarArchivos();
+}
 
 void printNodo(DescriptorNodo * nodo){
     log_info(logger, "Nodo Conectado en socket: %d\nNombre: %s\nDireccion Worker: %s:%u\nCantidad de bloques: %d\nCantidad de bloques libres: %d\n",
@@ -33,7 +46,6 @@ void asociarNodo(int socket){
     agregarNodoEnTabla(newNodo);
 
     printNodo(dictionary_get(nodos, newNodo->nombreNodo));
-    guardarTablaNodos(); //TODO remove
 }
 
 void _cargarConfiguracion(){
@@ -53,15 +65,6 @@ void _cargarConfiguracion(){
         log_error(logger, "El archivo de configuración %s no tiene los campos necesarios\n", ARCHIVO_CONFIGURACION);
         exit(-2);
     }
-}
-
-void inicializarFileSystem(){
-    nodos = dictionary_create();
-    _crearLogger();
-    _cargarConfiguracion();
-    _cargarFileSystem();
-    _logConfig();
-    _crearDirectoriosPrueba();
 }
 
 void _cargarFileSystem(){
@@ -104,37 +107,4 @@ void _logConfig(){
               config_get_string_value(config, PATH_TABLA_DIRECTORIO),
               config_get_string_value(config, PATH_DIR_ARCHIVOS),
               config_get_string_value(config, PATH_DIR_ARCHIVOS_FORMAT));
-}
-
-void _crearDirectoriosPrueba(){
-    tabla_Directorios[0].id = 0;
-    strcpy(tabla_Directorios[0].nombre,"root");
-    tabla_Directorios[0].padre = -1;
-
-    tabla_Directorios[1].id = 1;
-    strcpy(tabla_Directorios[1].nombre, "user");
-    tabla_Directorios[1].padre = 0;
-
-    tabla_Directorios[2].id = 2;
-    strcpy(tabla_Directorios[2].nombre, "jose");
-    tabla_Directorios[2].padre = 1;
-
-    tabla_Directorios[3].id = 3;
-    strcpy(tabla_Directorios[3].nombre, "juan");
-    tabla_Directorios[3].padre = 1;
-
-    tabla_Directorios[4].id = 4;
-    strcpy(tabla_Directorios[4].nombre, "temporal");
-    tabla_Directorios[4].padre = 0;
-
-    tabla_Directorios[5].id = 5;
-    strcpy(tabla_Directorios[5].nombre, "datos");
-    tabla_Directorios[5].padre = 2;
-
-    tabla_Directorios[6].id = 6;
-    strcpy(tabla_Directorios[6].nombre, "fotos");
-    tabla_Directorios[6].padre = 2;
-
-    guardarTablaDirectorio();
-    cargarTablaDirectorio();
 }

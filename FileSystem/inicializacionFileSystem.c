@@ -8,7 +8,7 @@
 
 int _cargarBitMap(DescriptorNodo * nodo);
 int _recorrerArchivosDirectorio(char * nombre);
-int _procesarArchivo(char * ruta, int directorio);
+int _procesarArchivo(char * rutaDirectorio, char * nombre, int directorio);
 void _procesarBloques(t_config * archivo, Archivo * descriptorArchivo);
 
 void cargarTablaNodos(t_config * tablaNodos){
@@ -31,7 +31,7 @@ void cargarTablaNodos(t_config * tablaNodos){
         newNodo->bloquesLibres = config_get_int_value(tablaNodos, libreNodoKey);
 
         if(_cargarBitMap(newNodo) == 0){
-            log_info(logger, "%s\nBloques:%d\nBloques Libres:%d\n", *nombresNodos, newNodo->bloques, newNodo->bloquesLibres);
+            log_debug(logger, "%s\nBloques:%d\nBloques Libres:%d\n", *nombresNodos, newNodo->bloques, newNodo->bloquesLibres);
             agregarNodoEnTabla(newNodo);
         }else{
             log_info(logger, "%s fue descartado por no tener bitmap", *nombresNodos);
@@ -72,6 +72,33 @@ int cargarTablaDirectorio(){
     return 0;
 }
 
+int cargarTablaArchivos(){
+    char rutaDirectorioArchivos[255];
+    strcpy(rutaDirectorioArchivos, config_get_string_value(config, PATH_DIR_ARCHIVOS));
+
+    DIR * directorio = opendir(rutaDirectorioArchivos);
+
+    if(directorio == NULL){
+        log_info(logger, "No se pudo encontrar el directorio %s", rutaDirectorioArchivos);
+        return -1;
+    }
+
+    struct dirent * entradaDirectorio;
+
+    while((entradaDirectorio = readdir(directorio)) != NULL){
+        // ignoro directorio actual y directorio padre
+        if(!strcmp(entradaDirectorio->d_name, ".")|| !strcmp(entradaDirectorio->d_name, "..")) continue;
+
+        if(entradaDirectorio->d_type == DT_DIR) { // es un directorio?
+            int statusCode = _recorrerArchivosDirectorio(entradaDirectorio->d_name);
+
+            if(statusCode != 0) return -1;
+        }
+    }
+
+    return 0;
+}
+
 int _cargarBitMap(DescriptorNodo * nodo){
     char * archivo = (char *) malloc(sizeof(char) * 255);
     sprintf(archivo, config_get_string_value(config, PATH_BITMAPS), nodo->nombreNodo);
@@ -104,34 +131,6 @@ int _cargarBitMap(DescriptorNodo * nodo){
     return 0;
 }
 
-int cargarTablaArchivos(){
-    char rutaDirectorioArchivos[255];
-    strcpy(rutaDirectorioArchivos, config_get_string_value(config, PATH_DIR_ARCHIVOS));
-
-    DIR * directorio = opendir(rutaDirectorioArchivos);
-
-    if(directorio == NULL){
-        log_info(logger, "No se pudo encontrar el directorio %s", rutaDirectorioArchivos);
-        return -1;
-    }
-
-    struct dirent * entradaDirectorio;
-
-    while((entradaDirectorio = readdir(directorio)) != NULL){
-        // ignoro directorio actual y directorio padre
-        if(!strcmp(entradaDirectorio->d_name, ".")|| !strcmp(entradaDirectorio->d_name, "..")) continue;
-
-        if(entradaDirectorio->d_type == DT_DIR) { // es un directorio?
-            log_info(logger, "Directorio: %s\n", entradaDirectorio->d_name);
-            int statusCode = _recorrerArchivosDirectorio(entradaDirectorio->d_name);
-
-            if(statusCode != 0) return -1;
-        }
-    }
-
-    return 0;
-}
-
 int _recorrerArchivosDirectorio(char * nombre){
     char rutaDirectorio[255];
 
@@ -148,23 +147,21 @@ int _recorrerArchivosDirectorio(char * nombre){
 
     while((entradaDirectorio = readdir(directorio)) != NULL){
         if(entradaDirectorio->d_type == DT_REG) { // es un archivo?
-            char rutaArchivo[255];
-
-            sprintf(rutaArchivo, "%s/%s", rutaDirectorio, entradaDirectorio->d_name);
-            int status = _procesarArchivo(rutaArchivo, atoi(nombre));
+            int status = _procesarArchivo(rutaDirectorio, entradaDirectorio->d_name, atoi(nombre));
 
             if(status != 0){
                 log_error(logger, "El archivo %s no pudo ser cargado, el File System está corrupto\n", entradaDirectorio->d_name);
             }
-            log_info(logger, "Archivo: %s\n", entradaDirectorio->d_name);
         }
     }
 
     return 0;
 }
 
-int _procesarArchivo(char * ruta, int directorio){
-    t_config * archivo = config_create(ruta);
+int _procesarArchivo(char * rutaDirectorio, char * nombre, int directorio){
+    char rutaArchivo[255];
+    sprintf(rutaArchivo, "%s/%s", rutaDirectorio, nombre);
+    t_config * archivo = config_create(rutaArchivo);
 
     if(archivo == NULL){
         return -1;
@@ -189,12 +186,17 @@ int _procesarArchivo(char * ruta, int directorio){
 
     _procesarBloques(archivo, descriptorArchivo);
 
-    log_info(logger, "Tamaño: %d\nTipo: %d\nDirectorio: %d",
+    calcularRuta(*descriptorArchivo, nombre, descriptorArchivo->ruta);
+
+    registrarArchivo(descriptorArchivo, descriptorArchivo->ruta);
+
+
+    log_debug(logger, "Tamaño: %d\nTipo: %d\nDirectorio: %d\nLa ruta es:%s",
              descriptorArchivo->tamanio,
              descriptorArchivo->tipo,
-             descriptorArchivo->directorioPadre);
+             descriptorArchivo->directorioPadre,
+             descriptorArchivo->ruta);
 
-    calcularRuta();
 
     list_add(listaArchivosDirectorios[descriptorArchivo->directorioPadre], descriptorArchivo);
     return 0;
@@ -215,7 +217,6 @@ void _procesarBloques(t_config * archivo, Archivo * descriptorArchivo){
 
         bloque->descriptor.numeroBloque = i;
         bloque->descriptor.bytes = config_get_int_value(archivo, bytesBloque);
-        printf("Bytes Bloque %d: %ld\n", i, bloque->descriptor.bytes);
 
         sprintf(bloqueCopia0, BLOQUE_I_COPIA_0, i);
         sprintf(bloqueCopia1, BLOQUE_I_COPIA_1, i);
@@ -229,10 +230,9 @@ void _procesarBloques(t_config * archivo, Archivo * descriptorArchivo){
         bloque->copia1.numeroBloque = atoi(copia1[1]);
         strcpy(bloque->copia1.nodo, copia1[0]);
 
-        printf("Copia 0:\nNodo: %s\nBloque: %d\n", bloque->copia0.nodo, bloque->copia0.numeroBloque);
-        printf("Copia 1:\nNodo: %s\nBloque: %d\n", bloque->copia1.nodo, bloque->copia1.numeroBloque);
-
         i++;
         sprintf(bytesBloque, BLOQUE_I_BYTES, i);
+
+        list_add(descriptorArchivo->bloques, bloque);
     }
 }

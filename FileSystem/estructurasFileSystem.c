@@ -3,16 +3,25 @@
 #include <string.h>
 #include <stdlib.h>
 #include <commons/string.h>
+#include "utilidadesFileSystem.h"
+#include "inicializacionFileSystem.h"
 #include "configuracionFileSystem.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 void _persistirNodo(char * key, void * value);
 void _persistirBitMap(char * strBitMap, char * nombreNodo, int bloques);
+void _persistirArchivo(char * key, void * value);
+void _persistirBloque(void * puntero);
 
-// Declaro estas variables globales para acumular durante la iteracion del diccionario
+// Declaro estas variables globales para acumular durante la iteracion del diccionario (guardado de nodos)
 int bloquesTotales;
 int bloquesLibres;
 t_config * tablaNodos;
 char * nombres;
+
+// Declaro estas variables globales para acumular durante la iteración de la lista (guardado de archivos)
+t_config * archivoConfig;
 
 void agregarNodoEnTabla(DescriptorNodo * newNodo){
     DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, newNodo->nombreNodo);
@@ -97,6 +106,10 @@ void guardarTablaDirectorio(){
     fclose(archivoDirectorio);
 }
 
+void guardarArchivos(){
+    dictionary_iterator(archivos, _persistirArchivo);
+}
+
 void _persistirNodo(char * key, void * value){
     DescriptorNodo * nodo = (DescriptorNodo *)value;
 
@@ -152,4 +165,57 @@ void _persistirBitMap(char * strBitMap, char * nombreNodo, int bloques){
     fwrite(strBitMap, bloques, 1, f);
     fclose(f);
     free(archivo);
+}
+
+void _persistirArchivo(char * key, void * value){
+    char rutaArchivo[255],
+         strDirectorioPadre[3];
+    Archivo * descriptorArchivo = (Archivo *) value;
+
+    intToString(descriptorArchivo->directorioPadre, strDirectorioPadre);
+    sprintf(rutaArchivo, config_get_string_value(config, PATH_DIR_ARCHIVOS_FORMAT), strDirectorioPadre);
+    strcat(rutaArchivo, "/");
+
+    mkdir(rutaArchivo, S_IRWXU | S_IRWXG | S_IRWXO); // creo el directorio si no existe
+
+    strcat(rutaArchivo, obtenerNombreArchivo(descriptorArchivo->ruta));
+
+    FILE * archivoNodos = fopen(rutaArchivo, "w"); // hago esto para crear el archivo si no existe
+    fclose(archivoNodos);
+
+    archivoConfig = config_create(rutaArchivo);
+
+    char strTamanio[15];
+    intToString(descriptorArchivo->tamanio, strTamanio);
+
+    config_set_value(archivoConfig, TAMANIO, strTamanio);
+    config_set_value(archivoConfig, TIPO, descriptorArchivo->tipo ? ARCHIVOBINARIO : ARCHIVOTEXTO);
+
+    list_iterate(descriptorArchivo->bloques, _persistirBloque);
+
+    config_save_in_file(archivoConfig, rutaArchivo);
+    config_destroy(archivoConfig);
+}
+
+void _persistirBloque(void * puntero){
+    Bloque * bloque = (Bloque *)puntero;
+
+    char bytesBloque[14],
+         bloqueCopia0[15],
+         bloqueCopia1[15],
+         strCopia0[110],
+         strCopia1[110],
+         strBytes[15];
+
+    sprintf(bytesBloque, BLOQUE_I_BYTES, bloque->descriptor.numeroBloque);
+    sprintf(bloqueCopia0, BLOQUE_I_COPIA_0, bloque->descriptor.numeroBloque);
+    sprintf(bloqueCopia1, BLOQUE_I_COPIA_1, bloque->descriptor.numeroBloque);
+
+    sprintf(strCopia0, "[%s, %d]", bloque->copia0.nodo, bloque->copia0.numeroBloque);
+    sprintf(strCopia1, "[%s, %d]", bloque->copia1.nodo, bloque->copia1.numeroBloque);
+    longToString(bloque->descriptor.bytes, strBytes);
+
+    config_set_value(archivoConfig, bloqueCopia0, strCopia0);
+    config_set_value(archivoConfig, bloqueCopia1, strCopia1);
+    config_set_value(archivoConfig, bytesBloque, strBytes);
 }

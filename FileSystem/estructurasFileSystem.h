@@ -13,5 +13,6 @@ void guardarTablaNodos();
 void agregarNodoEnTabla(DescriptorNodo * newNodo);
 void crearBitMap(DescriptorNodo * newNodo);
 void guardarTablaDirectorio();
+void guardarArchivos();
 
 #endif //TP_2017_2C_LANZALLAMAS_ESTRUCTURASFILESYSTEM_H

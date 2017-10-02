@@ -22,3 +22,7 @@ void _concatenarStringAlNombre(char * key, char * nombre, char * string){
 void intToString(int numero, char * string){
     sprintf(string, "%d", numero);
 }
+
+void longToString(long numero, char * string){
+    sprintf(string, "%ld", numero);
+}

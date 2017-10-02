@@ -8,6 +8,7 @@ int cargarTablaArchivos();
 
 #define TIPO "TIPO"
 #define ARCHIVOTEXTO "TEXTO"
+#define ARCHIVOBINARIO "BINARIO"
 
 #define BLOQUE_I_COPIA_0 "BLOQUE%dCOPIA0"
 #define BLOQUE_I_COPIA_1 "BLOQUE%dCOPIA1"

@@ -32,11 +32,11 @@ void hiloConsola(){
 		char * linea;
 		linea = readline(">");
 
-	    if (!linea) {
-	      break;
-	    }
-	    printf("%s\n", linea);
-	    free(linea);
+		if (!linea) {
+			break;
+		}
+		printf("%s\n", linea);
+		free(linea);
 
 	}
 	pthread_exit(NULL);
@@ -47,17 +47,16 @@ void crear_hilo_consola(){
 	int rc;
 	pthread_t tid;
 	rc = pthread_create(&tid, NULL, hiloConsola, NULL);
-		if(rc) printf("no pudo crear el hilo");
+	if(rc) printf("no pudo crear el hilo");
 }
 
 
 
 
-
+/*
 void format(){
 	//A desarrollar
 }
-/*
 void rm(char* path_archivo){
 	//A desarrollar (-d y -b)
 }*/
@@ -80,48 +79,48 @@ int yama_mkdir(char* path_dir){
 
 	log_debug(logger, "accediendo mkdir: %s", path_dir);
 
-		char *dupPath = strdup(path_dir);
-		char *fname = yamaGetNFile(dupPath);
-		free(dupPath);
+	char *dupPath = strdup(path_dir);
+	char *fname = yamaGetNFile(dupPath);
+	free(dupPath);
 
-		//Verifico que el nombre no sea mas largo de lo permitido
-		if(string_length(fname) > MAX_LENGTH){
-			log_error(logger, "El nombre del directorio es mas largo del permitido");
-			return -ENAMETOOLONG;
+	//Verifico que el nombre no sea mas largo de lo permitido
+	if(string_length(fname) > MAX_LENGTH){
+		log_error(logger, "El nombre del directorio es mas largo del permitido");
+		return -ENAMETOOLONG;
+	}
+
+	//Verifico que el file no exista en la tabla de directorios
+	int existe = 0;
+	int i = 0;
+
+	if(existe == 0){
+
+		while(!tabla_Directorios[i].nombre == fname){
+			i++;
 		}
-
-		//Verifico que el file no exista en la tabla de directorios
-		int existe = 0;
-		int i = 0;
-
-		if(existe == 0){
-
-			while(!tabla_Directorios[i].nombre == fname){
-				i++;
-			}
-			existe = 1;
+		existe = 1;
 		//enviar mensaje a quien corresponda de que el directorio ya existe
-		}
+	}
 
-		//Obtengo el nombre del padre
-		char *dpath = yamaGetPathPadre(path_dir);
-		dupPath = strdup(dpath);
-		char *dname = yamaGetNFile(dupPath);
-		free(dupPath);
-		//Obtener datos padre
-		existe = 0;
-		int p = 0;
-		if(existe == 0){
+	//Obtengo el nombre del padre
+	char *dpath = yamaGetPathPadre(path_dir);
+	dupPath = strdup(dpath);
+	char *dname = yamaGetNFile(dupPath);
+	free(dupPath);
+	//Obtener datos padre
+	existe = 0;
+	int p = 0;
+	if(existe == 0){
 
-			while(!tabla_Directorios[p].nombre == dname){
-		   		p++;
-			}
-			existe = 1;
+		while(!tabla_Directorios[p].nombre == dname){
+			p++;
 		}
-		//Creo el nuevo Directorio y asigno a la tabla
-		//Chequear si hay espacio en la tabla?
-		Directorio newDir = yamaCrearDirectorio(i, fname, tabla_Directorios[p].id);
-		asignarEspacioEnTabla(newDir);
+		existe = 1;
+	}
+	//Creo el nuevo Directorio y asigno a la tabla
+	//Chequear si hay espacio en la tabla?
+	Directorio newDir = yamaCrearDirectorio(i, fname, tabla_Directorios[p].id);
+	asignarEspacioEnTabla(newDir);
 
 	return 0;
 }

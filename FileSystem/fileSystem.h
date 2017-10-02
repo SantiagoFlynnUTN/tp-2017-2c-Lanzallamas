@@ -10,7 +10,7 @@
 #define FILESYSTEM_H_
 
 /* ENUMS */
-typedef enum{TEXTO, BINARIO} TipoArchivo;
+typedef enum{TEXTO=0, BINARIO} TipoArchivo;
 
 /* ESTRUCTURAS */
 typedef struct t_Directorio{
@@ -55,7 +55,7 @@ typedef struct t_Bloque{
 typedef struct t_Archivo{
     TipoArchivo tipo;
     t_list * bloques;
-    char * ruta;
+    char ruta[255];
     long tamanio;
     int directorioPadre;
 } Archivo;
@@ -78,12 +78,13 @@ t_list* listaArchivosDirectorios[100]; // 100 listas una por directorio para pon
 #define ROOT_DIR "root"
 
 t_dictionary* nodos;
+t_dictionary* archivos;
 t_log * logger;
 t_config * config;
 
 /* FUNCIONES */
 void asociarNodo(int socket);
 void inicializarFileSystem();
-
+void persistirFileSystem();
 
 #endif /* FILESYSTEM_H_ */
