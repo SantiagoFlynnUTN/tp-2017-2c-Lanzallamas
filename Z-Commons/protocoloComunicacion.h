@@ -10,8 +10,9 @@
 
 typedef enum {PORTYAMA = 9000, PORTMASTER, PORTNODO, PORTFILESYSTEM} puertos;
 
-enum ConexionesYAMAMaster {SOLICITUDJOB=1, PEDIDOREDUCCION} ;
+typedef enum {SOLICITUDJOB=1, PEDIDOREDUCCION} ConexionesYAMAMaster;
 //typedef enum {TRANSFORMACION=1} ConexionesMasterYAMA;
 //typedef enum {OK=1} ConexionesFileSystemDataNode;
+typedef enum {TRANSFORMACIONWORKER=1, REDUCCIONLOCAL} ConexionesWorkerMaster;
 
 #endif /* PROTOCOLOCOMUNICACION_H_ */

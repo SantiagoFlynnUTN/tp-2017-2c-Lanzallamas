@@ -133,7 +133,6 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama, int cantidadWork
 
 	while(i--){
 		pthread_join(tid[i], NULL);
-		printf("Terminaron las transformaciones del nodo %d\n", socket_nodo);
 	}
-
+	printf("Terminaron las transformaciones del nodo %d\n", socket_nodo);
 }
