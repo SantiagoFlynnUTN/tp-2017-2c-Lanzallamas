@@ -53,11 +53,11 @@ void crear_hilo_consola(){
 
 
 
-/*
+
 void format(){
 	//A desarrollar
 }
-
+/*
 void rm(char* path_archivo){
 	//A desarrollar (-d y -b)
 }*/

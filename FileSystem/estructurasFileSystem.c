@@ -15,8 +15,21 @@ t_config * tablaNodos;
 char * nombres;
 
 void agregarNodoEnTabla(DescriptorNodo * newNodo){
-    dictionary_remove_and_destroy(nodos, newNodo->nombreNodo, free); // evito duplicados
-    dictionary_put(nodos, newNodo->nombreNodo, newNodo);
+    DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, newNodo->nombreNodo);
+
+    if(descriptorNodo == NULL){
+        crearBitMap(newNodo);
+
+        dictionary_remove_and_destroy(nodos, newNodo->nombreNodo, free); // evito duplicados
+        dictionary_put(nodos, newNodo->nombreNodo, newNodo);
+    }else {
+        descriptorNodo->socket = newNodo->socket;
+        strcpy(descriptorNodo->ip, newNodo->ip);
+        descriptorNodo->puerto = newNodo->puerto;
+
+        dictionary_remove(nodos, descriptorNodo->nombreNodo);
+        dictionary_put(nodos, descriptorNodo->nombreNodo, descriptorNodo);
+    }
 }
 
 void crearBitMap(DescriptorNodo * newNodo){
@@ -69,6 +82,20 @@ void guardarTablaNodos(){
     free(nombres);
 }
 
+void guardarTablaDirectorio(){
+    FILE * archivoDirectorio = fopen(config_get_string_value(config, PATH_TABLA_DIRECTORIO), "wb");
+
+    int i;
+
+    for(i = 0; i < 100; ++i){ // recorro toda la tabla
+        // directorio no existente lo saleo, continuo el for porque puede haber otros si el directorio fue borrado
+        if(tabla_Directorios[i].nombre[0] == '\0') continue;
+
+        fwrite(&tabla_Directorios[i], sizeof(tabla_Directorios[i]), 1, archivoDirectorio);
+    }
+
+    fclose(archivoDirectorio);
+}
 
 void _persistirNodo(char * key, void * value){
     DescriptorNodo * nodo = (DescriptorNodo *)value;
@@ -82,20 +109,18 @@ void _persistirNodo(char * key, void * value){
     bloquesTotales += nodo->bloques;
 
     int bitmapSize = nodo->bloques;
-    int bloquesLibresNodo = 0;
     char strBitMap[bitmapSize + 1];
     memset(strBitMap, 0, bitmapSize + 1);
 
     while(bitmapSize--){
         if(bitarray_test_bit(nodo->bitmap, bitmapSize) == 0){ // bloque libre
-            bloquesLibresNodo++;
             strBitMap[bitmapSize] = '0';
         }else{
             strBitMap[bitmapSize] = '1';
         }
     }
 
-    bloquesLibres += bloquesLibresNodo;
+    bloquesLibres += nodo->bloquesLibres;
 
     char totalNodoKey[105];
 
@@ -111,7 +136,7 @@ void _persistirNodo(char * key, void * value){
     getKeyBloquesLibresNodo(libreNodoKey, nodo->nombreNodo);
 
     char strBloquesLibresNodo[5];
-    intToString(bloquesLibresNodo, strBloquesLibresNodo);
+    intToString(nodo->bloquesLibres, strBloquesLibresNodo);
 
     config_set_value(tablaNodos, libreNodoKey, strBloquesLibresNodo);
 

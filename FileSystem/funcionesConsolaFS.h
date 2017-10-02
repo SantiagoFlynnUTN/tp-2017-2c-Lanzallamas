@@ -20,4 +20,6 @@ void asignarEspacioEnTabla(Directorio newDir);
 void hiloConsola();
 void crear_hilo_consola();
 
+void formatFileSystem();
+
 #endif /* FUNCIONESCONSOLAFS_H_ */
