@@ -7,6 +7,8 @@
 #include "serializacionWorker.h"
 #include "conexionesWorker.h"
 #include "transformacionWorker.h"
+#include "reduccionWorker.h"
+#include <protocoloComunicacion.h>
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -14,6 +16,7 @@ void manejarDatos(int buf, int socket){
 		iniciarTransformacion(socket);
 		break;
 	case REDUCCIONLOCAL:
+		iniciarReduccion(socket);
 		break;
 	case REDUCCIONGLOBAL:
 		break;

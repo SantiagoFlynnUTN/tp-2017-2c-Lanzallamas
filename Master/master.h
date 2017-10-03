@@ -49,7 +49,15 @@ typedef struct{
 	uint16_t puerto;
 	int cantidadTemporales;
 	char archivoReducido[255];
-} __attribute__((packed)) operacionReduccion;
+} __attribute__((packed))
+operacionReduccion;
+
+typedef struct{
+	int tipoMensaje;
+	int cantidadTemporales;
+	char archivoReducido[255];
+} __attribute__((packed))
+reduccionWorker;
 
 typedef struct{
 	char ruta[255];

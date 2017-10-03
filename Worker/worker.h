@@ -40,6 +40,12 @@ typedef struct{
 	char nombreTemp[255];
 }mensajeTransf;
 
+typedef struct{
+	int cantidadTemporales;
+	char archivoReducido[255];
+} __attribute__((packed))
+mensajeReduc;
+
 /* VARIABLES GLOBALES Y DEFINES */
 #define ARCHIVO_CONFIGURACION "worker.conf"
 #define ARCHIVO_LOGGER "worker.log"
