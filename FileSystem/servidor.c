@@ -15,30 +15,27 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include "servidor.h"
-
 #include "mainFS.h"
 #include "serializacionFileSystem.h"
-
+#include "fileSystem.h"
 
 fd_set master;   // conjunto maestro de descriptores de fichero
 int listener;    // descriptor de socket a la escucha
 int fdmax;       // número máximo de descriptores de fichero
 fd_set read_fds; // conjunto temporal de descriptores de fichero para select()
 
-
-
 void comprobarConexion(int numbytes, int socket){
-	 if (numbytes <= 0) {
+	if (numbytes <= 0) {
 		// error o conexión cerrada por el cliente
 		if (numbytes == 0) {
 			// conexión cerrada
-			printf("selectserver: socket %d hung up\n", socket);
+			log_info(logger, "selectserver: socket %d hung up\n", socket);
 		} else {
 			perror("recv");
 		}
 		close(socket); // bye!
 		FD_CLR(socket, &master); // eliminar del conjunto maestro
-	 }
+	}
 }
 
 void manejarCliente(int newfd){
@@ -64,7 +61,7 @@ void gestionarNuevaConexion(){
 	addrlen = sizeof(remoteaddr);
 
 	if ((newfd = accept(listener, (struct sockaddr *)&remoteaddr,
-											 &addrlen)) == -1) {
+						&addrlen)) == -1) {
 		perror("accept");
 		exit(1);
 	}
@@ -118,31 +115,31 @@ void doSelect(){
 void setListener(){
 	// obtener socket a la escucha
 	if ((listener = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			perror("socket");
-			exit(1);
-		}
-		// obviar el mensaje "address already in use" (la dirección ya se está usando)
-		int yes=1;        // para setsockopt() SO_REUSEADDR, más abajo
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes,
-															sizeof(int)) == -1) {
-			perror("setsockopt");
-			exit(1);
-		}
-		// enlazar
-		struct sockaddr_in myaddr;     // dirección del servidor
-		myaddr.sin_family = AF_INET;
-		myaddr.sin_addr.s_addr = INADDR_ANY;
-		myaddr.sin_port = htons(PORT);
-		memset(&(myaddr.sin_zero), '\0', 8);
-		if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
-			perror("bind");
-			exit(1);
-		}
-		// escuchar
-		if (listen(listener, 10) == -1) {
-			perror("listen");
-			exit(1);
-		}
+		perror("socket");
+		exit(1);
+	}
+	// obviar el mensaje "address already in use" (la dirección ya se está usando)
+	int yes=1;        // para setsockopt() SO_REUSEADDR, más abajo
+	if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes,
+				   sizeof(int)) == -1) {
+		perror("setsockopt");
+		exit(1);
+	}
+	// enlazar
+	struct sockaddr_in myaddr;     // dirección del servidor
+	myaddr.sin_family = AF_INET;
+	myaddr.sin_addr.s_addr = INADDR_ANY;
+	myaddr.sin_port = htons(config_get_int_value(config, PUERTO_FILESYSTEM));
+	memset(&(myaddr.sin_zero), '\0', 8);
+	if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
+		perror("bind");
+		exit(1);
+	}
+	// escuchar
+	if (listen(listener, 10) == -1) {
+		perror("listen");
+		exit(1);
+	}
 }
 
 void iniciarServer(){
@@ -156,12 +153,12 @@ void iniciarServer(){
 	// seguir la pista del descriptor de fichero mayor
 	fdmax = listener; 			// por ahora es éste
 
-    doSelect();// bucle principal
+	doSelect();// bucle principal
 }
 
 void inicializarServer(){
 	int rc;
 	pthread_t tid;
 	rc = pthread_create(&tid, NULL, iniciarServer, NULL);
-		if(rc) printf("no pudo crear el hilo");
+	if(rc) log_error(logger, "No pudo crear el hilo\n");
 }

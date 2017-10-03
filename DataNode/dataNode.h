@@ -19,13 +19,23 @@ typedef struct {
 	uint16_t puerto;
 } ConexionFileSystem;
 
+typedef struct t_handshake{
+	int tipomensaje;
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+	int bloques;
+} __attribute__((packed))
+		HandshakeNodo;
+
 typedef struct {
 	int nombreLen;
 	char nombreNodo[100];
 	char rutaDataBin[255];
 	uint16_t puertoWorker;
+	int cantidadBloques;
 } __attribute__((packed))
-InfoNodo;
+		InfoNodo;
 
 /* VARIABLES GLOBALES Y DEFINES */
 #define ARCHIVO_CONFIGURACION "dataNode.conf"

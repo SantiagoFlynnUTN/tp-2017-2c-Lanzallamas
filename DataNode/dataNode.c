@@ -9,7 +9,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include <netinet/in.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "dataNode.h"
+#include "operacionesDataNode.h"
 
 void _cargarConfiguracion();
 void _copiarFileSystemIP();
@@ -17,6 +22,7 @@ void _copiarNombreNodo();
 void _copiarRutaDataBin();
 void _crearLogger();
 void _logConfig();
+void _calcularCantidadDeBloques();
 
 void inicializarDataNode(){
 	_crearLogger();
@@ -27,13 +33,18 @@ void inicializarDataNode(){
 void _cargarConfiguracion(){
 	config = config_create(ARCHIVO_CONFIGURACION);
 
+	if(config == NULL){
+		log_error(logger, "El archivo de configuración %s no pudo ser encontrado\n", ARCHIVO_CONFIGURACION);
+		exit(-1);
+	}
+
 	if (!config_has_property(config, IP_FILESYSTEM) ||
 		!config_has_property(config, PUERTO_FILESYSTEM) ||
 		!config_has_property(config, NOMBRE_NODO) ||
 		!config_has_property(config, PUERTO_WORKER) ||
 		!config_has_property(config, RUTA_DATABIN)){
-		printf("badConfig 120");
-		exit(120);
+		log_error(logger, "El archivo de configuración %s no tiene los campos necesarios\n", ARCHIVO_CONFIGURACION);
+		exit(-2);
 	}
 
 	conexionFileSystem.puerto = htons(config_get_int_value(config, PUERTO_FILESYSTEM));
@@ -41,9 +52,17 @@ void _cargarConfiguracion(){
 	_copiarFileSystemIP();
 	_copiarNombreNodo();
 	_copiarRutaDataBin();
+	_calcularCantidadDeBloques();
 }
 
+void _calcularCantidadDeBloques(){
+	int fd = open(infoNodo.rutaDataBin, O_RDONLY);
+	struct stat stats;
+	fstat(fd, &stats);
+	infoNodo.cantidadBloques = stats.st_size / MB;
 
+	log_info(logger, "La cantidad de bloques es: %d", infoNodo.cantidadBloques);
+}
 
 void _copiarFileSystemIP(){
 	char * ip;
@@ -97,10 +116,10 @@ void _crearLogger(){
 }
 
 void _logConfig(){
-	log_debug(logger, "Config:\nIP_FILESYSTEM: %s\nPUERTO_FILESYSTEM: %d\nNOMBRE_NODO: %s\nPUERTO_WORKER:%d\nRUTA_DATABIN: %s",
-			config_get_string_value(config, IP_FILESYSTEM),
-			config_get_int_value(config, PUERTO_FILESYSTEM),
-			config_get_string_value(config, NOMBRE_NODO),
-			config_get_int_value(config, PUERTO_WORKER),
-			config_get_string_value(config, RUTA_DATABIN));
+	log_debug(logger, "Config:\nIP_FILESYSTEM: %s\nPUERTO_FILESYSTEM: %d\nNOMBRE_NODO: %s\nPUERTO_WORKER:%d\nRUTA_DATABIN: %s\n",
+			  config_get_string_value(config, IP_FILESYSTEM),
+			  config_get_int_value(config, PUERTO_FILESYSTEM),
+			  config_get_string_value(config, NOMBRE_NODO),
+			  config_get_int_value(config, PUERTO_WORKER),
+			  config_get_string_value(config, RUTA_DATABIN));
 }

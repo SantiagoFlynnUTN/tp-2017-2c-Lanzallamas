@@ -18,13 +18,14 @@
 #include <pthread.h>
 #include "chat.h"
 #include "mainFS.h"
+#include "fileSystem.h"
 
 
 void leerMensaje(int socket){
 	char buffer[100];
 	memset(buffer, 0, 100);
 	int a = recv(socket, &buffer, 100, 0);
-	printf("Rta: %s - %d\n", buffer, a);
+	log_info(logger, "Rta: %s - %d\n", buffer, a);
 }
 
 
@@ -40,7 +41,7 @@ void enviarMensajeCorto(int sockfd){
 	memcpy(mensajeAEnviar, &msj, sizeof(mensajeCorto));
 
 	if (send(sockfd, mensajeAEnviar, sizeof(mensajeCorto), 0) ==-1)
-		printf("No puedo enviar\n");
+		log_error(logger, "No puedo enviar\n");
 	free (mensajeAEnviar);
 }
 
@@ -61,8 +62,7 @@ void escuchar(int* socket){
 		buf = 0;
 
 		if((nbytesReceived = recv(sockfd, &buf, 1, 0)) <= 0)				//recibo y compruebo q recibí correctamente
-			printf("No puedo recibir información, o el servidor colgó\n");
-
+			log_error(logger, "No puedo recibir información, o el servidor colgó\n");
 		else manejarDatos(buf, sockfd);
 	}
 }
@@ -71,12 +71,12 @@ void escuchar_chat(int socket){
 	int rc;
 	pthread_t tid;
 	rc = pthread_create(&tid, NULL, escuchar, &socket);
-		if(rc) printf("no pudo crear el hilo");
+		if(rc) log_error(logger, "No pudo crear el hilo\n");
 }
 
 void escribir_chat(int socket){
 	int rc;
 	pthread_t tid;
 	rc = pthread_create(&tid, NULL, escribir, &socket);
-		if(rc) printf("no pudo crear el hilo");
+		if(rc) log_error(logger, "No pudo crear el hilo\n");
 }

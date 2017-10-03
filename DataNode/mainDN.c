@@ -16,22 +16,11 @@
 #include "cliente.h"
 #include "dataNode.h"
 
-
-typedef struct t_handshake{
-	int tipomensaje;
-	int nombreLen;
-	char nombreNodo[100];
-	char ip[20];
-	uint16_t puerto;
-} __attribute__((packed))
-HandshakeNodo;
-
 int sockfd;
 
 void enviarStructFileSystem(int socket){
 	HandshakeNodo handshake;
 	handshake.tipomensaje = 2;
-	handshake.nombreLen = infoNodo.nombreLen;
 	strcpy(handshake.nombreNodo, infoNodo.nombreNodo);
 
 	struct sockaddr_in address;
@@ -40,6 +29,7 @@ void enviarStructFileSystem(int socket){
 	memset(handshake.ip, 0, 20);
 	strcpy(handshake.ip, inet_ntoa(address.sin_addr));
 	handshake.puerto = infoNodo.puertoWorker;
+	handshake.bloques = infoNodo.cantidadBloques;
 
 	send(socket, &handshake, sizeof(handshake), 0);
 }
