@@ -5,6 +5,8 @@
  *      Author: utnso
  */
 
+#include "worker.h"
+
 void iniciarReduccion(int socket) {
 
 	mensajeReduc opReduc;

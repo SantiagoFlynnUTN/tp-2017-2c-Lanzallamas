@@ -71,7 +71,7 @@ int respuestaSolicitud(int socket_yama) {
 	}*/
 }
 
-void iniciarConexionAWorker(int *sockfd, workerTransformacion t){
+void conexionTransfWorker(int *sockfd, workerTransformacion t){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
@@ -95,7 +95,7 @@ void iniciarConexionAWorker(int *sockfd, workerTransformacion t){
 
 void mandarSolicitudTransformacion(workerTransformacion* t){
 	int socketWorker;
-	iniciarConexionAWorker(&socketWorker, *t);
+	conexionTransfWorker(&socketWorker, *t);
 
 	mensajeTransformacion mensaje;
 	mensaje.tipoMensaje = 1;

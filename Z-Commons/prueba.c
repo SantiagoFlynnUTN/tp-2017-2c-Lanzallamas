@@ -10,3 +10,7 @@
 void myfunc(){
 	printf("operativos\n");
 }
+
+int main(){
+	return 0;
+}

@@ -1,13 +1,35 @@
 /*
  * reduccionMaster.c
+
+
+
  *
  *  Created on: 1/10/2017
  *      Author: utnso
  */
-#include <protocoloComunicacion.h>
+
+#include "mainMaster.h"
 #include "master.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <archivos.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
 #include <sys/types.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include "chat.h"
+#include "enviarArchivo.h"
+#include "cliente.h"
+#include "servidorMaster.h"
+#include "conexionesYAMA.h"
+#include "transformacionMaster.h"
+#include <protocoloComunicacion.h>
+
 
 void solicitudReduccion(int socket_yama){
 
@@ -33,7 +55,7 @@ void solicitudReduccion(int socket_yama){
 	mandarReduccionNodo(op, rutas, i, cantidadNodosEjemplo);
 }
 
-void iniciarConexionAWorker(int *sockfd, operacionReduccion op){
+void conexionReduccionWorker(int *sockfd, operacionReduccion op){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
@@ -57,7 +79,7 @@ void iniciarConexionAWorker(int *sockfd, operacionReduccion op){
 
 void mandarSolicitudReduccion(operacionReduccion* op){
 	int socketNodo;
-	iniciarConexionAWorker(&socketNodo, *op);
+	conexionReduccionWorker(&socketNodo, *op);
 
 	reduccionWorker mensaje;
 	mensaje.tipoMensaje = 2;
@@ -90,5 +112,5 @@ void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidad
 	while(i--){
 		pthread_join(tid[i], NULL);
 	}
-	printf("Terminaron las transformaciones del nodo %d\n", socket_nodo);
+	printf("Terminaron las transformaciones del nodo %d\n");
 }
