@@ -26,49 +26,17 @@
 #include "conexionesYAMA.h"
 #include "transformacionMaster.h"
 #include <protocoloComunicacion.h>
+#include <sockets.h>
 
 
-
-void _manejarDatos(int buf, int socket){
-
-	switch(buf){
-	case 1://HANDSHAKE
-		break;
-	case 4:
-		printf("llegue");
-		break;
-	}
-}
-
-void _manejarCliente(int* newfd){
-
-	int numbytes;
-	int buf;
-
-	buf = 0;
-	numbytes = recv(*newfd, &buf, sizeof(int), 0); //leo el primer byte. Me dirá el tipo de paquete. (es un int)
-
-	comprobarConexion(numbytes, *newfd); //Me fijo si lo que recibí esta ok.
-
-	_manejarDatos(buf, *newfd); //Si llegamos hasta acá manejamos los datos que recibimos.
-}
 
 int respuestaSolicitud(int socket_yama) {
 
 	int cantidadWorkers;
-	int nbytesReceived = 0;
 
-	if ((nbytesReceived = recv(socket_yama, &cantidadWorkers, sizeof(int), 0))
-			<= 0)				//recibo y compruebo q recibí correctamente
-		printf("No puedo recibir información, o el servidor colgó\n");
+	zrecv(socket_yama, &cantidadWorkers, sizeof(int), 0);
 
 	return cantidadWorkers;
-	/*else {
-		int i;
-		for(i=0; i<cantidadWorkers; i++) {
-			recv(socket_yama, tablaTransformacion[i], sizeof(workerTransformacion), 0);
-		}
-	}*/
 }
 
 void conexionTransfWorker(int *sockfd, workerTransformacion t){
@@ -104,14 +72,12 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	printf("numBloque: %d\n", t->numBloque);
 	strcpy(mensaje.nombreTemp, t->rutaArchivo);
 
-	if (send(socketWorker, &mensaje, sizeof(mensaje), 0) ==-1)
-					printf("No puedo enviar\n");
+	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
 
 	enviarArchivo(socketWorker, "prueba.sh");
 
-	printf("%d vces\n", socketWorker);
-	int a, numbytes;
-	numbytes = recv(socketWorker, &a, sizeof(int), 0);
+	int a;
+	zrecv(socketWorker, &a, sizeof(int), 0);
 	if (a == 4){
 		printf("worker %d finalizó transformación\n", socketWorker);
 		pthread_exit(NULL);
@@ -119,20 +85,23 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 }
 
 
-void mandarTransformacionNodo(int socket_nodo, int socket_yama, int cantidadWorkers){
+void mandarTransformacionNodo(int socket_nodo, int socket_yama,
+		int cantidadWorkers) {
 	workerTransformacion t[cantidadWorkers];
 	pthread_t tid[cantidadWorkers];
 	int rc[cantidadWorkers];
 	int i = 0;
-	while(cantidadWorkers--){
+	while (cantidadWorkers--) {
 		recv(socket_yama, &t[cantidadWorkers], sizeof(workerTransformacion), 0);
-		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL, mandarSolicitudTransformacion, &t[cantidadWorkers]);
-		if(rc[cantidadWorkers]) printf("no pudo crear el hilo %d\n", i);
+		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
+				mandarSolicitudTransformacion, &t[cantidadWorkers]);
+		if (rc[cantidadWorkers])
+			printf("no pudo crear el hilo %d\n", i);
 		i++;
 	}
 
-	while(i--){
+	while (i--) {
 		pthread_join(tid[i], NULL);
 	}
-	printf("Terminaron las transformaciones del nodo %d\n", socket_nodo);
+	printf("Terminaron las transformaciones\n");
 }

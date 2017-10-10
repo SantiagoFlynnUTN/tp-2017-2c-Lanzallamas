@@ -5,7 +5,6 @@
  *      Author: utnso
  */
 #include "serializacionWorker.h"
-#include "conexionesWorker.h"
 #include "transformacionWorker.h"
 #include "reduccionWorker.h"
 #include <protocoloComunicacion.h>

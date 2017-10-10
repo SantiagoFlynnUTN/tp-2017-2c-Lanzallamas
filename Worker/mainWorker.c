@@ -14,7 +14,6 @@
 #include <arpa/inet.h>
 #include "chat.h"
 #include "worker.h"
-#include "conexionesWorker.h"
 #include "servidor.h"
 #include <sys/wait.h>
 

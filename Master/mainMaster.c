@@ -44,19 +44,5 @@ int main(int argc, char *argv[]){
 
 	solicitudReduccion(socket_yama);
 
-
-
-	/*
-	 * (no dar bola a esto)
-	 * asociarAYAMA();
-	 * ingresarComando();
-	 * esperarIndicaciones();
-	 * thread por worker: transformacion();
-	 * thread por nodo: reduccion();
-	 *
-	 */
-
-
-
 	return 0;
 }
