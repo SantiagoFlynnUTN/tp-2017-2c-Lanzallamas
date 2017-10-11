@@ -19,24 +19,24 @@
 #include <arpa/inet.h>
 #include "chat.h"
 #include "worker.h"
-#include "conexionesWorker.h"
 #include <sys/wait.h>
 #include "cliente.h"
+#include <sockets.h>
 
 void recibirArchivo(int socket, char * ruta){
 	int longitud;
-	recv(socket, &longitud, sizeof(longitud), 0);
+	zrecv(socket, &longitud, sizeof(longitud), 0);
 	char buffer[longitud];
 	memset(buffer, 0, longitud);
 	printf("entre\n");
-	int a = recv(socket, &buffer, longitud, 0);
+	zrecv(socket, &buffer, longitud, 0);
 	printf("sali\n");
 	//guardarArchivo(ruta, buffer, longitud);
 }
 
 void iniciarTransformacion(int socket){
 	mensajeTransf t;
-	recv(socket, &t, sizeof(t), 0);
+	zrecv(socket, &t, sizeof(t), 0);
 	char * ruta = (char *)malloc(sizeof(char) * 255);
 	sprintf(ruta, "scripts/transformacion%d.sh", getpid());
 	recibirArchivo(socket, ruta);
@@ -46,7 +46,7 @@ void iniciarTransformacion(int socket){
 	//system(command);
 	printf("bloque: %d\n", t.bloque);
 	int num = 4;
-	send(socket, &num, sizeof(int), 0);
+	zsend(socket, &num, sizeof(int), 0);
 	free(ruta);
 	free(command);
 	exit(1);

@@ -28,12 +28,11 @@
 
 void enviarTablaTransformacion(int socket_master){
 	char nombArch[255];
-	recv(socket_master, nombArch, sizeof(char)* 255, 0);
+	zrecv(socket_master, nombArch, sizeof(char)* 255, 0);
 	int cantidadWorkersEjemplo = 2;
 
-	if (send(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0) == -1){
-			printf("No se puedo enviar el mensaje.\n");
-	}
+	zsend(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0);
+
 	while(cantidadWorkersEjemplo--){
 		operacionTransformacion op;
 		strcpy(op.nombreNodo, "nodo1");
@@ -42,7 +41,7 @@ void enviarTablaTransformacion(int socket_master){
 		strcpy(op.ip, "127.0.0.1");
 		op.puerto = htons(9002);
 		strcpy(op.ruta, "temp/algo.txt");
-		send(socket_master, &op, sizeof(op), 0);
+		zsend(socket_master, &op, sizeof(op), 0);
 	}
 
 }
@@ -64,23 +63,17 @@ void enviarSolicitudReduccion(int socket) {
 	strcpy(&rutas[2], "ruta3");
 	strcpy(&rutas[3], "ruta4");
 
-	for(i=0; i<op.cantidadTemporales; i++){
-			printf("ruta %s\n", &rutas[i]);
-		}
-
-	if (send(socket, &op, sizeof(op), 0) == -1) {
-		printf("No se puedo enviar el mensaje.\n");
+	for (i = 0; i < op.cantidadTemporales; i++) {
+		printf("ruta %s\n", &rutas[i]);
 	}
+
+	zsend(socket, &op, sizeof(op), 0);
 
 	while (op.cantidadTemporales--) {
-		if (send(socket, &rutas[op.cantidadTemporales], sizeof(rutaArchivo), 0)
-				== -1) {
-			printf("No se puedo enviar el mensaje.\n");
-		}
-
+		zsend(socket, &rutas[op.cantidadTemporales], sizeof(rutaArchivo), 0);
 	}
-
 }
+
 
 void manejarDatos(int buf, int socket){
 	switch(buf){

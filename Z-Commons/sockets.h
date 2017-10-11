@@ -31,7 +31,7 @@ enum enum_protocolo{// Si yo soy el kernel tengo que enviar handshake_kernel.
 	HANDSHAKE_KERNEL = 4,
 	HANDSHAKE_MEMORIA = 5,
 	HANDSHAKE_FS = 6,
-	OK = 7
+	//OK = 7
 };
 
 //Mensajes que el kernel le envia al CPU
@@ -188,7 +188,8 @@ int recvMsj(int socket, void** paquete, header_t*header);
 int enviar_info(int sockfd, int codigo_operacion, int length, void* buff);
 int enviar_paquete_vacio(int codigo_operacion, int socket);
 int finalizarConexion(int socket);
-
+void zrecv(int socket, void* buffer, int size, int flags);
+void zsend(int socket, void* buffer, int size, int flags);
 //
 // Serializadores y Deserializadores de mensajes.
 //

@@ -5,7 +5,6 @@
  *      Author: utnso
  */
 #include "serializacionWorker.h"
-#include "conexionesWorker.h"
 #include "transformacionWorker.h"
 #include "reduccionWorker.h"
 #include <protocoloComunicacion.h>
@@ -15,7 +14,7 @@ void manejarDatos(int buf, int socket){
 	case TRANSFORMACIONWORKER:
 		iniciarTransformacion(socket);
 		break;
-	case REDUCCIONLOCAL:
+	case REDUCLOCAL:
 		iniciarReduccion(socket);
 		break;
 	case REDUCCIONGLOBAL:

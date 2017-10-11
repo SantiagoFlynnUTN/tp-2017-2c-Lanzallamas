@@ -8,7 +8,7 @@
 #define YAMA_H_
 
 /* ENUMS */
-typedef enum{TRANSFORMACION=1, REDUCCIONLOCAL, REDUCCIONGLOBAL} TipoOperacion;
+typedef enum{TRANSFORMACION=1, REDUCCIONLOCAL} TipoOperacion;
 typedef enum{ENPROCESO=1, ERRORYAMA, FINALIZADO} Estado;
 typedef enum{ROUNDROBIN=1, WEIGHTEDROUNDROBIN} AlgoritmoBalanceo;
 

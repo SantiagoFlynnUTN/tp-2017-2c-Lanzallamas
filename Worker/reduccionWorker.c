@@ -5,13 +5,17 @@
  *      Author: utnso
  */
 
+#include "worker.h"
+#include <sockets.h>
+
+
 void iniciarReduccion(int socket) {
 
 	mensajeReduc opReduc;
-	recv(socket, &opReduc, sizeof(opReduc), 0);
+	zrecv(socket, &opReduc, sizeof(opReduc), 0);
 
 	int num = 4;
-	send(socket, &num, sizeof(int), 0);
+	zsend(socket, &num, sizeof(int), 0);
 	exit(1);
 
 }
