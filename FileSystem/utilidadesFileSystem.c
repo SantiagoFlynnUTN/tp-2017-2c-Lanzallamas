@@ -4,6 +4,7 @@
 #include <commons/string.h>
 
 void _agregarAlPrincipio(char* s, char* t);
+int _buscarDirectorio(char * nombre);
 
 void calcularRuta(Archivo descriptorArchivo, char * nombreArchivo, char * rutaArchivo){
     int directorio = descriptorArchivo.directorioPadre;
@@ -17,12 +18,14 @@ void calcularRuta(Archivo descriptorArchivo, char * nombreArchivo, char * rutaAr
     strcat(rutaArchivo, nombreArchivo);
 }
 
-void registrarArchivo(Archivo * descriptorArchivo, char * ruta){
+void registrarArchivo(Archivo * descriptorArchivo){
     if(dictionary_get(archivos, descriptorArchivo->ruta)){
         dictionary_remove_and_destroy(archivos, descriptorArchivo->ruta, free);
     }
 
     dictionary_put(archivos, descriptorArchivo->ruta, descriptorArchivo);
+
+    list_add(listaArchivosDirectorios[descriptorArchivo->directorioPadre], descriptorArchivo);
 }
 
 char * obtenerNombreArchivo(char * ruta){
@@ -34,6 +37,22 @@ char * obtenerNombreArchivo(char * ruta){
     return *--pathsElements;
 }
 
+int calcularDirectorioPadre(char * ruta){
+    int directorioPadre = 0;
+    char ** pathsElements = string_split(ruta, "/");
+    while(*(pathsElements + 1) != NULL){
+        directorioPadre = _buscarDirectorio(*pathsElements);
+
+        if(directorioPadre == -1){
+            return -1;
+        }
+
+        pathsElements++;
+    }
+
+    return directorioPadre;
+}
+
 void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio) {
     int longitud = strlen(stringAAgregarAlPrincipio);
     int i;
@@ -43,4 +62,17 @@ void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio) 
     for (i = 0; i < longitud; ++i) {
         stringOriginal[i] = stringAAgregarAlPrincipio[i];
     }
+}
+
+int _buscarDirectorio(char * nombre){
+    int i = 0;
+
+    while(i < 100){
+        if(strcmp(tabla_Directorios[i].nombre, nombre) == 0){
+            return i;
+        }
+        i++;
+    }
+
+    return -1;
 }

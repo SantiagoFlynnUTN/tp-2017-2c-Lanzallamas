@@ -188,8 +188,7 @@ int _procesarArchivo(char * rutaDirectorio, char * nombre, int directorio){
 
     calcularRuta(*descriptorArchivo, nombre, descriptorArchivo->ruta);
 
-    registrarArchivo(descriptorArchivo, descriptorArchivo->ruta);
-
+    registrarArchivo(descriptorArchivo);
 
     log_debug(logger, "Tamaño: %d\nTipo: %d\nDirectorio: %d\nLa ruta es:%s",
              descriptorArchivo->tamanio,
@@ -197,8 +196,6 @@ int _procesarArchivo(char * rutaDirectorio, char * nombre, int directorio){
              descriptorArchivo->directorioPadre,
              descriptorArchivo->ruta);
 
-
-    list_add(listaArchivosDirectorios[descriptorArchivo->directorioPadre], descriptorArchivo);
     return 0;
 }
 

@@ -32,7 +32,7 @@ void manejarStructs(int socket){
 void manejarDatos(int buf, int socket){
 	switch(buf){
 	case OK:
-		log_info(logger, "Socket %i dice OK\n", socket);
+		log_debug(logger, "Socket %i dice OK\n", socket);
 		break;
 	case CONEXIONNODO:
 		asociarNodo(socket);
