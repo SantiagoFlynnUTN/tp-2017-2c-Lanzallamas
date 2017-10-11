@@ -120,6 +120,10 @@ int _controlarEspacioDisponible(int cantidadBloques){
 void _contarBloquesLibres(char * key, void * nodo){
     DescriptorNodo * descriptorNodo = (DescriptorNodo *) nodo;
 
+    if(descriptorNodo->socket == -1){ // nodo desconectado no lo incluyo en los bloques disponibles
+        return;
+    }
+
     bloquesLibres += descriptorNodo->bloquesLibres;
 }
 
