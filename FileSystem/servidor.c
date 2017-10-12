@@ -1,10 +1,3 @@
-/*
- * servidor.c
- *
- *  Created on: 4/9/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +11,7 @@
 #include "mainFS.h"
 #include "serializacionFileSystem.h"
 #include "fileSystem.h"
+#include "estructurasFileSystem.h"
 
 fd_set master;   // conjunto maestro de descriptores de fichero
 int listener;    // descriptor de socket a la escucha
@@ -29,7 +23,9 @@ void comprobarConexion(int numbytes, int socket){
 		// error o conexión cerrada por el cliente
 		if (numbytes == 0) {
 			// conexión cerrada
-			log_info(logger, "selectserver: socket %d hung up\n", socket);
+			log_debug(logger, "selectserver: socket %d hung up\n", socket);
+
+			marcarNodoDesconectado(socket);
 		} else {
 			perror("recv");
 		}

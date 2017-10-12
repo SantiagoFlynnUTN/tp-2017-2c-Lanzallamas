@@ -8,7 +8,7 @@
 #ifndef SERIALIZACIONDATANODE_H_
 #define SERIALIZACIONDATANODE_H_
 
-typedef enum {DATANODEOK = 1} CODIGOSFILESYSTEM;
+typedef enum {DATANODEERROR=0, DATANODEOK} CODIGOSFILESYSTEM;
 
 void manejarDatos(int buf, int socket);
 

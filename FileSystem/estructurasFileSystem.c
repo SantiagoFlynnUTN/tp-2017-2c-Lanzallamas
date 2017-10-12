@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <commons/string.h>
+#include "fileSystem.h"
 #include "utilidadesFileSystem.h"
 #include "inicializacionFileSystem.h"
 #include "configuracionFileSystem.h"
@@ -13,6 +14,8 @@ void _persistirNodo(char * key, void * value);
 void _persistirBitMap(char * strBitMap, char * nombreNodo, int bloques);
 void _persistirArchivo(char * key, void * value);
 void _persistirBloque(void * puntero);
+void _marcarNodoDesconectadoImpl(char * key, void * value);
+int _contieneNombreNodo(char * nombreNodo);
 
 // Declaro estas variables globales para acumular durante la iteracion del diccionario (guardado de nodos)
 int bloquesTotales;
@@ -23,6 +26,15 @@ char * nombres;
 // Declaro estas variables globales para acumular durante la iteración de la lista (guardado de archivos)
 t_config * archivoConfig;
 
+// Declaro el socket para pasarle al iterator
+int socketNodo;
+
+void guardarFileSystem(){
+    guardarTablaNodos();
+    guardarTablaDirectorio();
+    guardarArchivos();
+}
+
 void agregarNodoEnTabla(DescriptorNodo * newNodo){
     DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, newNodo->nombreNodo);
 
@@ -31,6 +43,8 @@ void agregarNodoEnTabla(DescriptorNodo * newNodo){
 
         dictionary_remove_and_destroy(nodos, newNodo->nombreNodo, free); // evito duplicados
         dictionary_put(nodos, newNodo->nombreNodo, newNodo);
+
+        list_add(nombreNodos, newNodo->nombreNodo);
     }else {
         descriptorNodo->socket = newNodo->socket;
         strcpy(descriptorNodo->ip, newNodo->ip);
@@ -38,6 +52,10 @@ void agregarNodoEnTabla(DescriptorNodo * newNodo){
 
         dictionary_remove(nodos, descriptorNodo->nombreNodo);
         dictionary_put(nodos, descriptorNodo->nombreNodo, descriptorNodo);
+
+        if(!_contieneNombreNodo(descriptorNodo->nombreNodo)){
+            list_add(nombreNodos, newNodo->nombreNodo);
+        }
     }
 }
 
@@ -108,6 +126,19 @@ void guardarTablaDirectorio(){
 
 void guardarArchivos(){
     dictionary_iterator(archivos, _persistirArchivo);
+}
+
+void marcarNodoDesconectado(int socket){
+    socketNodo = socket;
+    dictionary_iterator(nodos,_marcarNodoDesconectadoImpl);
+}
+
+void _marcarNodoDesconectadoImpl(char * key, void * value){
+    DescriptorNodo * descriptorNodo = (DescriptorNodo *) value;
+    if(descriptorNodo->socket == socketNodo){
+        descriptorNodo->socket = -1;
+        log_info(logger, "Se desconectó el nodo: %s\n", key);
+    }
 }
 
 void _persistirNodo(char * key, void * value){
@@ -218,4 +249,17 @@ void _persistirBloque(void * puntero){
     config_set_value(archivoConfig, bloqueCopia0, strCopia0);
     config_set_value(archivoConfig, bloqueCopia1, strCopia1);
     config_set_value(archivoConfig, bytesBloque, strBytes);
+}
+
+int _contieneNombreNodo(char * nombreNodo){
+    int longitud = list_size(nombreNodos);
+    int i = 0;
+
+    for(i = 0; i < longitud; ++i){
+        if(strcmp(nombreNodo, list_get(nombreNodos, i))){
+            return 0;
+        }
+    }
+
+    return 1;
 }

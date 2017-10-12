@@ -78,6 +78,7 @@ t_list* listaArchivosDirectorios[100]; // 100 listas una por directorio para pon
 #define ROOT_DIR "root"
 
 t_dictionary* nodos;
+t_list * nombreNodos;
 t_dictionary* archivos;
 t_log * logger;
 t_config * config;

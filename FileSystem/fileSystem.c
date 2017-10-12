@@ -7,6 +7,7 @@
 #include "configuracionFileSystem.h"
 #include "inicializacionFileSystem.h"
 #include "funcionesConsolaFS.h"
+#include "envioBloques.h"
 
 void _cargarConfiguracion();
 void _crearLogger();
@@ -15,6 +16,7 @@ void _cargarFileSystem();
 
 void inicializarFileSystem(){
     nodos = dictionary_create();
+    nombreNodos = list_create();
     archivos = dictionary_create();
     _crearLogger();
     _cargarConfiguracion();

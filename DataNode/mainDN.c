@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
 	//escribir_chat(sockfd);
 	enviarStructFileSystem(sockfd);
 
-	//escuchar_chat(sockfd);
+	escuchar_chat(sockfd);
 
 	for(;;);
 
