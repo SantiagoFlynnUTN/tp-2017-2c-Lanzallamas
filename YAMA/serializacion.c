@@ -24,6 +24,7 @@
 #include <protocoloComunicacion.h>
 #include "yama.h"
 
+void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
 
 
 void enviarTablaTransformacion(int socket_master){
@@ -37,8 +38,35 @@ void enviarTablaTransformacion(int socket_master){
 	int respuesta;
 
 	zrecv(sock_fs, &respuesta, sizeof(respuesta), 0);
+	if (respuesta != 0){
+		//zsend(socket_master, )  -- Mandar a master que aborte la trafo
+		log_error(logger, "El archivo %s no pudo no se encuentra disponible", solFs.ruta);
+		return;
+	}
 
+	int bloques, i;
 
+	zrecv(sock_fs, &bloques, sizeof(bloques), 0);
+
+	zsend(socket_master, &bloques, sizeof(bloques), 0);
+	for(i = 0; i < bloques; ++i){
+		int copias, j;
+		long bytes;
+
+		zrecv(sock_fs, &bytes, sizeof(bytes), 0);
+		zrecv(sock_fs, &copias, sizeof(copias), 0);
+		DescriptorNodo nodos[copias];
+
+		for (j = 0; j < copias; ++j){
+			zrecv(sock_fs, nodos[j].nombreNodo, sizeof(char)*100, 0);
+			zrecv(sock_fs, nodos[j].ip, sizeof(char)*20, 0);
+			zrecv(sock_fs, &nodos[j].puerto, sizeof(nodos[j].puerto), 0);
+			zrecv(sock_fs, &nodos[j].bloque, sizeof(nodos[j].bloque), 0);
+		}
+		if (copias == 1){
+							//FALTA ENVIAR Y ṔLANIFICAR
+		}
+	}
 
 	int cantidadWorkersEjemplo = 2;
 
@@ -100,4 +128,12 @@ void manejarDatos(int buf, int socket){
 		enviarSolicitudReduccion(socket);
 		break;
 	}
+}
+
+void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
+	zsend(socket, nombNodo,sizeof(char)*100, 0);
+	zsend(socket, ip,sizeof(char)*20, 0);
+	zsend(socket, &puerto,sizeof(puerto), 0);
+	zsend(socket, &nroBloque,sizeof(nroBloque), 0);
+	zsend(socket, &bytes,sizeof(bytes), 0);			//FALTA MANDAR NOMBRE ARCHIVO TEMPORAL, AGREGAR OPERACION A TABLA DE OPERACIONES,
 }

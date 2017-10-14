@@ -10,6 +10,9 @@
 #ifndef SERIALIZACION_H_
 #define SERIALIZACION_H_
 
+typedef struc {
+
+}
 enum tipoProceso {YAMA, FILESYSTEM, DATANODE, MASTER, WORKER};
 
 void manejarDatos(int buf, int socket);

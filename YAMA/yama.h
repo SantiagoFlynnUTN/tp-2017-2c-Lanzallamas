@@ -52,9 +52,11 @@ typedef struct{
 
 // Está repetido sacar de acá cuando hagamos una librería común
 typedef struct t_DescriptorNodo{
-	char * nodoId;
-	char * ip;
-	int puerto;
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+	int bloque;
+
 } DescriptorNodo;
 
 // Está repetido sacar de acá cuando hagamos una librería común
