@@ -13,3 +13,9 @@
 [ERROR] 17:14:30:836 MASTER/(6842:6849): No es posible leer el archivo
 [ERROR] 17:14:30:837 MASTER/(6842:6848): No es posible leer el archivo
 [ERROR] 17:14:30:837 MASTER/(6842:6847): No es posible leer el archivo
+[ERROR] 15:24:44:322 MASTER/(5118:5121): Error al enviar archivo
+[ERROR] 15:35:54:521 MASTER/(5319:5322): Error al enviar archivo
+[ERROR] 15:48:36:48 MASTER/(5498:5501): Error al enviar archivo
+[ERROR] 16:06:29:867 MASTER/(5785:5788): Error al enviar archivo
+[ERROR] 16:09:48:17 MASTER/(5827:5828): Error al enviar archivo
+[ERROR] 16:09:48:18 MASTER/(5827:5830): Error al enviar archivo

@@ -215,7 +215,7 @@ int createClient(char *addr, char *port) {
  */
 void zrecv(int socket, void* buffer, int size, int flags){
 	int bytes;
-	bytes = recv(socket, &buffer, size, flags);
+	bytes = recv(socket, buffer, size, flags);
 	if(bytes == 0) printf("recv error: %d\n", bytes);
 	if(bytes == -1) printf("recv error: %d\n", bytes);
 }
@@ -226,7 +226,7 @@ void zrecv(int socket, void* buffer, int size, int flags){
  *
  */
 void zsend(int socket, void* buffer, int size, int flags){
-	if (send(socket, &buffer, size, flags) == -1) {
+	if (send(socket, buffer, size, flags) == -1) {
 		printf("No se puedo enviar el mensaje.\n");
 	}
 }

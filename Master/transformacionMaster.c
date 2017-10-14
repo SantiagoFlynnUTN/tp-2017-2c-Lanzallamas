@@ -36,6 +36,8 @@ int respuestaSolicitud(int socket_yama) {
 
 	zrecv(socket_yama, &cantidadWorkers, sizeof(int), 0);
 
+	//printf("cant: %d\n", cantidadWorkers);
+
 	return cantidadWorkers;
 }
 
@@ -49,9 +51,13 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 		exit(1);
 	}
 
+	printf("ip: %s\nport: %d\n", t.ipWorker, t.puertoWorker);
+
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
-	their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
+	//their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
+	their_addr.sin_port = htons(PORTNODO);  // short, Ordenación de bytes de la red
+	//their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
+	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
@@ -69,8 +75,8 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	mensaje.tipoMensaje = 1;
 	mensaje.cantidadBytes = t->bytesOcupados;
 	mensaje.bloque = t->numBloque;
-	printf("numBloque: %d\n", t->numBloque);
 	strcpy(mensaje.nombreTemp, t->rutaArchivo);
+
 
 	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
 
@@ -92,7 +98,14 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 	int rc[cantidadWorkers];
 	int i = 0;
 	while (cantidadWorkers--) {
-		recv(socket_yama, &t[cantidadWorkers], sizeof(workerTransformacion), 0);
+
+		recv(socket_yama,t + cantidadWorkers, sizeof(workerTransformacion), 0);
+
+		printf("nom: %s\nbloq: %d\nbytes: %d\nip: %s\nport: %d\nruta: %s\n",
+				t[cantidadWorkers].nombreNodo, t[cantidadWorkers].numBloque,
+				t[cantidadWorkers].bytesOcupados, t[cantidadWorkers].ipWorker,
+				t[cantidadWorkers].puertoWorker,
+				t[cantidadWorkers].rutaArchivo);
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
 				mandarSolicitudTransformacion, &t[cantidadWorkers]);
 		if (rc[cantidadWorkers])

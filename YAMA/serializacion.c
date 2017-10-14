@@ -31,7 +31,8 @@ void enviarTablaTransformacion(int socket_master){
 	zrecv(socket_master, nombArch, sizeof(char)* 255, 0);
 	int cantidadWorkersEjemplo = 2;
 
-	zsend(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0);
+	send(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0);
+
 
 	while(cantidadWorkersEjemplo--){
 		operacionTransformacion op;
@@ -39,9 +40,11 @@ void enviarTablaTransformacion(int socket_master){
 		op.bloque = cantidadWorkersEjemplo +2;
 		op.bytes = 10;
 		strcpy(op.ip, "127.0.0.1");
-		op.puerto = htons(9002);
+		op.puerto = htons(PORTNODO);
 		strcpy(op.ruta, "temp/algo.txt");
 		zsend(socket_master, &op, sizeof(op), 0);
+		printf("nom: %s\nbloq: %d\nbytes: %d\nip: %s\nport: %d\nruta: %s\n",
+				op.nombreNodo, op.bloque, op.bytes, op.ip, op.puerto, op.ruta);
 	}
 
 }
