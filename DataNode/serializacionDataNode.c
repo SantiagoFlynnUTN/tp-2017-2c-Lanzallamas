@@ -46,8 +46,7 @@ void _setBloque(int socket){
 	recv(socket, &bloque, sizeof(bloque), 0);
 	recv(socket, data, sizeof(char) * MB, 0);
 
-	status = setBloque(bloque, data + 3);
-
+	status = setBloque(bloque, data);
 
 	if(status == -1){
 		mensaje = DATANODEERROR;

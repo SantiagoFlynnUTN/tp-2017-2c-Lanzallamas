@@ -69,8 +69,6 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
 
     while((bytesLeidos = getline(&linea, &len, file)) > -1) { // hasta llegar al final del archivo
         if (ocupados + bytesLeidos > MB) { // no alcanza el bloque para guardar el renglón
-            strcat(bloque, "\n");
-
             Bloque * descriptorBloque = _crearBloque(numeroBloque, ocupados);
 
             ocupados = 0;
@@ -91,7 +89,6 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
     }
 
     if(ocupados != 0){ // quedan bytes para mandar para mandar
-        strcat(bloque, "\n");
         Bloque * descriptorBloque = _crearBloque(numeroBloque, ocupados);
 
         if(_manejarEnvioBloque(bloque, descriptorBloque) == -1){
@@ -114,7 +111,7 @@ int _controlarEspacioDisponible(int cantidadBloques){
     bloquesLibres = 0;
     dictionary_iterator(nodos,_contarBloquesLibres);
 
-    return 2 * cantidadBloques < bloquesLibres;
+    return 2 * cantidadBloques <= bloquesLibres;
 }
 
 void _contarBloquesLibres(char * key, void * nodo){
@@ -134,7 +131,7 @@ int _enviarBloque(char * bloque, Ubicacion ubicacion){
     if (send(nodo->socket, &mensaje, sizeof(mensaje), 0) == -1 ||
         send(nodo->socket, &ubicacion.numeroBloque, sizeof(ubicacion.numeroBloque), 0) == -1 ||
         send(nodo->socket, bloque, sizeof(char) * MB, 0) ==-1){
-        log_error(logger, "No puedo enviar al nodo %s\n", nodo->nombreNodo);
+        log_error(logger, "No puedo enviar el bloque al nodo %s\n", nodo->nombreNodo);
         return -1;
     }
 
