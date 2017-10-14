@@ -37,9 +37,8 @@ void manejarDatos(int buf, int socket){
 	case CONEXIONNODO:
 		asociarNodo(socket);
 		break;
-	case CONEXIONYAMA:
-		break;
 	case SOLICITUDARCHIVOYAMA:
+		responderYAMA(socket);
 		break;
     case RECEPCIONBLOQUE:
         break;

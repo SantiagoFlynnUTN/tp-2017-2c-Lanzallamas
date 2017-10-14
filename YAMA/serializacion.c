@@ -27,13 +27,26 @@
 
 
 void enviarTablaTransformacion(int socket_master){
-	char nombArch[255];
-	zrecv(socket_master, nombArch, sizeof(char)* 255, 0);
+	SolicitudFS solFs;
+	solFs.tipomensaje = SOLICITUDARCHIVO;
+	memset(solFs.ruta, 0, sizeof(char)*255);
+	zrecv(socket_master, solFs.ruta, sizeof(char)* 255, 0);
+
+	zsend(sock_fs, &solFs, sizeof(solFs), 0);
+
+	int respuesta;
+
+	zrecv(sock_fs, &respuesta, sizeof(respuesta), 0);
+
+
+
 	int cantidadWorkersEjemplo = 2;
 
-	send(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0);
+	zsend(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0);
 
 
+
+	printf("El nombre del archivo es: %s\n", solFs.ruta);
 	while(cantidadWorkersEjemplo--){
 		operacionTransformacion op;
 		strcpy(op.nombreNodo, "nodo1");

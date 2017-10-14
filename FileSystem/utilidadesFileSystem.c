@@ -53,6 +53,23 @@ int calcularDirectorioPadre(char * ruta){
     return directorioPadre;
 }
 
+int archivoDisponible(Archivo * archivo){
+	int bloques = list_size(archivo->bloques);
+	int i;
+
+	for(i = 0; i < bloques; ++i){
+		Bloque * bloque = list_get(archivo.bloques, i);
+		DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
+		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
+
+		if(descriptorNodoCopia0->socket == -1 && descriptorNodoCopia1->socket == -1){
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
 void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio) {
     int longitud = strlen(stringAAgregarAlPrincipio);
     int i;

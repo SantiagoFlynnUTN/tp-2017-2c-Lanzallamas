@@ -7,4 +7,5 @@ void calcularRuta(Archivo descriptorArchivo, char * nombreArchivo, char * rutaAr
 void registrarArchivo(Archivo * descriptorArchivo);
 char * obtenerNombreArchivo(char * ruta);
 int calcularDirectorioPadre(char * ruta);
+int archivoDisponible(Archivo * archivo);
 #endif //TP_2017_2C_LANZALLAMAS_UTILIDADESFILESYSTEM_H

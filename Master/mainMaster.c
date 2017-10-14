@@ -31,11 +31,16 @@ workerTransformacion* tablaTransformacion[];
 
 int main(int argc, char *argv[]){
 
+	if(argc < 5){
+		printf("faltan parametros\n");
+		exit(-1);
+	}
+
 	inicializarMaster();
 	printf("Conectando a YAMA...\n");
 	iniciarConexionAYAMA(&socket_yama);
 	printf("Enviando solicitud de Job\n");
-	solicitudJob(socket_yama, "algo.txt");
+	solicitudJob(socket_yama, argv[3]);
 
 	int cantidadWorkersEjemplo;
 	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);

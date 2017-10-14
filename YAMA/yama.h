@@ -13,6 +13,12 @@ typedef enum{ENPROCESO=1, ERRORYAMA, FINALIZADO} Estado;
 typedef enum{ROUNDROBIN=1, WEIGHTEDROUNDROBIN} AlgoritmoBalanceo;
 
 /* ESTRUCTURAS */
+
+typedef struct{
+	int tipomensaje;
+	char ruta[255];
+} __attribute__((packed)) SolicitudFS;
+
 typedef struct t_TablaEstado{
 	int jobId;
 	int masterId;
@@ -84,7 +90,7 @@ t_log * logger;
 ConexionFileSystem conexionFileSystem;
 AlgoritmoBalanceo algoritmoBalanceo;
 int retardoPlanificacion;
-
+int sock_fs;
 t_list* tablaEstado;
 
 /* FUNCIONES */
