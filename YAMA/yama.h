@@ -22,12 +22,12 @@ typedef struct{
 typedef struct t_TablaEstado{
 	int jobId;
 	int masterId;
-	char * nodoId;
+	char nombreNodo[100];
 	int numeroBloque;
 	TipoOperacion etapa;
-	char * archivoTemporal;
+	char archivoTemporal[255];
 	Estado estado;
-} entradaTablaEstado;
+} EntradaTablaEstado;
 
 typedef struct{
 	char ruta[255];
@@ -56,7 +56,6 @@ typedef struct t_DescriptorNodo{
 	char ip[20];
 	uint16_t puerto;
 	int bloque;
-
 } DescriptorNodo;
 
 // Está repetido sacar de acá cuando hagamos una librería común
@@ -75,6 +74,13 @@ typedef struct {
 	char ip[20];
 	uint16_t puerto;
 } ConexionFileSystem;
+
+typedef struct {
+	char nombre[100];
+	int bloque;
+	char ip[20];
+	uint16_t puerto;
+} InfoNodo;
 
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
