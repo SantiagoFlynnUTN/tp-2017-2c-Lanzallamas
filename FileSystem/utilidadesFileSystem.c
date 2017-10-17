@@ -58,7 +58,7 @@ int archivoDisponible(Archivo * archivo){
 	int i;
 
 	for(i = 0; i < bloques; ++i){
-		Bloque * bloque = list_get(archivo.bloques, i);
+        Bloque * bloque = (Bloque *)list_get(archivo->bloques, i);
 		DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
 		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
@@ -68,6 +68,35 @@ int archivoDisponible(Archivo * archivo){
 	}
 
 	return 1;
+}
+
+int calcularEntradaDirectorio(char * dir){
+    int entradaDirectorio = 0;
+    char ** pathsElements = string_split(dir, "/");
+    while(*pathsElements != NULL){
+        entradaDirectorio = _buscarDirectorio(*pathsElements);
+
+        if(entradaDirectorio == -1){
+            return -1;
+        }
+
+        pathsElements++;
+    }
+
+    return entradaDirectorio;
+}
+
+t_list * obtenerNombresDirectoriosHijos(int dir){
+    int i;
+    t_list * lista = list_create();
+
+    for(i = 0; i < 100; ++i){
+        if(tabla_Directorios[i].padre == dir && strlen(tabla_Directorios[i].nombre) > 0){
+            list_add(lista, tabla_Directorios[i].nombre);
+        }
+    }
+
+    return lista;
 }
 
 void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio) {
