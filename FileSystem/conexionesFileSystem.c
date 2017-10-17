@@ -33,7 +33,7 @@ void responderYAMA(int socketYAMA){
 	}
 
 	int mensaje = 0;
-	int bloques = list_get(descriptorArchivo->bloques);
+	int bloques = list_size(descriptorArchivo->bloques);
 
 	send(socketYAMA, &mensaje, sizeof(mensaje), 0);
 	send(socketYAMA, &bloques, sizeof(bloques), 0);
