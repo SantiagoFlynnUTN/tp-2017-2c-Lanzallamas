@@ -31,9 +31,11 @@
 #include <protocoloComunicacion.h>
 #include <sockets.h>
 
+int YAMAsock;
 
 void solicitudReduccion(int socket_yama) {
 
+	YAMAsock = socket_yama; //como dije, no me puteen, je.
 	int pedRed;
 	pedRed = PEDIDOREDUCCION;
 	zsend(socket_yama, &pedRed, sizeof(int), 0);
@@ -44,6 +46,7 @@ void solicitudReduccion(int socket_yama) {
 
 	int i = 0;
 	while (op.cantidadTemporales--) {
+		printf("llegue\n");
 		zrecv(socket_yama, &rutas[op.cantidadTemporales], sizeof(rutaArchivo),
 				0);
 		printf("ruta: %s\n", &rutas[op.cantidadTemporales]);
@@ -87,8 +90,13 @@ void mandarSolicitudReduccion(operacionReduccion* op) {
 
 	zsend(socketNodo, &mensaje, sizeof(mensaje), 0);
 
-	int a;
-	zrecv(socketNodo, &a, sizeof(int), 0);
+	int a, bytes;
+	bytes= recv(socketNodo, &a, sizeof(int), 0);
+	if(bytes == -1){
+		printf("Fallo reduccion en nodo %s\n", op->nombreNodo);
+		zsend(YAMAsock, FALLOREDLOCAL, sizeof(int), 0);
+		//zsend(YAMAsock, op->nombreNodo, sizeof(char)*100, 0);
+	}
 	if (a == 4) {
 		printf("worker %d finalizó reduccion\n", socketNodo);
 		pthread_exit(NULL);

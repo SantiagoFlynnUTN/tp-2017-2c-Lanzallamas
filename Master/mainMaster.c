@@ -27,14 +27,14 @@
 int socket_yama;
 int socket_nodo;
 
-workerTransformacion* tablaTransformacion[];
-
 int main(int argc, char *argv[]){
 
 	if(argc < 5){
 		printf("faltan parametros\n");
 		exit(-1);
 	}
+
+	strcpy(argv[3], "algo.txt");
 
 	inicializarMaster();
 	printf("Conectando a YAMA...\n");
