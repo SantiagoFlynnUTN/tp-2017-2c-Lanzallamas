@@ -22,12 +22,16 @@
 #include <protocoloComunicacion.h>
 #include "transformacionMaster.h"
 #include "reduccionMaster.h"
+#include <sys/time.h>
 
 
 int socket_yama;
 int socket_nodo;
 
 int main(int argc, char *argv[]){
+
+	struct timeval  tv1, tv2;
+	gettimeofday(&tv1, NULL);
 
 	if(argc < 5){
 		printf("faltan parametros\n");
@@ -45,10 +49,13 @@ int main(int argc, char *argv[]){
 	int cantidadWorkersEjemplo;
 	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);
 
-
 	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo);
 
 	solicitudReduccion(socket_yama);
 
+	gettimeofday(&tv2, NULL);
+	printf ("Tiempo de ejecución del Job = %f segundos\n",
+	         (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+	         (double) (tv2.tv_sec - tv1.tv_sec));
 	return 0;
 }
