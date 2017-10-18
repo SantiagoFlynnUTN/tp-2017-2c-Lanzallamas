@@ -46,3 +46,13 @@ InfoNodo _weightedRoundRobin(InfoNodo copia0, InfoNodo copia1){
 
     return contadorNodo0 <= contadorNodo1 ? copia0 : copia1;
 }
+
+int availability(){
+	if(algoritmoBalanceo == ROUNDROBIN){
+	        return disponibilidad_base;
+	    }
+
+	    return disponibilidad_wRR();
+	}
+
+//unsigned int disponiblidad_wRR();

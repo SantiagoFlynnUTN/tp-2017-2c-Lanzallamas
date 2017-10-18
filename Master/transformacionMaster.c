@@ -28,7 +28,7 @@
 #include <protocoloComunicacion.h>
 #include <sockets.h>
 
-
+int YAMAsock;
 
 int respuestaSolicitud(int socket_yama) {
 
@@ -82,8 +82,13 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 
 	enviarArchivo(socketWorker, "prueba.sh");
 
-	int a;
-	zrecv(socketWorker, &a, sizeof(int), 0);
+	int a, bytes;
+	bytes = recv(socketWorker, &a, sizeof(int), 0);
+	if(bytes == -1){
+		printf("fallo la transformacion en el nodo %s\n", t->nombreNodo);
+		zsend(YAMAsock, FALLOTRANSFORMACION, sizeof(int), 0);
+	}
+
 	if (a == 4){
 		printf("worker %d finalizó transformación\n", socketWorker);
 		pthread_exit(NULL);
@@ -97,6 +102,7 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 	pthread_t tid[cantidadWorkers];
 	int rc[cantidadWorkers];
 	int i = 0;
+	YAMAsock = socket_yama; //no me puteen por esto, tengo mucha paja.
 	while (cantidadWorkers--) {
 
 		recv(socket_yama,t + cantidadWorkers, sizeof(workerTransformacion), 0);

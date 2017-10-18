@@ -7,6 +7,7 @@
 
 #include "worker.h"
 #include <sockets.h>
+#include <protocoloComunicacion.h>
 
 
 void iniciarReduccion(int socket) {
@@ -14,8 +15,9 @@ void iniciarReduccion(int socket) {
 	mensajeReduc opReduc;
 	zrecv(socket, &opReduc, sizeof(opReduc), 0);
 
-	int num = 4;
-	zsend(socket, &num, sizeof(int), 0);
+	//rutinaTransformacion
+
+	zsend(socket, TRANSFORMACIONOK, sizeof(int), 0);
 	exit(1);
 
 }

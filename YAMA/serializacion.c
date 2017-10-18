@@ -127,7 +127,10 @@ void manejarDatos(int buf, int socket){
 	case PEDIDOREDUCCION:
 		enviarSolicitudReduccion(socket);
 		break;
-	}
+	case FALLOTRANSFORMACION:
+		break;
+	case FALLOREDLOCAL:
+		break;
 }
 
 void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
