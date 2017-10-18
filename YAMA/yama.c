@@ -35,7 +35,8 @@ void _cargarConfiguracion(){
 	if (!config_has_property(config, FS_IP) ||
 		!config_has_property(config, FS_PUERTO) ||
 		!config_has_property(config, RETARDO_PLANIFICACION) ||
-		!config_has_property(config, ALGORITMO_BALANCEO)){
+		!config_has_property(config, ALGORITMO_BALANCEO) ||
+		!config_has_property(config, DISPONIBILIDAD_BASE)){
 		log_error(logger, "Bad Config");
 		exit(120);
 	}
@@ -44,6 +45,7 @@ void _cargarConfiguracion(){
 	retardoPlanificacion = config_get_int_value(config, RETARDO_PLANIFICACION);
 	_definirAlgoritmoBalanceo();
 	_copiarFileSystemIP();
+	disponibilidad_base = config_get_int_value(config, DISPONIBILIDAD_BASE);
 }
 
 void _copiarFileSystemIP(){

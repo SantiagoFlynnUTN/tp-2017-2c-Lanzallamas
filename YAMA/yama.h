@@ -92,6 +92,7 @@ typedef struct {
 #define ALGORITMO_BALANCEO "ALGORITMO_BALANCEO"
 #define ROUND_ROBIN "ROUND_ROBIN"
 #define WEIGHTED_ROUND_ROBIN "WEIGHTED_ROUND_ROBIN"
+#define DISPONIBILIDAD_BASE "DISPONIBILIDAD_BASE"
 
 t_config * config;
 t_log * logger;
@@ -100,6 +101,7 @@ AlgoritmoBalanceo algoritmoBalanceo;
 int retardoPlanificacion;
 int sock_fs;
 t_list* tablaEstado;
+int disponibilidad_base;
 
 /* FUNCIONES */
 void inicializarYAMA();
