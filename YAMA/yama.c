@@ -68,10 +68,10 @@ void _definirAlgoritmoBalanceo(){
 
 	algoritmo = config_get_string_value(config, ALGORITMO_BALANCEO);
 
-	if(strcmp(algoritmo,ROUND_ROBIN) == 0){
-		algoritmoBalanceo = ROUNDROBIN;
-	} else if(strcmp(algoritmo,WEIGHTED_ROUND_ROBIN) == 0){
-		algoritmoBalanceo = WEIGHTEDROUNDROBIN;
+	if(strcmp(algoritmo,CLOCK) == 0){
+		algoritmoBalanceo = CLOCK;
+	} else if(strcmp(algoritmo,WEIGHTED_CLOCK) == 0){
+		algoritmoBalanceo = WEIGHTEDCLOCK;
 	} else {
 		printf("ALGORITMO DE PLANIFICACION DESCONOCIDO\n");
 		exit(121);

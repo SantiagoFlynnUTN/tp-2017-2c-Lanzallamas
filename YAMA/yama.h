@@ -10,7 +10,7 @@
 /* ENUMS */
 typedef enum{TRANSFORMACION=1, REDUCCIONLOCAL} TipoOperacion;
 typedef enum{ENPROCESO=1, ERRORYAMA, FINALIZADO} Estado;
-typedef enum{ROUNDROBIN=1, WEIGHTEDROUNDROBIN} AlgoritmoBalanceo;
+typedef enum{CLOCK=1, WEIGHTEDCLOCK} AlgoritmoBalanceo;
 
 /* ESTRUCTURAS */
 
@@ -51,21 +51,17 @@ typedef struct{
 } __attribute__((packed)) operacionTransformacion;
 
 // Está repetido sacar de acá cuando hagamos una librería común
-typedef struct t_DescriptorNodo{
-	char nombreNodo[100];
-	char ip[20];
-	uint16_t puerto;
-	int bloque;
-} DescriptorNodo;
-
-// Está repetido sacar de acá cuando hagamos una librería común
 typedef struct t_DescriptorBloque{
 	int numeroBloque;
 	long bytes;
+	char copia0;
+	char copia1;
+	char nodoAsignado;
+	DescriptorBloque siguiente;
 } DescriptorBloque;
 
 typedef struct t_Worker{
-	DescriptorNodo descriptor;
+	InfoNodo descriptor;
 	int tareasRealizadas; // agregué estos campos porque me pareció que está bueno tenerlos disponibles 
 	int tareasEnProceso; // sino el load balancer tiene que recorrer la tabla cada vez
 } Worker;
@@ -80,6 +76,10 @@ typedef struct {
 	int bloque;
 	char ip[20];
 	uint16_t puerto;
+	int disponibilidad;
+	int trabajoActual;
+	int tareasHistoricas;
+	InfoNodo siguiente;
 } InfoNodo;
 
 /* VARIABLES GLOBALES Y DEFINES*/
@@ -90,8 +90,8 @@ typedef struct {
 #define FS_PUERTO "FS_PUERTO"
 #define RETARDO_PLANIFICACION "RETARDO_PLANIFICACION"
 #define ALGORITMO_BALANCEO "ALGORITMO_BALANCEO"
-#define ROUND_ROBIN "ROUND_ROBIN"
-#define WEIGHTED_ROUND_ROBIN "WEIGHTED_ROUND_ROBIN"
+#define CLOCK "CLOCK"
+#define WEIGHTED_CLOCK "WEIGHTED_CLOCK"
 #define DISPONIBILIDAD_BASE "DISPONIBILIDAD_BASE"
 
 t_config * config;
@@ -102,6 +102,9 @@ int retardoPlanificacion;
 int sock_fs;
 t_list* tablaEstado;
 int disponibilidad_base;
+unsigned int wlMax;
+unsigned int wl;
+InfoNodo pClock;
 
 /* FUNCIONES */
 void inicializarYAMA();
