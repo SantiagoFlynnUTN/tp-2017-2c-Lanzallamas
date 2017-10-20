@@ -57,21 +57,17 @@ typedef struct t_DescriptorBloque{
 	char copia0;
 	char copia1;
 	char nodoAsignado;
-	DescriptorBloque *siguiente;
-} DescriptorBloque;
+	struct t_DescriptorBloque *siguiente;
+}DescriptorBloque;
 
-typedef struct t_Worker{
-	InfoNodo descriptor;
-	int tareasRealizadas; // agregué estos campos porque me pareció que está bueno tenerlos disponibles 
-	int tareasEnProceso; // sino el load balancer tiene que recorrer la tabla cada vez
-} Worker;
+//typedef struct t_DescriptorBloque DescriptorBloque;
 
 typedef struct {
 	char ip[20];
 	uint16_t puerto;
 } ConexionFileSystem;
 
-typedef struct {
+typedef struct t_InfoNodo{
 	char nombre[100];
 	int bloque;
 	char ip[20];
@@ -79,12 +75,9 @@ typedef struct {
 	int disponibilidad;
 	int trabajoActual;
 	int tareasHistoricas;
-	InfoNodo *siguiente;
+	struct t_infoNodo *siguiente;
 } InfoNodo;
 
-typedef struct {
-	InfoNodo primero;
-};
 
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
@@ -116,3 +109,4 @@ void inicializarYAMA();
 void recargarConfiguracion();
 
 #endif /* YAMA_H_ */
+
