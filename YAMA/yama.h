@@ -57,7 +57,7 @@ typedef struct t_DescriptorBloque{
 	char copia0;
 	char copia1;
 	char nodoAsignado;
-	DescriptorBloque siguiente;
+	DescriptorBloque *siguiente;
 } DescriptorBloque;
 
 typedef struct t_Worker{
@@ -79,8 +79,12 @@ typedef struct {
 	int disponibilidad;
 	int trabajoActual;
 	int tareasHistoricas;
-	InfoNodo siguiente;
+	InfoNodo *siguiente;
 } InfoNodo;
+
+typedef struct {
+	InfoNodo primero;
+};
 
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
@@ -105,6 +109,7 @@ int disponibilidad_base;
 unsigned int wlMax;
 unsigned int wl;
 InfoNodo pClock;
+InfoNodo auxiliar;
 
 /* FUNCIONES */
 void inicializarYAMA();

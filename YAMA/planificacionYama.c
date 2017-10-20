@@ -1,7 +1,7 @@
 #include "planificacionYama.h"
 #include <string.h>
 
-InfoNodo _clock(InfoNodo copia0, InfoNodo copia1);
+/*InfoNodo _clock(InfoNodo copia0, InfoNodo copia1);
 InfoNodo _weightedClock(InfoNodo copia0, InfoNodo copia1);
 
 InfoNodo elegirNodo(InfoNodo copia0, InfoNodo copia1){
@@ -12,7 +12,7 @@ InfoNodo elegirNodo(InfoNodo copia0, InfoNodo copia1){
     return _weightedRoundRobin(copia0, copia1);
 }
 
-/*InfoNodo _clock(InfoNodo copia0, InfoNodo copia1){
+InfoNodo _clock(InfoNodo copia0, InfoNodo copia1){
     int index = list_size(tablaEstado);
 
     while(index--){
@@ -47,7 +47,9 @@ InfoNodo _weightedClock(InfoNodo copia0, InfoNodo copia1){
     return contadorNodo0 <= contadorNodo1 ? copia0 : copia1;
 }*/
 
-void planificacion(InfoNodo *nodos, DescriptorBloque *bloques){
+InfoNodo *nodos = list_create();
+
+void planificacion(nodos, DescriptorBloque *bloques){
 	setAvailability(nodos);
 	setTareasRealizadas(nodos);
 	sortByAvailability(nodos);
@@ -73,19 +75,67 @@ int estaEnNodo(DescriptorBloque bloque, InfoNodo *pClock){
 
 
 
-void setAvailability(InfoNodo nodos){
+void setAvailability(nodos){
 	if(algoritmoBalanceo == CLOCK){
-	        while(nodos != NULL){
-	        	nodos.disponibilidad = disponibilidad_base;
+		//faltaria hacer que auxiliar apunte al primero de la lista
+	        while(auxiliar != NULL){
+	        	auxiliar.disponibilidad = disponibilidad_base;
+	        	auxiliar = auxiliar.siguiente;
 	        }
 	    }
 	if(algoritmoBalanceo == WEIGHTEDCLOCK){
-			while(nodos != NULL){
-				nodos.disponibilidad = disponibilidad_base + pWL(nodos);
+			while(auxiliar != NULL){
+				auxiliar.disponibilidad = disponibilidad_base + pWL(auxiliar);
+				auxiliar = auxiliar.siguiente;
 			}
 	}
 	}
 
+void wL(InfoNodo nodo){
+
+}
+
+int pWl(InfoNodo nodo){
+	wL(nodo);
+	return wlMax - nodo.trabajoActual;
+}
+
+void setTareasRealizadas(InfoNodo nodos){
+	if(tablaEstado != NULL){
+
+	}
+
+}
 
 
-//unsigned int disponiblidad_wRR();
+void sortByAvailability(nodos){
+	int i, j, k;
+	InfoNodo nodoAux;
+	//apuntar auxiliar al primero de la lista
+	for (i = 0; i < (list_size(nodos)-1); ++i) {
+		for(j = 0; j < (list_size(nodos)-1); ++j){
+					if(auxiliar.disponibilidad < auxiliar.siguiente.disponibilidad){
+						nodoAux = auxiliar;
+						nodoAux.siguiente = auxiliar.siguiente.siguiente;
+						auxiliar = auxiliar.siguiente;
+						auxiliar.siguiente = nodoAux;
+					}
+				}
+	}
+}
+
+void sortByTareasRealizadas(nodos){
+	int i, j, k;
+		InfoNodo nodoAux;
+		//apuntar auxiliar al primero de la lista
+		for (i = 0; i < (list_size(nodos)-1); ++i) {
+			for(j = 0; j < (list_size(nodos)-1); ++j){
+						if(auxiliar.tareasHistoricas > auxiliar.siguiente.tareasHistoricas){
+							nodoAux = auxiliar;
+							nodoAux.siguiente = auxiliar.siguiente.siguiente;
+							auxiliar = auxiliar.siguiente;
+							auxiliar.siguiente = nodoAux;
+						}
+					}
+		}
+}
