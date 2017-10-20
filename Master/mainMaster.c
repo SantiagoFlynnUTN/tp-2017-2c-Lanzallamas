@@ -1,7 +1,3 @@
-/*
-    ** client.c -- Ejemplo de cliente de sockets de flujo
-    */
-
 #include "mainMaster.h"
 #include "master.h"
 #include <stdio.h>
@@ -38,12 +34,10 @@ int main(int argc, char *argv[]){
 		exit(-1);
 	}
 
-	strcpy(argv[3], "algo.txt");
-
 	inicializarMaster();
-	printf("Conectando a YAMA...\n");
+	log_info(logger, "Conectando a YAMA...\n");
 	iniciarConexionAYAMA(&socket_yama);
-	printf("Enviando solicitud de Job\n");
+	log_info(logger, "Enviando solicitud de Job\n");
 	solicitudJob(socket_yama, argv[3]);
 
 	int cantidadWorkersEjemplo;

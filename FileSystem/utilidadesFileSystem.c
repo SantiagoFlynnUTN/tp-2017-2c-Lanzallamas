@@ -99,6 +99,18 @@ t_list * obtenerNombresDirectoriosHijos(int dir){
     return lista;
 }
 
+int obtenerIdDirectorio(){
+    int i;
+
+    for(i = 0; i < 100; ++i){
+        if(strlen(tabla_Directorios[i].nombre) == 0){
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio) {
     int longitud = strlen(stringAAgregarAlPrincipio);
     int i;

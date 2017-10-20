@@ -16,17 +16,21 @@
 #include "commons/collections/queue.h"
 #include <readline/readline.h>
 #include "utilidadesFileSystem.h"
+#include "recepcionBloques.h"
+#include "md5/md5.h"
+#include <sys/stat.h>
+#include "envioBloques.h"
 
 void formatFileSystem();
 void rm(char ** linea);
 void renameFs(char * nombreOriginal, char * nombreFinal);
 void mv(char * nombreOriginal, char * nombreFinal);
 void cat(char * nombre);
-void mkdir(char * dir);
+void mkdirConsola(char * dir);
 void cpfrom(char * archivo, char * archivoFS);
 void cpto(char * archivoFS, char * archivo);
 void cpblock(char * archivo, char * numeroBloque, char * nodo);
-void md5(char * archivo);
+void md5Consola(char * archivo);
 void ls(char * dir);
 void info(char * archivo);
 
@@ -86,7 +90,11 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("cat", linea[0]) == 0){
-			cat(linea[1]);
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de archivo\n");
+			}else{
+				cat(linea[1]);
+			}
 			continue;
 		}
 
@@ -95,7 +103,11 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("mkdir", linea[0]) == 0){
-			mkdir(linea[1]);
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de directorio\n");
+			}else{
+				mkdirConsola(linea[1]);
+			}
 			continue;
 		}
 
@@ -104,7 +116,14 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("cpfrom", linea[0]) == 0){
-			cpfrom(linea[1], linea[2]);
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de archivo\n");
+			}else if(linea[2] == NULL) {
+				printf("Error: falta el nombre de archivo en YAMA FS\n");
+			}else{
+				cpfrom(linea[1], linea[2]);
+			}
+
 			continue;
 		}
 
@@ -113,7 +132,14 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("cpto", linea[0]) == 0){
-			cpto(linea[1], linea[2]);
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de archivo en YAMA FS\n");
+			}else if(linea[2] == NULL) {
+				printf("Error: falta el nombre de archivo\n");
+			}else{
+				cpto(linea[1], linea[2]);
+			}
+
 			continue;
 		}
 
@@ -131,7 +157,11 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("md5", linea[0]) == 0){
-			md5(linea[1]);
+            if(linea[1] == NULL){
+                printf("Error: falta el nombre de archivo\n");
+            }else{
+				md5Consola(linea[1]);
+            }
 			continue;
 		}
 
@@ -181,12 +211,89 @@ void formatFileSystem(){}
 void rm(char ** linea){}
 void renameFs(char * nombreOriginal, char * nombreFinal){}
 void mv(char * nombreOriginal, char * nombreFinal){}
-void cat(char * nombre){}
-void mkdir(char * dir){}
-void cpfrom(char * archivo, char * archivoFS){}
-void cpto(char * archivoFS, char * archivo){}
-void cpblock(char * archivo, char * numeroBloque, char * nodo){}
-void md5(char * archivo){}
+
+void cat(char * nombre){
+	if(obtenerArchivo(nombre, TEMPFILE) == 0){
+		FILE * fd = fopen(TEMPFILE, "r");
+
+		struct stat fileStats;
+
+		if(fd == NULL || stat(TEMPFILE, &fileStats) != 0){ // error
+			printf("No se pudo traer correctamente el archivo de los data node\n");
+			return;
+		}
+
+		char contenido[fileStats.st_size];
+
+		if(fread(contenido, fileStats.st_size * sizeof(char), 1, fd) != 1){
+			printf("Error leyendo el archivo\n");
+		}
+
+		printf("%s\n", contenido);
+	}
+}
+
+void mkdirConsola(char * dir){
+	int entrada = calcularEntradaDirectorio(dir);
+
+	if(entrada != -1){
+		printf("Ya existe el directorio\n");
+		return;
+	}
+
+	int idDirectorio = obtenerIdDirectorio();
+
+	if(idDirectorio == -1){
+		printf("Se ha alcanzado la máxima cantidad de directorios\n");
+		return;
+	}
+
+	strcpy(tabla_Directorios[idDirectorio].nombre, obtenerNombreArchivo(dir));
+	tabla_Directorios[idDirectorio].padre = calcularDirectorioPadre(dir);
+	tabla_Directorios[idDirectorio].id = idDirectorio;
+	listaArchivosDirectorios[idDirectorio] = list_create();
+}
+
+void cpfrom(char * archivo, char * archivoFS){
+	if(enviarBloques(archivo, archivoFS) != 0){
+		printf("No se pudo guardar el archivo en el file system\n");
+	}
+}
+
+void cpto(char * archivoFS, char * archivo){
+	if(obtenerArchivo(archivoFS, archivo) != 0){
+		printf("No se pudo obtener el archivo de YAMA FS\n");
+	}
+}
+
+void cpblock(char * archivo, char * numeroBloque, char * nodo){
+
+}
+
+void md5Consola(char * archivo){
+    if(obtenerArchivo(archivo, TEMPFILE) == 0){
+        FILE * fd = fopen(TEMPFILE, "r");
+
+		struct stat fileStats;
+
+		if(fd == NULL || stat(TEMPFILE, &fileStats) != 0){ // error
+			printf("No se pudo traer correctamente el archivo de los data node\n");
+			return;
+		}
+
+        char contenido[fileStats.st_size];
+
+		if(fread(contenido, fileStats.st_size * sizeof(char), 1, fd) != 1){
+			printf("Error leyendo el archivo\n");
+		}
+
+		char md5Value[32];
+
+		getMD5(contenido, fileStats.st_size, md5Value);
+
+		printf("%s\n", md5Value);
+    }
+}
 
 void ls(char * dir){
 	int entradaDirectorio = calcularEntradaDirectorio(dir);

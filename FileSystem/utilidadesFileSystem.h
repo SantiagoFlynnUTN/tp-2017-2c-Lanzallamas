@@ -10,4 +10,5 @@ int calcularDirectorioPadre(char * ruta);
 int calcularEntradaDirectorio(char * dir);
 int archivoDisponible(Archivo * archivo);
 t_list * obtenerNombresDirectoriosHijos(int dir);
+int obtenerIdDirectorio();
 #endif //TP_2017_2C_LANZALLAMAS_UTILIDADESFILESYSTEM_H

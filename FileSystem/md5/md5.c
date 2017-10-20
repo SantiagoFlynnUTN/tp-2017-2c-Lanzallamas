@@ -32,7 +32,7 @@ uint32_t k[] = {
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};
 
  
-void md5(char *initial_msg, size_t initial_len, char * MD5) {
+void getMD5(char *initial_msg, size_t initial_len, char * MD5) {
     // Contienen el Hash => como son 128 bits lo divido en 4 valores de 32 bits
     uint32_t hash0, hash1, hash2, hash3;
     // Message (to prepare)

@@ -1,13 +1,3 @@
-/*
- * reduccionMaster.c
-
-
-
- *
- *  Created on: 1/10/2017
- *      Author: utnso
- */
-
 #include "mainMaster.h"
 #include "master.h"
 #include <stdio.h>
@@ -33,6 +23,8 @@
 
 int YAMAsock;
 
+void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos);
+
 void solicitudReduccion(int socket_yama) {
 
 	YAMAsock = socket_yama; //como dije, no me puteen, je.
@@ -47,9 +39,9 @@ void solicitudReduccion(int socket_yama) {
 	int i = 0;
 	while (op.cantidadTemporales--) {
 		printf("llegue\n");
-		zrecv(socket_yama, &rutas[op.cantidadTemporales], sizeof(rutaArchivo),
+		zrecv(socket_yama, rutas[op.cantidadTemporales].ruta, sizeof(rutaArchivo),
 				0);
-		printf("ruta: %s\n", &rutas[op.cantidadTemporales]);
+		printf("ruta: %s\n", rutas[op.cantidadTemporales].ruta);
 		i++;
 	}
 
@@ -93,8 +85,9 @@ void mandarSolicitudReduccion(operacionReduccion* op) {
 	int a, bytes;
 	bytes= recv(socketNodo, &a, sizeof(int), 0);
 	if(bytes == -1){
+		int mensajeError = FALLOREDLOCAL;
 		printf("Fallo reduccion en nodo %s\n", op->nombreNodo);
-		zsend(YAMAsock, FALLOREDLOCAL, sizeof(int), 0);
+		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
 		//zsend(YAMAsock, op->nombreNodo, sizeof(char)*100, 0);
 	}
 	if (a == 4) {
@@ -103,8 +96,7 @@ void mandarSolicitudReduccion(operacionReduccion* op) {
 	}
 }
 
-void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas,
-		int cantidadRutas, int cantNodos) {
+void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos) {
 	pthread_t tid[cantNodos];
 	int rc[cantNodos];
 	int i = 0;

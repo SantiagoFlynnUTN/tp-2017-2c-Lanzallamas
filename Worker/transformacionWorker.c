@@ -29,7 +29,7 @@ void recibirArchivo(int socket, char * ruta){
 	char buffer[longitud];
 	memset(buffer, 0, longitud);
 	printf("entre\n");
-	zrecv(socket, &buffer, longitud, 0);
+	zrecv(socket, &buffer, longitud * sizeof(char), 0);
 	printf("sali\n");
 	//guardarArchivo(ruta, buffer, longitud);
 }

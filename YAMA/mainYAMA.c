@@ -1,11 +1,3 @@
-/*
- * main.c
- *
- *  Created on: 2/9/2017
- *      Author: utnso
- */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +10,7 @@
 #include "servidor.h"
 #include "chat.h"
 #include "yama.h"
+#include "clienteFS.h"
 
 
 void nuevoCliente(char* remoteHost, int newfd){
@@ -49,8 +42,7 @@ void conectarAFileSystem() {
 int main(){
 	inicializarYAMA();
 	inicializarServer();
-	//conectarAFileSystem();
-	//iniciarConexionAFS(&sock_fs);
+	iniciarConexionAFS(&sock_fs);
 
 	for(;;);
 	return 0;

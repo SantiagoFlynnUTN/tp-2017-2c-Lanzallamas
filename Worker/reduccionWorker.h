@@ -8,6 +8,6 @@
 #ifndef REDUCCIONWORKER_H_
 #define REDUCCIONWORKER_H_
 
-iniciarReduccion(int socket);
+void iniciarReduccion(int socket);
 
 #endif /* REDUCCIONWORKER_H_ */

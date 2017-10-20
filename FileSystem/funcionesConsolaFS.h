@@ -1,16 +1,10 @@
-/*
- * funcionesConsolaFS.h
- *
- *  Created on: 15/9/2017
- *      Author: utnso
- */
-
 #ifndef FUNCIONESCONSOLAFS_H_
 #define FUNCIONESCONSOLAFS_H_
 
 
 int yama_mkdir(char* path_dir);
 
+#define TEMPFILE "tempFile"
 
 //FUNCIONES AUX
 char *yamaGetNFile(char *path);

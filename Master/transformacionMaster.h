@@ -1,10 +1,3 @@
-/*
- * transformacionMaster.h
- *
- *  Created on: 18/9/2017
- *      Author: utnso
- */
-
 #ifndef TRANSFORMACIONMASTER_H_
 #define TRANSFORMACIONMASTER_H_
 
