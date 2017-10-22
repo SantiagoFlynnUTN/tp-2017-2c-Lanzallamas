@@ -16,8 +16,6 @@ Bloque * _crearBloque(int numeroBloque, long bytes);
 void _calcularUbicacionBloque(Bloque * bloque);
 int _obtenerNumeroBloqueLibre(t_bitarray * bitmap);
 int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque);
-void _destruirArchivo(Archivo * descriptorArchivo);
-void _liberarBloque(Ubicacion bloque);
 
 int bloquesLibres = 0;
 
@@ -74,7 +72,7 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
             ocupados = 0;
 
             if(_manejarEnvioBloque(bloque, descriptorBloque) == -1){
-                _destruirArchivo(descriptorArchivo);
+                destruirArchivo(descriptorArchivo);
                 log_error(logger, "Error guardando los bloques en los datanode\n", archivo);
                 return -1;
             }
@@ -92,7 +90,7 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
         Bloque * descriptorBloque = _crearBloque(numeroBloque, ocupados);
 
         if(_manejarEnvioBloque(bloque, descriptorBloque) == -1){
-            _destruirArchivo(descriptorArchivo);
+            destruirArchivo(descriptorArchivo);
             log_error(logger, "Error guardando los bloques en los datanode\n", archivo);
             return -1;
         }
@@ -206,30 +204,4 @@ int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
     }
 
     return 0;
-}
-
-void _destruirArchivo(Archivo * descriptorArchivo){
-    int bloques = list_size(descriptorArchivo->bloques);
-    int i;
-
-    for(i = 0; i < bloques; ++i){
-        Bloque * descriptorBloque = (Bloque *)list_get(descriptorArchivo->bloques, i);
-        list_remove(descriptorArchivo->bloques, i);
-
-        _liberarBloque(descriptorBloque->copia0);
-        _liberarBloque(descriptorBloque->copia1);
-
-        free(descriptorBloque);
-    }
-
-    list_destroy(descriptorArchivo->bloques);
-
-    free(descriptorArchivo);
-}
-
-void _liberarBloque(Ubicacion bloque){
-    DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, bloque.nodo);
-    bitarray_clean_bit(nodo->bitmap, bloque.numeroBloque);
-
-    nodo->bloquesLibres++;
 }

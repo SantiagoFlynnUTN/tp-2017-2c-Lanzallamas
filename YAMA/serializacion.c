@@ -19,6 +19,7 @@
 
 void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
 void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
+void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
 
 void enviarTablaTransformacion(int socket_master){
 	SolicitudFS solFs;
@@ -38,10 +39,10 @@ void enviarTablaTransformacion(int socket_master){
 	}
 
 	int bloques, i;
+	t_list * listaNodos = list_create();
 
 	zrecv(sock_fs, &bloques, sizeof(bloques), 0);
 
-	zsend(socket_master, &bloques, sizeof(bloques), 0);
 	for(i = 0; i < bloques; ++i){
 		int copias, j;
 		long bytes;
@@ -57,13 +58,16 @@ void enviarTablaTransformacion(int socket_master){
 			zrecv(sock_fs, &nodos[j].bloque, sizeof(nodos[j].bloque), 0);
 		}
 
-		if (copias == 1){
+		_registrarBloquePlanificacion(listaNodos, i, bytes, nodos, copias);
+		/*if (copias == 1){
 			mandarOperacionTrafo(socket_master, nodos[0].nombreNodo, nodos[0].ip, nodos[0].puerto, nodos[0].bloque, bytes);
 		} else if(copias == 2){
 			mandarOperacionTrafo(socket_master, nodos[0].nombreNodo, nodos[0].ip, nodos[0].puerto, nodos[0].bloque, bytes);
 			// planificar y enviar
-		}
+		}*/
 	}
+
+	zsend(socket_master, &bloques, sizeof(bloques), 0);
 }
 
 void enviarSolicitudReduccion(int socket) {
@@ -131,3 +135,45 @@ void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint1
 
 	list_add(tablaEstado, entradaTablaEstado);
 }
+
+void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos){
+	int i;
+
+	for(i = 0; i < cantidadNodos; ++i){
+		bool criterio(void * nodo){
+			InfoNodo * infoNodo = (InfoNodo *) nodo;
+
+			return strcmp(infoNodo->nombre, nodos[i].nombreNodo) == 0;
+		}
+
+		InfoNodo * nodo = (InfoNodo *) list_find(listaNodos, criterio);
+
+		if(nodo == NULL){
+			InfoNodo * nuevoNodo = (InfoNodo *) malloc(sizeof(*nuevoNodo));
+			strcpy(nuevoNodo->nombre,nodos[i].nombreNodo);
+			nuevoNodo->disponibilidad = disponibilidad_base;
+			nuevoNodo->bloques = dictionary_create();
+
+			TamanoBloque * bloque = (TamanoBloque *)malloc(sizeof(*bloque));
+			char * numBloqueStr = (char *) malloc(sizeof(char) * 5);
+			intToString(numBloque, numBloqueStr);
+
+			bloque->bloque = nodos[i].bloque;
+			bloque->bytes = bytes;
+
+			dictionary_put(nuevoNodo->bloques, numBloqueStr, bloque);
+
+			list_add(listaNodos, nuevoNodo);
+		}else{
+			TamanoBloque * bloque = (TamanoBloque *)malloc(sizeof(*bloque));
+			char * numBloqueStr = (char *) malloc(sizeof(char) * 5);
+			intToString(numBloque, numBloqueStr);
+
+			bloque->bloque = nodos[i].bloque;
+			bloque->bytes = bytes;
+
+			dictionary_put(nodo->bloques, numBloqueStr, bloque);
+		}
+	}
+}
+

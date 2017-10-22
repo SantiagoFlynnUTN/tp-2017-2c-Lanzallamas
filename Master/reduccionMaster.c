@@ -82,18 +82,16 @@ void mandarSolicitudReduccion(operacionReduccion* op) {
 
 	zsend(socketNodo, &mensaje, sizeof(mensaje), 0);
 
-	int a, bytes;
-	bytes= recv(socketNodo, &a, sizeof(int), 0);
-	if(bytes == -1){
+	int status, bytes;
+	bytes= recv(socketNodo, &status, sizeof(int), 0);
+	if(bytes == -1 || status != 0){
 		int mensajeError = FALLOREDLOCAL;
-		printf("Fallo reduccion en nodo %s\n", op->nombreNodo);
+		log_error(logger, "Fallo reduccion en nodo %s\n", op->nombreNodo);
 		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
-		//zsend(YAMAsock, op->nombreNodo, sizeof(char)*100, 0);
+	}else{
+		log_info(logger, "worker %d finalizó reduccion\n", socketNodo);
 	}
-	if (a == 4) {
-		printf("worker %d finalizó reduccion\n", socketNodo);
-		pthread_exit(NULL);
-	}
+	pthread_exit(NULL);
 }
 
 void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos) {
@@ -104,13 +102,13 @@ void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidad
 		rc[cantNodos] = pthread_create(&tid[cantNodos], NULL,
 				mandarSolicitudReduccion, &op);
 		if (rc[cantNodos])
-			printf("no pudo crear el hilo %d\n", i);
+			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;
 	}
 
 	while (i--) {
 		pthread_join(tid[i], NULL);
-		printf("Terminaron las reducciones\n");
+		log_info(logger, "Terminaron las reducciones\n");
 	}
 
 }

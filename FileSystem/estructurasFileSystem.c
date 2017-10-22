@@ -64,6 +64,7 @@ void crearBitMap(DescriptorNodo * newNodo){
     int bytes = (newNodo->bloques + 7) / 8;
 
     char * bitArray = (char *) malloc(sizeof(char) * bytes);
+    memset(bitArray, 0, sizeof(char) * bytes);
 
     newNodo->bitmap = bitarray_create_with_mode(bitArray, bytes, LSB_FIRST);
 }

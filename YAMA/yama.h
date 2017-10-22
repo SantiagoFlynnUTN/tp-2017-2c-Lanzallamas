@@ -69,15 +69,25 @@ typedef struct {
 
 typedef struct t_InfoNodo{
 	char nombre[100];
-	int bloque;
 	char ip[20];
 	uint16_t puerto;
+	long bytes;
 	int disponibilidad;
-	int trabajoActual;
-	int tareasHistoricas;
-	struct t_infoNodo *siguiente;
+	int trabajosActuales;
+	t_dictionary * bloques;
 } InfoNodo;
 
+typedef struct {
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+	int bloque;
+} DescriptorNodo;
+
+typedef struct {
+	int bloque;
+	long bytes;
+} TamanoBloque;
 
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
@@ -87,7 +97,7 @@ typedef struct t_InfoNodo{
 #define FS_PUERTO "FS_PUERTO"
 #define RETARDO_PLANIFICACION "RETARDO_PLANIFICACION"
 #define ALGORITMO_BALANCEO "ALGORITMO_BALANCEO"
-#define CLOCK "CLOCK"
+#define CLOCK_CONFIG "CLOCK"
 #define WEIGHTED_CLOCK "WEIGHTED_CLOCK"
 #define DISPONIBILIDAD_BASE "DISPONIBILIDAD_BASE"
 
@@ -101,12 +111,11 @@ t_list* tablaEstado;
 int disponibilidad_base;
 unsigned int wlMax;
 unsigned int wl;
-InfoNodo pClock;
-InfoNodo auxiliar;
 
 /* FUNCIONES */
 void inicializarYAMA();
 void recargarConfiguracion();
+void intToString(int numero, char * string);
 
 #endif /* YAMA_H_ */
 

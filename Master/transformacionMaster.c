@@ -52,7 +52,7 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
-										  sizeof(struct sockaddr)) == -1) {
+				sizeof(struct sockaddr)) == -1) {
 		perror("connect");
 		exit(1);
 	}
@@ -72,22 +72,21 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 
 	enviarArchivo(socketWorker, "prueba.sh");
 
-	int a, bytes;
-	bytes = recv(socketWorker, &a, sizeof(int), 0);
-	if(bytes == -1){
+	int status, bytes;
+	bytes = recv(socketWorker, &status, sizeof(int), 0);
+	if(bytes == -1 || status != 0){
 		int mensajeError = FALLOTRANSFORMACION;
 		log_error(logger, "fallo la transformacion en el nodo %s\n", t->nombreNodo);
 		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
+	}else{
+		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
 	}
 
-	if (a == 4){
-		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
-		pthread_exit(NULL);
-	}
+	pthread_exit(NULL);
 }
 
 void mandarTransformacionNodo(int socket_nodo, int socket_yama,
-		int cantidadWorkers) {
+							  int cantidadWorkers) {
 	workerTransformacion t[cantidadWorkers];
 	pthread_t tid[cantidadWorkers];
 	int rc[cantidadWorkers];
@@ -102,12 +101,12 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
 
 		log_info(logger, "nom: %s\nbloq: %d\nbytes: %d\nip: %s\nport: %d\nruta: %s\n",
-				t[cantidadWorkers].nombreNodo, t[cantidadWorkers].numBloque,
-				t[cantidadWorkers].bytesOcupados, t[cantidadWorkers].ipWorker,
-				t[cantidadWorkers].puertoWorker,
-				t[cantidadWorkers].rutaArchivo);
+				 t[cantidadWorkers].nombreNodo, t[cantidadWorkers].numBloque,
+				 t[cantidadWorkers].bytesOcupados, t[cantidadWorkers].ipWorker,
+				 t[cantidadWorkers].puertoWorker,
+				 t[cantidadWorkers].rutaArchivo);
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
-				mandarSolicitudTransformacion, &t[cantidadWorkers]);
+											 mandarSolicitudTransformacion, &t[cantidadWorkers]);
 		if (rc[cantidadWorkers])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;

@@ -63,7 +63,11 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("rm", linea[0]) == 0){
-			rm(linea);
+			if(linea[1] == NULL){
+				printf("Error: falta especificar el archivo, bloque o directorio\n");
+			}else{
+				rm(linea);
+			}
 			continue;
 		}
 
@@ -72,7 +76,13 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("rename", linea[0]) == 0){
-			renameFs(linea[1], linea[2]);
+			if(linea[1] == NULL){
+				printf("Error: falta la ruta original\n");
+			}else if(linea[2] == NULL){
+				printf("Error: falta el nombre final\n");
+			}else{
+				renameFs(linea[1], linea[2]);
+			}
 			continue;
 		}
 
@@ -81,7 +91,13 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("mv", linea[0]) == 0){
-			mv(linea[1], linea[2]);
+			if(linea[1] == NULL){
+				printf("Error: falta la ruta original\n");
+			}else if(linea[2] == NULL){
+				printf("Error: falta la ruta destino\n");
+			}else{
+				mv(linea[1], linea[2]);
+			}
 			continue;
 		}
 
@@ -157,11 +173,11 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("md5", linea[0]) == 0){
-            if(linea[1] == NULL){
-                printf("Error: falta el nombre de archivo\n");
-            }else{
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de archivo\n");
+			}else{
 				md5Consola(linea[1]);
-            }
+			}
 			continue;
 		}
 
@@ -208,9 +224,153 @@ void crear_hilo_consola(){
 /************************FUNCIONES DE CONSOLA****************************/
 
 void formatFileSystem(){}
-void rm(char ** linea){}
-void renameFs(char * nombreOriginal, char * nombreFinal){}
-void mv(char * nombreOriginal, char * nombreFinal){}
+
+void rm(char ** linea){
+	if(linea[1][0] == '-'){
+		if(linea[2] == NULL){
+			printf("Error: falta especificar el archivo, bloque o directorio\n");
+			return;
+		}
+
+		if(linea[1][1] == 'd'){
+			char * dir = obtenerNombreArchivo(linea[2]);
+			int directorio = calcularEntradaDirectorio(dir);
+
+			if(directorio == -1){
+				printf("No existe el archivo o directorio %s\n", linea[2]);
+				return;
+			}
+
+			if(list_size(listaArchivosDirectorios[directorio]) > 0 || cantidadDirectoriosHijos(directorio) > 0){
+				printf("El directorio %s no está vacío\n", linea[2]);
+				return;
+			}
+
+			list_destroy(listaArchivosDirectorios[directorio]);
+
+			tabla_Directorios[directorio].padre = 0;
+			tabla_Directorios[directorio].id = 0;
+			memset(tabla_Directorios[directorio].nombre, 0, sizeof(char) * 255);
+		}else if(linea[1][1] == 'b'){
+			if(linea[3] == NULL){
+				printf("Error: falta especificar el número de bloque\n");
+				return;
+			}
+
+			if(linea[4] == NULL){
+				printf("Error: falta especificar el número de copia\n");
+				return;
+			}
+
+			printf("BORRANDO BLOQUE\n");
+		}else{
+			printf("Error: opción desconocida");
+		}
+	}else{
+		Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, linea[1]);
+
+		if(descriptorArchivo == NULL){
+			printf("Error: No existe el archivo %s", linea[1]);
+			return;
+		}
+
+		bool criterio(void * elemento){
+			Archivo * descriptor = (Archivo *) elemento;
+			return strcmp(descriptor->ruta, descriptorArchivo->ruta) == 0;
+		}
+
+		list_remove_by_condition(listaArchivosDirectorios[descriptorArchivo->directorioPadre], criterio);
+
+		destruirArchivo(descriptorArchivo);
+	}
+}
+
+void renameFs(char * nombreOriginal, char * nombreFinal){
+	int directorioPadre = calcularDirectorioPadre(nombreOriginal);
+
+	if(directorioPadre == -1){
+		printf("No existe la ruta %s\n", nombreOriginal);
+		return;
+	}
+
+	Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, nombreOriginal);
+
+	if(descriptorArchivo != NULL){
+		bool criterio(void * elemento){
+			Archivo * descriptor = (Archivo *) elemento;
+			return strcmp(descriptor->ruta, descriptorArchivo->ruta) == 0;
+		}
+
+		list_remove_by_condition(listaArchivosDirectorios[directorioPadre], criterio);
+
+		strcpy(descriptorArchivo->ruta, nombreFinal);
+
+		list_add(listaArchivosDirectorios[directorioPadre], descriptorArchivo);
+		dictionary_put(archivos, descriptorArchivo->ruta, descriptorArchivo);
+	}else{
+		char * dir = obtenerNombreArchivo(nombreOriginal);
+		int directorio = calcularEntradaDirectorio(dir);
+
+		if(directorio == -1){
+			printf("No existe el archivo o directorio %s\n", nombreOriginal);
+			return;
+		}
+
+		if(list_size(listaArchivosDirectorios[directorio]) > 0 || cantidadDirectoriosHijos(directorio) > 0){
+			printf("El directorio %s no está vacío\n", nombreOriginal);
+			return;
+		}
+
+		strcpy(tabla_Directorios[directorio].nombre, nombreFinal);
+	}
+}
+
+void mv(char * nombreOriginal, char * nombreFinal){
+	int directorioPadreViejo = calcularDirectorioPadre(nombreOriginal);
+	int directorioPadreNuevo = calcularDirectorioPadre(nombreFinal);
+
+	if(directorioPadreViejo == -1){
+		printf("No existe la ruta %s\n", nombreOriginal);
+		return;
+	}
+
+	if(directorioPadreNuevo == -1){
+		printf("No existe la ruta %s\n", nombreFinal);
+	}
+
+	Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, nombreOriginal);
+
+	if(descriptorArchivo != NULL){
+		bool criterio(void * elemento){
+			Archivo * descriptor = (Archivo *) elemento;
+			return strcmp(descriptor->ruta, descriptorArchivo->ruta) == 0;
+		}
+
+		list_remove_by_condition(listaArchivosDirectorios[directorioPadreViejo], criterio);
+
+		strcpy(descriptorArchivo->ruta, nombreFinal);
+		descriptorArchivo->directorioPadre = directorioPadreNuevo;
+
+		list_add(listaArchivosDirectorios[directorioPadreNuevo], descriptorArchivo);
+		dictionary_put(archivos, descriptorArchivo->ruta, descriptorArchivo);
+	}else{
+		char * dir = obtenerNombreArchivo(nombreOriginal);
+		int directorio = calcularEntradaDirectorio(dir);
+
+		if(directorio == -1){
+			printf("No existe el archivo o directorio %s\n", nombreOriginal);
+			return;
+		}
+
+		if(list_size(listaArchivosDirectorios[directorio]) > 0 || cantidadDirectoriosHijos(directorio) > 0){
+			printf("El directorio %s no está vacío\n", nombreOriginal);
+			return;
+		}
+
+		strcpy(tabla_Directorios[directorio].nombre, obtenerNombreArchivo(nombreFinal));
+		tabla_Directorios[directorio].padre = directorioPadreNuevo;
+	}
+}
 
 void cat(char * nombre){
 	if(obtenerArchivo(nombre, TEMPFILE) == 0){
@@ -241,6 +401,12 @@ void mkdirConsola(char * dir){
 		return;
 	}
 
+	int directorioPadre = calcularDirectorioPadre(dir);
+
+	if(directorioPadre == -1){
+		printf("No existe la ruta\n");
+	}
+
 	int idDirectorio = obtenerIdDirectorio();
 
 	if(idDirectorio == -1){
@@ -249,7 +415,7 @@ void mkdirConsola(char * dir){
 	}
 
 	strcpy(tabla_Directorios[idDirectorio].nombre, obtenerNombreArchivo(dir));
-	tabla_Directorios[idDirectorio].padre = calcularDirectorioPadre(dir);
+	tabla_Directorios[idDirectorio].padre = directorioPadre;
 	tabla_Directorios[idDirectorio].id = idDirectorio;
 	listaArchivosDirectorios[idDirectorio] = list_create();
 }
@@ -268,11 +434,18 @@ void cpto(char * archivoFS, char * archivo){
 
 void cpblock(char * archivo, char * numeroBloque, char * nodo){
 
+
+
+
+
+
+
+
 }
 
 void md5Consola(char * archivo){
-    if(obtenerArchivo(archivo, TEMPFILE) == 0){
-        FILE * fd = fopen(TEMPFILE, "r");
+	if(obtenerArchivo(archivo, TEMPFILE) == 0){
+		FILE * fd = fopen(TEMPFILE, "r");
 
 		struct stat fileStats;
 
@@ -281,7 +454,7 @@ void md5Consola(char * archivo){
 			return;
 		}
 
-        char contenido[fileStats.st_size];
+		char contenido[fileStats.st_size];
 
 		if(fread(contenido, fileStats.st_size * sizeof(char), 1, fd) != 1){
 			printf("Error leyendo el archivo\n");
@@ -292,7 +465,7 @@ void md5Consola(char * archivo){
 		getMD5(contenido, fileStats.st_size, md5Value);
 
 		printf("%s\n", md5Value);
-    }
+	}
 }
 
 void ls(char * dir){
@@ -318,7 +491,7 @@ void ls(char * dir){
 
 	bool _ordenarPorNombre(void * n1, void * n2){
 		char * nombre1 = (char *) n1,
-		     * nombre2 = (char *) n2;
+				* nombre2 = (char *) n2;
 
 		return strcmp(nombre1, nombre2) <= 0;
 	}
@@ -347,6 +520,6 @@ void info(char * archivo){
 		Bloque * bloque = (Bloque *) list_get(descriptorArchivo->bloques, i);
 
 		printf("Bloque %d:\t\tNodo\t\tNumero Bloque\nCopia 0:\t\t%s\t\t%d\nCopia 1:\t\t%s\t\t%d\n",
-		i, bloque->copia0.nodo, bloque->copia0.numeroBloque, bloque->copia1.nodo, bloque->copia1.numeroBloque);
+			   i, bloque->copia0.nodo, bloque->copia0.numeroBloque, bloque->copia1.nodo, bloque->copia1.numeroBloque);
 	}
 }

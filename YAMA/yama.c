@@ -1,9 +1,3 @@
-/*
- * yama.c
- *
- *  Created on: 10/9/2017
- *      Author: utnso
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,9 +19,13 @@ void inicializarYAMA(){
 }
 
 void recargarConfiguracion(){
-	 // destruyo la config original ya que el config_create hace un malloc
+	// destruyo la config original ya que el config_create hace un malloc
 	config_destroy(config);
 	_cargarConfiguracion();
+}
+
+void intToString(int numero, char * string){
+	sprintf(string, "%d", numero);
 }
 
 void _cargarConfiguracion(){
@@ -68,7 +66,7 @@ void _definirAlgoritmoBalanceo(){
 
 	algoritmo = config_get_string_value(config, ALGORITMO_BALANCEO);
 
-	if(strcmp(algoritmo,CLOCK) == 0){
+	if(strcmp(algoritmo,CLOCK_CONFIG) == 0){
 		algoritmoBalanceo = CLOCK;
 	} else if(strcmp(algoritmo,WEIGHTED_CLOCK) == 0){
 		algoritmoBalanceo = WEIGHTEDCLOCK;
@@ -84,8 +82,8 @@ void _crearLogger(){
 
 void _logConfig(){
 	log_debug(logger, "Config:\nFS_IP: %s\nFS_PUERTO: %d\nRETARDO_PLANIFICACION: %d\nALGORITMO_BALANCEO: %s",
-			config_get_string_value(config, FS_IP),
-			config_get_int_value(config, FS_PUERTO),
-			config_get_int_value(config, RETARDO_PLANIFICACION),
-			config_get_string_value(config, ALGORITMO_BALANCEO));
+			  config_get_string_value(config, FS_IP),
+			  config_get_int_value(config, FS_PUERTO),
+			  config_get_int_value(config, RETARDO_PLANIFICACION),
+			  config_get_string_value(config, ALGORITMO_BALANCEO));
 }

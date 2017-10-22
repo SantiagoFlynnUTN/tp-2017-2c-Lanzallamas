@@ -3,7 +3,7 @@
 
 typedef struct{
 	int tipoMensaje;
-	int cantidadBytes;
+	long cantidadBytes;
 	int bloque;
 	char nombreTemp[255];
 }__attribute__((packed))
