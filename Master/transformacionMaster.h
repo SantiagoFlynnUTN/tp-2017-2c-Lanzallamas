@@ -9,7 +9,6 @@
 #define TRANSFORMACIONMASTER_H_
 
 typedef struct{
-	int tipoMensaje;
 	int cantidadBytes;
 	int bloque;
 	char nombreTemp[255];

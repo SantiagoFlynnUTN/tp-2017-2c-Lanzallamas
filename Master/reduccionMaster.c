@@ -81,14 +81,17 @@ void conexionReduccionWorker(int *sockfd, operacionReduccion op) {
 
 void mandarSolicitudReduccion(operacionReduccion* op) {
 	int socketNodo;
+	int tipoMensaje;
 	conexionReduccionWorker(&socketNodo, *op);
 
 	reduccionWorker mensaje;
-	mensaje.tipoMensaje = 2;
+	tipoMensaje = PEDIDOREDUCCION;
+
 	mensaje.cantidadTemporales = op->cantidadTemporales;
 	strcpy(mensaje.archivoReducido, op->archivoReducido);
 
-	zsend(socketNodo, &mensaje, sizeof(mensaje), 0);
+	zsend(socketNodo, &tipoMensaje, sizeof(int), 0);
+	zsend(socketNodo, &mensaje, sizeof(reduccionWorker), 0);
 
 	int a, bytes;
 	bytes= recv(socketNodo, &a, sizeof(int), 0);

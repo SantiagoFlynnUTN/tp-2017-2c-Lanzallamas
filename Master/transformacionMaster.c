@@ -69,6 +69,7 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 
 void mandarSolicitudTransformacion(workerTransformacion* t){
 	int socketWorker;
+	int tipoMensaje;
 	conexionTransfWorker(&socketWorker, *t);
 
 	mensajeTransformacion mensaje;
@@ -77,7 +78,7 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	mensaje.bloque = t->numBloque;
 	strcpy(mensaje.nombreTemp, t->rutaArchivo);
 
-
+	zsend(socketWorker, &tipoMensaje, sizeof(int), 0);
 	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
 
 	enviarArchivo(socketWorker, "prueba.sh");
