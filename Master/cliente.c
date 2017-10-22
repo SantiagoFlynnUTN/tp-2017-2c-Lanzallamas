@@ -40,7 +40,7 @@ void iniciarConexionAYAMA(int *sockfd){
 	}
 }
 
-void iniciarConexionANodo(int *sockfd){
+void iniciarConexionANodo(int *sockfd, char*ip, uint16_t puerto){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
@@ -50,10 +50,10 @@ void iniciarConexionANodo(int *sockfd){
 		exit(1);
 	}
 
-
+	printf("conectando %s:%d\n", ip, puerto);
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = htons(PORTNODO);  // short, Ordenación de bytes de la red
-	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	their_addr.sin_port = puerto;  // short, Ordenación de bytes de la red
+	their_addr.sin_addr.s_addr = inet_addr(ip);
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
