@@ -53,7 +53,6 @@ typedef struct{
 operacionReduccion;
 
 typedef struct{
-	int tipoMensaje;
 	int cantidadTemporales;
 	char archivoReducido[255];
 } __attribute__((packed))

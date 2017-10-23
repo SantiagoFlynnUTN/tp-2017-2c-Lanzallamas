@@ -23,6 +23,7 @@
 
 int YAMAsock;
 
+
 void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos);
 
 void solicitudReduccion(int socket_yama) {
@@ -73,14 +74,17 @@ void conexionReduccionWorker(int *sockfd, operacionReduccion op) {
 
 void mandarSolicitudReduccion(operacionReduccion* op) {
 	int socketNodo;
+	int tipoMensaje;
 	conexionReduccionWorker(&socketNodo, *op);
 
 	reduccionWorker mensaje;
-	mensaje.tipoMensaje = 2;
+	tipoMensaje = PEDIDOREDUCCION;
+
 	mensaje.cantidadTemporales = op->cantidadTemporales;
 	strcpy(mensaje.archivoReducido, op->archivoReducido);
 
-	zsend(socketNodo, &mensaje, sizeof(mensaje), 0);
+	zsend(socketNodo, &tipoMensaje, sizeof(int), 0);
+	zsend(socketNodo, &mensaje, sizeof(reduccionWorker), 0);
 
 	int status, bytes;
 	bytes= recv(socketNodo, &status, sizeof(int), 0);
@@ -100,7 +104,7 @@ void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidad
 	int i = 0;
 	while (cantNodos--) {
 		rc[cantNodos] = pthread_create(&tid[cantNodos], NULL,
-				mandarSolicitudReduccion, &op);
+				(void*)mandarSolicitudReduccion, &op);
 		if (rc[cantNodos])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;
@@ -110,5 +114,32 @@ void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidad
 		pthread_join(tid[i], NULL);
 		log_info(logger, "Terminaron las reducciones\n");
 	}
-
 }
+
+void reduccionLocal(int socket_yama) {
+
+	YAMAsock = socket_yama; //como dije, no me puteen, je.
+	int pedRed;
+	pedRed = PEDIDOREDUCCION;
+	zsend(socket_yama, &pedRed, sizeof(int), 0);
+	operacionReduccion op;
+	recv(socket_yama, &op, sizeof(op), 0);
+
+	rutaArchivo rutas[op.cantidadTemporales];
+
+	int i = 0;
+	while (op.cantidadTemporales--) {
+		zrecv(socket_yama, &rutas[op.cantidadTemporales], sizeof(rutaArchivo),
+				0);
+		printf("ruta: %s\n", (char*)&rutas[op.cantidadTemporales]);
+		i++;
+	}
+
+	int cantidadNodosEjemplo = 3;
+
+	mandarReduccionNodo(op, rutas, i, cantidadNodosEjemplo);
+}
+
+
+
+

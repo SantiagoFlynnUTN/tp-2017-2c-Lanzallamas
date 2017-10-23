@@ -8,6 +8,7 @@
 #include "transformacionWorker.h"
 #include "reduccionWorker.h"
 #include <protocoloComunicacion.h>
+#include "RGWorker.h"
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -18,10 +19,12 @@ void manejarDatos(int buf, int socket){
 		iniciarReduccion(socket);
 		break;
 	case REDUCCIONGLOBAL:
+		iniciarGlobal(socket);
 		break;
 	case ALMACENAMIENTO:
 		break;
     case SOLICITUDARCHIVOWORKER:
+    	rutinaNoEncargado(socket);
         break;
     case RECEPCIONARCHIVOWORKER:
     	break;

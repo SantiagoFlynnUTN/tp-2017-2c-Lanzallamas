@@ -18,7 +18,6 @@ void solicitudJob(int socket, char * archivoTransformar){
 	sol.tipoMensaje = 1;
 	memset(sol.rutaArchivo, 0, 255);
 	strcpy(sol.rutaArchivo, archivoTransformar);
-	if (send(socket, &sol, sizeof(SolicitudJob), 0) == -1){
-		printf("No se puedo enviar el mensaje.\n");
-	}
+	zsend(socket, &sol.tipoMensaje, sizeof(sol.tipoMensaje), 0);
+	zsend(socket, &sol.rutaArchivo, sizeof(sol.rutaArchivo), 0);
 }

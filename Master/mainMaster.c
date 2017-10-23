@@ -19,6 +19,7 @@
 #include "transformacionMaster.h"
 #include "reduccionMaster.h"
 #include <sys/time.h>
+#include "RGMaster.h"
 
 
 int socket_yama;
@@ -45,7 +46,9 @@ int main(int argc, char *argv[]){
 
 	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo);
 
-	solicitudReduccion(socket_yama);
+	reduccionLocal(socket_yama);
+
+	reduccionGlobal(socket_yama);
 
 	gettimeofday(&tv2, NULL);
 	printf ("Tiempo de ejecución del Job = %f segundos\n",

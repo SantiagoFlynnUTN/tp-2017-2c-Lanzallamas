@@ -2,8 +2,7 @@
 #define TRANSFORMACIONMASTER_H_
 
 typedef struct{
-	int tipoMensaje;
-	long cantidadBytes;
+	int cantidadBytes;
 	int bloque;
 	char nombreTemp[255];
 }__attribute__((packed))
