@@ -89,6 +89,22 @@ typedef struct {
 	long bytes;
 } TamanoBloque;
 
+typedef struct{
+	char nombre[100];
+	char ip[20];
+	uint16_t puerto;
+	char archTemp[255];
+}__attribute__((packed))
+NodoGlobal;
+
+typedef struct{
+	char nombre[100];
+	char ip[20];
+	uint16_t puerto;
+	char archTemp[255];
+}__attribute__((packed))
+NodoEncargado;
+
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
 #define ARCHIVO_LOGGER "yama.log"

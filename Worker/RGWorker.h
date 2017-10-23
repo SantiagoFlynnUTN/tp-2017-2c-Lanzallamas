@@ -8,6 +8,8 @@
 #ifndef RGWORKER_H_
 #define RGWORKER_H_
 
+#include <stdint.h>
+
 void iniciarGlobal(int socket_master);
 void rutinaNoEncargado(int socket);
 
