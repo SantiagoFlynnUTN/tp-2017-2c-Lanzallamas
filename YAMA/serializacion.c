@@ -1,10 +1,3 @@
-/*
- * seralizacion.c
- *
- *  Created on: 4/9/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -25,7 +18,8 @@
 #include "yama.h"
 
 void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
-
+void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
+void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
 
 void enviarTablaTransformacion(int socket_master){
 	SolicitudFS solFs;
@@ -45,10 +39,10 @@ void enviarTablaTransformacion(int socket_master){
 	}
 
 	int bloques, i;
+	t_list * listaNodos = list_create();
 
 	zrecv(sock_fs, &bloques, sizeof(bloques), 0);
 
-	zsend(socket_master, &bloques, sizeof(bloques), 0);
 	for(i = 0; i < bloques; ++i){
 		int copias, j;
 		long bytes;
@@ -63,31 +57,17 @@ void enviarTablaTransformacion(int socket_master){
 			zrecv(sock_fs, &nodos[j].puerto, sizeof(nodos[j].puerto), 0);
 			zrecv(sock_fs, &nodos[j].bloque, sizeof(nodos[j].bloque), 0);
 		}
-		if (copias == 1){
-							//FALTA ENVIAR Y ṔLANIFICAR
-		}
+
+		_registrarBloquePlanificacion(listaNodos, i, bytes, nodos, copias);
+		/*if (copias == 1){
+			mandarOperacionTrafo(socket_master, nodos[0].nombreNodo, nodos[0].ip, nodos[0].puerto, nodos[0].bloque, bytes);
+		} else if(copias == 2){
+			mandarOperacionTrafo(socket_master, nodos[0].nombreNodo, nodos[0].ip, nodos[0].puerto, nodos[0].bloque, bytes);
+			// planificar y enviar
+		}*/
 	}
 
-	int cantidadWorkersEjemplo = 2;
-
-	zsend(socket_master, &cantidadWorkersEjemplo, sizeof(int), 0);
-
-
-
-	printf("El nombre del archivo es: %s\n", solFs.ruta);
-	while(cantidadWorkersEjemplo--){
-		operacionTransformacion op;
-		strcpy(op.nombreNodo, "nodo1");
-		op.bloque = cantidadWorkersEjemplo +2;
-		op.bytes = 10;
-		strcpy(op.ip, "127.0.0.1");
-		op.puerto = htons(PORTNODO);
-		strcpy(op.ruta, "temp/algo.txt");
-		zsend(socket_master, &op, sizeof(op), 0);
-		printf("nom: %s\nbloq: %d\nbytes: %d\nip: %s\nport: %d\nruta: %s\n",
-				op.nombreNodo, op.bloque, op.bytes, op.ip, op.puerto, op.ruta);
-	}
-
+	zsend(socket_master, &bloques, sizeof(bloques), 0);
 }
 
 void enviarSolicitudReduccion(int socket) {
@@ -102,13 +82,13 @@ void enviarSolicitudReduccion(int socket) {
 
 	rutaArchivo rutas[op.cantidadTemporales];
 
-	strcpy(&rutas[0], "ruta1");
-	strcpy(&rutas[1], "ruta2");
-	strcpy(&rutas[2], "ruta3");
-	strcpy(&rutas[3], "ruta4");
+	strcpy(rutas[0].ruta, "ruta1");
+	strcpy(rutas[1].ruta, "ruta2");
+	strcpy(rutas[2].ruta, "ruta3");
+	strcpy(rutas[3].ruta, "ruta4");
 
 	for (i = 0; i < op.cantidadTemporales; i++) {
-		printf("ruta %s\n", &rutas[i]);
+		log_info(logger, "ruta %s\n", &rutas[i]);
 	}
 
 	zsend(socket, &op, sizeof(op), 0);
@@ -120,23 +100,80 @@ void enviarSolicitudReduccion(int socket) {
 
 
 void manejarDatos(int buf, int socket){
-	switch(buf){
-	case SOLICITUDJOB:
-		enviarTablaTransformacion(socket);
-		break;
-	case PEDIDOREDUCCION:
-		enviarSolicitudReduccion(socket);
-		break;
-	case FALLOTRANSFORMACION:
-		break;
-	case FALLOREDLOCAL:
-		break;
+	switch(buf) {
+		case SOLICITUDJOB:
+			enviarTablaTransformacion(socket);
+			break;
+		case PEDIDOREDUCCION:
+			enviarSolicitudReduccion(socket);
+			break;
+		case FALLOTRANSFORMACION:
+			break;
+		case FALLOREDLOCAL:
+			break;
+	}
 }
 
-void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
+void mandarOperacionTrafo(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
 	zsend(socket, nombNodo,sizeof(char)*100, 0);
 	zsend(socket, ip,sizeof(char)*20, 0);
 	zsend(socket, &puerto,sizeof(puerto), 0);
 	zsend(socket, &nroBloque,sizeof(nroBloque), 0);
-	zsend(socket, &bytes,sizeof(bytes), 0);			//FALTA MANDAR NOMBRE ARCHIVO TEMPORAL, AGREGAR OPERACION A TABLA DE OPERACIONES,
+	zsend(socket, &bytes,sizeof(bytes), 0);
+	zsend(socket, "/temp/j1n1b8", 255 * sizeof(char), 0);
+
 }
+
+void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
+	EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) malloc(sizeof(*entradaTablaEstado));
+	entradaTablaEstado->jobId = 0;
+	entradaTablaEstado->masterId = 0;
+	strcpy(entradaTablaEstado->nombreNodo, nombNodo);
+	entradaTablaEstado->numeroBloque = nroBloque;
+	entradaTablaEstado->etapa = TRANSFORMACION;
+	strcpy(entradaTablaEstado->archivoTemporal, "/temp/j1n1b8");
+
+	list_add(tablaEstado, entradaTablaEstado);
+}
+
+void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos){
+	int i;
+
+	for(i = 0; i < cantidadNodos; ++i){
+		bool criterio(void * nodo){
+			InfoNodo * infoNodo = (InfoNodo *) nodo;
+
+			return strcmp(infoNodo->nombre, nodos[i].nombreNodo) == 0;
+		}
+
+		InfoNodo * nodo = (InfoNodo *) list_find(listaNodos, criterio);
+
+		if(nodo == NULL){
+			InfoNodo * nuevoNodo = (InfoNodo *) malloc(sizeof(*nuevoNodo));
+			strcpy(nuevoNodo->nombre,nodos[i].nombreNodo);
+			nuevoNodo->disponibilidad = disponibilidad_base;
+			nuevoNodo->bloques = dictionary_create();
+
+			TamanoBloque * bloque = (TamanoBloque *)malloc(sizeof(*bloque));
+			char * numBloqueStr = (char *) malloc(sizeof(char) * 5);
+			intToString(numBloque, numBloqueStr);
+
+			bloque->bloque = nodos[i].bloque;
+			bloque->bytes = bytes;
+
+			dictionary_put(nuevoNodo->bloques, numBloqueStr, bloque);
+
+			list_add(listaNodos, nuevoNodo);
+		}else{
+			TamanoBloque * bloque = (TamanoBloque *)malloc(sizeof(*bloque));
+			char * numBloqueStr = (char *) malloc(sizeof(char) * 5);
+			intToString(numBloque, numBloqueStr);
+
+			bloque->bloque = nodos[i].bloque;
+			bloque->bytes = bytes;
+
+			dictionary_put(nodo->bloques, numBloqueStr, bloque);
+		}
+	}
+}
+

@@ -1,13 +1,3 @@
-/*
- * reduccionMaster.c
-
-
-
- *
- *  Created on: 1/10/2017
- *      Author: utnso
- */
-
 #include "mainMaster.h"
 #include "master.h"
 #include <stdio.h>
@@ -32,6 +22,34 @@
 #include <sockets.h>
 
 int YAMAsock;
+
+
+void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos);
+
+void solicitudReduccion(int socket_yama) {
+
+	YAMAsock = socket_yama; //como dije, no me puteen, je.
+	int pedRed;
+	pedRed = PEDIDOREDUCCION;
+	zsend(socket_yama, &pedRed, sizeof(int), 0);
+	operacionReduccion op;
+	recv(socket_yama, &op, sizeof(op), 0);
+
+	rutaArchivo rutas[op.cantidadTemporales];
+
+	int i = 0;
+	while (op.cantidadTemporales--) {
+		printf("llegue\n");
+		zrecv(socket_yama, rutas[op.cantidadTemporales].ruta, sizeof(rutaArchivo),
+				0);
+		printf("ruta: %s\n", rutas[op.cantidadTemporales].ruta);
+		i++;
+	}
+
+	int cantidadNodosEjemplo = 3;
+
+	mandarReduccionNodo(op, rutas, i, cantidadNodosEjemplo);
+}
 
 void conexionReduccionWorker(int *sockfd, operacionReduccion op) {
 
@@ -68,22 +86,19 @@ void mandarSolicitudReduccion(operacionReduccion* op) {
 	zsend(socketNodo, &tipoMensaje, sizeof(int), 0);
 	zsend(socketNodo, &mensaje, sizeof(reduccionWorker), 0);
 
-	int a, bytes, fallo;
-	bytes= recv(socketNodo, &a, sizeof(int), 0);
-	if(bytes == -1){
-		fallo = FALLOREDLOCAL;
-		printf("Fallo reduccion en nodo %s\n", op->nombreNodo);
-		zsend(YAMAsock, &fallo, sizeof(int), 0);
-		//zsend(YAMAsock, op->nombreNodo, sizeof(char)*100, 0);
+	int status, bytes;
+	bytes= recv(socketNodo, &status, sizeof(int), 0);
+	if(bytes == -1 || status != 0){
+		int mensajeError = FALLOREDLOCAL;
+		log_error(logger, "Fallo reduccion en nodo %s\n", op->nombreNodo);
+		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
+	}else{
+		log_info(logger, "worker %d finalizó reduccion\n", socketNodo);
 	}
-	if (a == 4) {
-		printf("worker %d finalizó reduccion\n", socketNodo);
-		pthread_exit(NULL);
-	}
+	pthread_exit(NULL);
 }
 
-void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas,
-		int cantidadRutas, int cantNodos) {
+void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos) {
 	pthread_t tid[cantNodos];
 	int rc[cantNodos];
 	int i = 0;
@@ -91,13 +106,13 @@ void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas,
 		rc[cantNodos] = pthread_create(&tid[cantNodos], NULL,
 				(void*)mandarSolicitudReduccion, &op);
 		if (rc[cantNodos])
-			printf("no pudo crear el hilo %d\n", i);
+			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;
 	}
 
 	while (i--) {
 		pthread_join(tid[i], NULL);
-		printf("Terminaron las reducciones\n");
+		log_info(logger, "Terminaron las reducciones\n");
 	}
 }
 

@@ -38,6 +38,10 @@ char * obtenerNombreArchivo(char * ruta){
 }
 
 int calcularDirectorioPadre(char * ruta){
+    if(ruta[0] != '/'){ // la ruta no empieza con / por lo que no existe
+        return -1;
+    }
+
     int directorioPadre = 0;
     char ** pathsElements = string_split(ruta, "/");
     while(*(pathsElements + 1) != NULL){
@@ -72,14 +76,16 @@ int archivoDisponible(Archivo * archivo){
 
 int calcularEntradaDirectorio(char * dir){
     int entradaDirectorio = 0;
+    Directorio directorioAnterior = tabla_Directorios[0];
     char ** pathsElements = string_split(dir, "/");
     while(*pathsElements != NULL){
         entradaDirectorio = _buscarDirectorio(*pathsElements);
 
-        if(entradaDirectorio == -1){
+        if(entradaDirectorio == -1 || directorioAnterior.id != tabla_Directorios[entradaDirectorio].padre){
             return -1;
         }
 
+        directorioAnterior = tabla_Directorios[entradaDirectorio];
         pathsElements++;
     }
 
@@ -97,6 +103,57 @@ t_list * obtenerNombresDirectoriosHijos(int dir){
     }
 
     return lista;
+}
+
+int cantidadDirectoriosHijos(int dir){
+    int i;
+    int hijos = 0;
+
+    for(i = 0; i < 100; ++i){
+        if(tabla_Directorios[i].padre == dir && strlen(tabla_Directorios[i].nombre) > 0){
+            hijos++;
+        }
+    }
+
+    return hijos;
+}
+
+int obtenerIdDirectorio(){
+    int i;
+
+    for(i = 0; i < 100; ++i){
+        if(strlen(tabla_Directorios[i].nombre) == 0){
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void destruirArchivo(Archivo * descriptorArchivo){
+    int bloques = list_size(descriptorArchivo->bloques);
+    int i;
+
+    for(i = 0; i < bloques; ++i){
+        Bloque * descriptorBloque = (Bloque *)list_get(descriptorArchivo->bloques, i);
+        list_remove(descriptorArchivo->bloques, i);
+
+        liberarBloque(descriptorBloque->copia0);
+        liberarBloque(descriptorBloque->copia1);
+
+        free(descriptorBloque);
+    }
+
+    list_destroy(descriptorArchivo->bloques);
+
+    free(descriptorArchivo);
+}
+
+void liberarBloque(Ubicacion bloque){
+    DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, bloque.nodo);
+    bitarray_clean_bit(nodo->bitmap, bloque.numeroBloque);
+
+    nodo->bloquesLibres++;
 }
 
 void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio) {

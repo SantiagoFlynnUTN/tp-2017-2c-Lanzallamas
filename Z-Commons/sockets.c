@@ -715,6 +715,8 @@ int sendAll(int fd, char *cosa, int size, int flags){
 	int cant_enviada = 0;
 	int aux;
 
+	zsend(fd, &size, sizeof(size), 0);
+
 	while(cant_enviada < size){
 
 		aux = send(fd, cosa + cant_enviada, size - cant_enviada, flags);

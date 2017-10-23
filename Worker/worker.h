@@ -35,7 +35,7 @@ typedef struct {
 InfoNodo;
 
 typedef struct{
-	int cantidadBytes;
+	long cantidadBytes;
 	int bloque;
 	char nombreTemp[255];
 }mensajeTransf;

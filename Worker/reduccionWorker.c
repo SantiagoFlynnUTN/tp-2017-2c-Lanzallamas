@@ -1,10 +1,3 @@
-/*
- * reduccionWorker.c
- *
- *  Created on: 2/10/2017
- *      Author: utnso
- */
-
 #include "worker.h"
 #include <sockets.h>
 #include <protocoloComunicacion.h>
@@ -16,8 +9,9 @@ void iniciarReduccion(int socket) {
 	zrecv(socket, &opReduc, sizeof(opReduc), 0);
 
 	//rutinaTransformacion
+	int status = 0;
 
-	zsend(socket, TRANSFORMACIONOK, sizeof(int), 0);
+	zsend(socket, &status, sizeof(status), 0);
 	exit(1);
 
 }
