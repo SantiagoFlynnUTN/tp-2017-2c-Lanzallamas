@@ -1,12 +1,10 @@
 #include "planificacionYama.h"
 #include <string.h>
 
-void sumarTrabajos(t_list * nodos);
-int _buscarMax(t_list * nodos);
 
 void planificacion(t_list * nodos, int cantBloques, int socketMaster){
 	setAvailability(nodos);
-	setTareasRealizadas(nodos);
+	sumarTrabajos(nodos);
 	sortByAvailability(nodos);
 	sortByTareasRealizadas(nodos);
 	/*pClock = nodos;
@@ -65,16 +63,17 @@ int pWl(InfoNodo * nodo, int max){
 	return max - nodo->trabajosActuales;
 }
 
-void setTareasRealizadas(InfoNodo * nodos){
-	if(tablaEstado != NULL){
-
-	}
-
-}
-
 
 void sortByAvailability(t_list * nodos){
+	list_sort(nodos, _ordenarPorDisponibilidad);
 }
 
 void sortByTareasRealizadas(t_list * nodos){
 }
+
+bool _ordenarPorDisponibilidad(void * n1, void * n2){
+		InfoNodo * nodo1 = (InfoNodo *) n1,
+				* nodo2 = (InfoNodo *) n2;
+
+		return strcmp(nodo1->disponibilidad, nodo2->disponibilidad) >= 0;
+	}

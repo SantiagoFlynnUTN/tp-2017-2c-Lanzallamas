@@ -12,6 +12,8 @@ void setTareasRealizadas(InfoNodo * nodos);
 void sortByAvailability(t_list * nodos);
 void sortByTareasRealizadas(t_list * nodos);
 void sumarTrabajos(t_list * nodos);
+int _buscarMax(t_list * nodos);
+bool _ordenarPorDisponibilidad(void * n1, void * n2);
 
 
 #endif //TP_2017_2C_LANZALLAMAS_PLANIFICACIONYAMA_H
