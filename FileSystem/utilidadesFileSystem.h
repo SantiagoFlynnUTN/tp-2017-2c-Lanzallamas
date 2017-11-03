@@ -6,6 +6,7 @@
 void calcularRuta(Archivo descriptorArchivo, char * nombreArchivo, char * rutaArchivo);
 void registrarArchivo(Archivo * descriptorArchivo);
 char * obtenerNombreArchivo(char * ruta);
+void obtenerNuevaRutaArchivo(char * rutaVieja, char * rutaDir);
 int calcularDirectorioPadre(char * ruta);
 int calcularEntradaDirectorio(char * dir);
 int archivoDisponible(Archivo * archivo);

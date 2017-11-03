@@ -37,6 +37,13 @@ char * obtenerNombreArchivo(char * ruta){
     return *--pathsElements;
 }
 
+void obtenerNuevaRutaArchivo(char * rutaVieja, char * rutaDir){
+    char * nombre = obtenerNombreArchivo(rutaVieja);
+    strcpy(rutaVieja, rutaDir);
+    strcat(rutaVieja, "/");
+    strcat(rutaVieja, nombre);
+}
+
 int calcularDirectorioPadre(char * ruta){
     if(ruta[0] != '/'){ // la ruta no empieza con / por lo que no existe
         return -1;
