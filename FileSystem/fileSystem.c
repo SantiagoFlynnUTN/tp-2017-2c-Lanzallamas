@@ -72,11 +72,6 @@ void _cargarConfiguracion(){
 void _cargarFileSystem(){
     t_config * tablaNodos = config_create(config_get_string_value(config, PATH_TABLA_NODOS));
 
-    if(tablaNodos == NULL){
-        log_info(logger, "No hay nodos registrados\n");
-        return;
-    }
-
     if(cargarTablaDirectorio() != 0){ // no hay directorios
         log_info(logger, "No hay directorios registrados\n");
 
@@ -84,6 +79,11 @@ void _cargarFileSystem(){
         tabla_Directorios[0].padre = -1;
         tabla_Directorios[0].id = 0;
         listaArchivosDirectorios[0] = list_create();
+        return;
+    }
+
+    if(tablaNodos == NULL){
+        log_info(logger, "No hay nodos registrados\n");
         return;
     }
 

@@ -3,7 +3,7 @@
 #include <sys/socket.h>
 #include "conexionesFileSystem.h"
 
-int _guardarBloque(DescriptorNodo * nodo, Bloque * bloque, FILE * archivo);
+int _guardarBloque(DescriptorNodo * nodo, int bloque, long bytes, FILE * archivo);
 
 
 int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
@@ -30,7 +30,7 @@ int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
         DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
 
         if(descriptorNodo->socket != -1){
-            int bloqueGuardado = _guardarBloque(descriptorNodo, bloque, archivoFinal);
+            int bloqueGuardado = _guardarBloque(descriptorNodo, bloque->copia0.numeroBloque, bloque->descriptor.bytes, archivoFinal);
 
             if(bloqueGuardado != 0){
                 fclose(archivoFinal);
@@ -42,7 +42,7 @@ int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
             descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
             if(descriptorNodo->socket != -1){
-                int bloqueGuardado = _guardarBloque(descriptorNodo, bloque, archivoFinal);
+                int bloqueGuardado = _guardarBloque(descriptorNodo, bloque->copia1.numeroBloque, bloque->descriptor.bytes, archivoFinal);
 
                 if(bloqueGuardado != 0){
                     fclose(archivoFinal);
@@ -62,12 +62,12 @@ int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
     return 0;
 }
 
-int _guardarBloque(DescriptorNodo * nodo, Bloque * bloque, FILE * archivo){
+int _guardarBloque(DescriptorNodo * nodo, int bloque, long bytes, FILE * archivo){
     int mensaje = GETBLOQUE;
     char contenidoBloque[MB];
 
     if (send(nodo->socket, &mensaje, sizeof(mensaje), 0) == -1 ||
-        send(nodo->socket, &bloque->descriptor.numeroBloque, sizeof(bloque->descriptor.numeroBloque), 0) == -1){
+        send(nodo->socket, &bloque, sizeof(bloque), 0) == -1){
         log_error(logger, "No puedo solicitar el bloque al nodo %s\n", nodo->nombreNodo);
         return -1;
     }
@@ -77,7 +77,7 @@ int _guardarBloque(DescriptorNodo * nodo, Bloque * bloque, FILE * archivo){
         return -1;
     }
 
-    if(fwrite(contenidoBloque, sizeof(char) * bloque->descriptor.bytes, 1, archivo) != 1){
+    if(fwrite(contenidoBloque, sizeof(char) * bytes, 1, archivo) != 1){
         log_error(logger, "Error guardando el bloque en el archivo\n");
         return -1;
     }

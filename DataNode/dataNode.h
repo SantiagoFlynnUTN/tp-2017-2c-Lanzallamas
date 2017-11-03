@@ -8,6 +8,7 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <stdint.h>
+#include <sys/mman.h>
 
 #ifndef DATANODE_H_
 #define DATANODE_H_
@@ -51,6 +52,7 @@ t_config * config;
 t_log * logger;
 ConexionFileSystem conexionFileSystem;
 InfoNodo infoNodo;
+char * mapeoDataBin;
 
 /* FUNCIONES */
 void inicializarDataNode();

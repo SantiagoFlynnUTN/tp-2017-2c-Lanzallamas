@@ -1,9 +1,3 @@
-/*
- * dataNode.c
- *
- *  Created on: 10/9/2017
- *      Author: utnso
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,6 +17,7 @@ void _copiarRutaDataBin();
 void _crearLogger();
 void _logConfig();
 void _calcularCantidadDeBloques();
+void _mapearDataBin();
 
 void inicializarDataNode(){
 	_crearLogger();
@@ -53,6 +48,7 @@ void _cargarConfiguracion(){
 	_copiarNombreNodo();
 	_copiarRutaDataBin();
 	_calcularCantidadDeBloques();
+	_mapearDataBin();
 }
 
 void _calcularCantidadDeBloques(){
@@ -62,6 +58,23 @@ void _calcularCantidadDeBloques(){
 	infoNodo.cantidadBloques = stats.st_size / MB;
 
 	log_info(logger, "La cantidad de bloques es: %d", infoNodo.cantidadBloques);
+}
+
+void _mapearDataBin(){
+	int fd = open(infoNodo.rutaDataBin, O_RDWR);
+
+	if(fd == -1){
+		log_error(logger, "No se encontró el data.bin en la ruta %s\n", infoNodo.rutaDataBin);
+		exit(1);
+	}
+
+	mapeoDataBin = mmap(NULL, infoNodo.cantidadBloques * MB,
+						PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+	if(mapeoDataBin == MAP_FAILED){
+		log_error(logger, "No se pudo mapear el data.bin en la ruta\n");
+		exit(1);
+	}
 }
 
 void _copiarFileSystemIP(){
