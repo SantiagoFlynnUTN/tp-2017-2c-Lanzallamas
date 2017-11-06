@@ -3,17 +3,10 @@
 #ifndef TP_2017_2C_LANZALLAMAS_PLANIFICACIONYAMA_H
 #define TP_2017_2C_LANZALLAMAS_PLANIFICACIONYAMA_H
 
-void planificacion(t_list * nodos, int cantBloques, int socketMaster);
+void ordenarNodos(t_list * nodos);
 int estaEnNodo(DescriptorBloque bloque, InfoNodo *pClock);
-void setAvailability(t_list * nodos);
-void wL(InfoNodo * nodo);
-int pWl(InfoNodo * nodo, int max);
-void setTareasRealizadas(InfoNodo * nodos);
-void sortByAvailability(t_list * nodos);
-void sortByTareasRealizadas(t_list * nodos);
-void sumarTrabajos(t_list * nodos);
-int _buscarMax(t_list * nodos);
-bool _ordenarPorDisponibilidad(void * n1, void * n2);
+void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * listaNodos);
+void generarArchivoTemporal(char * nombre, char * file);
 
 
 #endif //TP_2017_2C_LANZALLAMAS_PLANIFICACIONYAMA_H

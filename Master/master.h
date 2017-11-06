@@ -1,9 +1,3 @@
-/*
- * master.h
- *
- *  Created on: 9/9/2017
- *      Author: utnso
- */
 #include <commons/config.h>
 #include <commons/log.h>
 #include <stdint.h>
@@ -49,8 +43,9 @@ typedef struct{
 	uint16_t puerto;
 	int cantidadTemporales;
 	char archivoReducido[255];
+	char temporales[100][255];
 } __attribute__((packed))
-operacionReduccion;
+OperacionReduccion;
 
 typedef struct{
 	int cantidadTemporales;
@@ -73,6 +68,7 @@ typedef struct{
 YamaConexion conexionYAMA;
 t_log * logger;
 t_config * config;
+int jobId;
 
 /* FUNCIONES */
 void inicializarMaster();

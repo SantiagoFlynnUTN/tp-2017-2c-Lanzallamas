@@ -24,7 +24,7 @@
 int YAMAsock;
 
 
-void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos);
+void mandarReduccionNodo(OperacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos);
 
 void solicitudReduccion(int socket_yama) {
 
@@ -32,7 +32,7 @@ void solicitudReduccion(int socket_yama) {
 	int pedRed;
 	pedRed = PEDIDOREDUCCION;
 	zsend(socket_yama, &pedRed, sizeof(int), 0);
-	operacionReduccion op;
+	OperacionReduccion op;
 	recv(socket_yama, &op, sizeof(op), 0);
 
 	rutaArchivo rutas[op.cantidadTemporales];
@@ -41,7 +41,7 @@ void solicitudReduccion(int socket_yama) {
 	while (op.cantidadTemporales--) {
 		printf("llegue\n");
 		zrecv(socket_yama, rutas[op.cantidadTemporales].ruta, sizeof(rutaArchivo),
-				0);
+			  0);
 		printf("ruta: %s\n", rutas[op.cantidadTemporales].ruta);
 		i++;
 	}
@@ -51,7 +51,7 @@ void solicitudReduccion(int socket_yama) {
 	mandarReduccionNodo(op, rutas, i, cantidadNodosEjemplo);
 }
 
-void conexionReduccionWorker(int *sockfd, operacionReduccion op) {
+void conexionReduccionWorker(int *sockfd, OperacionReduccion op) {
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
@@ -66,13 +66,13 @@ void conexionReduccionWorker(int *sockfd, operacionReduccion op) {
 	memset(&(their_addr.sin_zero), 0, 8); // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *) &their_addr,
-			sizeof(struct sockaddr)) == -1) {
+				sizeof(struct sockaddr)) == -1) {
 		perror("connect");
 		exit(1);
 	}
 }
 
-void mandarSolicitudReduccion(operacionReduccion* op) {
+void mandarSolicitudReduccion(OperacionReduccion* op) {
 	int socketNodo;
 	int tipoMensaje;
 	conexionReduccionWorker(&socketNodo, *op);
@@ -98,13 +98,13 @@ void mandarSolicitudReduccion(operacionReduccion* op) {
 	pthread_exit(NULL);
 }
 
-void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos) {
+void mandarReduccionNodo(OperacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos) {
 	pthread_t tid[cantNodos];
 	int rc[cantNodos];
 	int i = 0;
 	while (cantNodos--) {
 		rc[cantNodos] = pthread_create(&tid[cantNodos], NULL,
-				(void*)mandarSolicitudReduccion, &op);
+									   (void*)mandarSolicitudReduccion, &op);
 		if (rc[cantNodos])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;
@@ -117,29 +117,24 @@ void mandarReduccionNodo(operacionReduccion op, rutaArchivo* rutas, int cantidad
 }
 
 void reduccionLocal(int socket_yama) {
+	OperacionReduccion op;
 
-	YAMAsock = socket_yama; //como dije, no me puteen, je.
-	int pedRed;
-	pedRed = PEDIDOREDUCCION;
-	zsend(socket_yama, &pedRed, sizeof(int), 0);
-	operacionReduccion op;
-	recv(socket_yama, &op, sizeof(op), 0);
+	zrecv(socket_yama, op.nombreNodo, sizeof(char) * 100, 0);
+	zrecv(socket_yama, op.ip, sizeof(char) * 20, 0);
+	zrecv(socket_yama, &op.puerto, sizeof(op.puerto), 0);
+	zrecv(socket_yama, &op.cantidadTemporales, sizeof(op.cantidadTemporales), 0);
 
-	rutaArchivo rutas[op.cantidadTemporales];
+	int i;
 
-	int i = 0;
-	while (op.cantidadTemporales--) {
-		zrecv(socket_yama, &rutas[op.cantidadTemporales], sizeof(rutaArchivo),
-				0);
-		printf("ruta: %s\n", (char*)&rutas[op.cantidadTemporales]);
-		i++;
+	printf("Reduccion a Realizar:\nNODO: %s\nIP: %s\nPUERTO: %d\n", op.nombreNodo, op.ip, op.puerto);
+
+	for(i = 0; i < op.cantidadTemporales; ++i){
+		zrecv(socket_yama, op.temporales[i], sizeof(char) * 255, 0);
+
+		printf("TEMPORAL %d: %s\n", i+1, op.temporales[i]);
 	}
 
-	int cantidadNodosEjemplo = 3;
+	zrecv(socket_yama, op.archivoReducido, sizeof(char) *  255, 0);
 
-	mandarReduccionNodo(op, rutas, i, cantidadNodosEjemplo);
+	printf("REDUCIDO: %s\n", op.archivoReducido);
 }
-
-
-
-

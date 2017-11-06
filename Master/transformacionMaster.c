@@ -20,12 +20,16 @@
 #include "transformacionMaster.h"
 #include <protocoloComunicacion.h>
 #include <sockets.h>
+#include "reduccionMaster.h"
 
 int YAMAsock;
 
 int respuestaSolicitud(int socket_yama) {
 
 	int cantidadWorkers;
+
+	zrecv(socket_yama, &jobId, sizeof(jobId), 0);
+	log_info(logger, "Job Id: %d", jobId);
 
 	zrecv(socket_yama, &cantidadWorkers, sizeof(int), 0);
 
@@ -58,6 +62,10 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 	}
 }
 
+void mandarReduccion(OperacionReduccion * op){
+
+}
+
 void mandarSolicitudTransformacion(workerTransformacion* t){
 	int socketWorker;
 	int tipoMensaje;
@@ -68,7 +76,6 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	mensaje.cantidadBytes = t->bytesOcupados;
 	mensaje.bloque = t->numBloque;
 	strcpy(mensaje.nombreTemp, t->rutaArchivo);
-
 
 	zsend(socketWorker, &tipoMensaje, sizeof(int), 0);
 	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
@@ -82,8 +89,13 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 		log_error(logger, "fallo la transformacion en el nodo %s\n", t->nombreNodo);
 		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
 	}else{
+		int mensajeOK = TRANSFORMACIONOK;
+		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
 		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
 	}
+
+	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
+	zsend(YAMAsock, mensaje.nombreTemp, sizeof(char) * 255, 0);
 
 	pthread_exit(NULL);
 }
@@ -103,11 +115,6 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados, sizeof(t[cantidadWorkers].bytesOcupados), 0);
 		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
 
-		log_info(logger, "nom: %s\nbloq: %d\nbytes: %d\nip: %s\nport: %d\nruta: %s\n",
-				 t[cantidadWorkers].nombreNodo, t[cantidadWorkers].numBloque,
-				 t[cantidadWorkers].bytesOcupados, t[cantidadWorkers].ipWorker,
-				 t[cantidadWorkers].puertoWorker,
-				 t[cantidadWorkers].rutaArchivo);
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
 											 mandarSolicitudTransformacion, &t[cantidadWorkers]);
 		if (rc[cantidadWorkers])
@@ -115,8 +122,16 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		i++;
 	}
 
-	while (i--) {
-		pthread_join(tid[i], NULL);
+	int operacion = 0;
+	while(operacion != SOLICITUDREDUCCIONGLOBAL){
+		zrecv(socket_yama, &operacion, sizeof(operacion), 0);
+		switch(operacion){
+			case REPLANIFICACION:
+				break;
+			case SOLICITUDREDUCCIONLOCAL:
+				reduccionLocal(socket_yama);
+				break;
+		}
 	}
 	log_info(logger, "Terminaron las transformaciones\n");
 }

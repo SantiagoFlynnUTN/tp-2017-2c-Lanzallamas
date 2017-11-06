@@ -17,6 +17,5 @@ mensajeCorto;
 
 void escuchar_chat(int socket);
 void escribir_chat(int socket);
-void leerMensaje(int socket);
 
 #endif /* CHAT_H_ */

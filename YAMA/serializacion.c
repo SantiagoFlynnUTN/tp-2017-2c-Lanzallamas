@@ -16,8 +16,9 @@
 #include "chat.h"
 #include <protocoloComunicacion.h>
 #include "yama.h"
+#include "planificacionYama.h"
+#include "respuestaTransformacion.h"
 
-void mandarOperacionTrafo (int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
 void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
 void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
 
@@ -59,69 +60,81 @@ void enviarTablaTransformacion(int socket_master){
 		}
 
 		_registrarBloquePlanificacion(listaNodos, i, bytes, nodos, copias);
-		/*if (copias == 1){
-			mandarOperacionTrafo(socket_master, nodos[0].nombreNodo, nodos[0].ip, nodos[0].puerto, nodos[0].bloque, bytes);
-		} else if(copias == 2){
-			mandarOperacionTrafo(socket_master, nodos[0].nombreNodo, nodos[0].ip, nodos[0].puerto, nodos[0].bloque, bytes);
-			// planificar y enviar
-		}*/
 	}
+
+	ordenarNodos(listaNodos);
+
+	cantidadJobs++;
+	zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
 
 	zsend(socket_master, &bloques, sizeof(bloques), 0);
+
+	planificarBloquesYEnviarAMaster(socket_master, bloques, listaNodos);
+
+	// LIBERAR LISTA (hicimos malloc)
 }
 
-void enviarSolicitudReduccion(int socket) {
+void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
+	int entradas = list_size(transformacionesRealizadas);
 	int i;
+	int tipoMensaje = SOLICITUDREDUCCIONLOCAL;
 
-	operacionReduccion op;
-	strcpy(op.nombreNodo, "nombrePrueba");
-	strcpy(op.ip, "127.0.0.1");
-	op.puerto = htons(9002);
-	op.cantidadTemporales = 4;
-	strcpy(op.archivoReducido, "archivoReducido");
+	zsend(socket, &tipoMensaje, sizeof(tipoMensaje), 0);
 
-	rutaArchivo rutas[op.cantidadTemporales];
+	EntradaTablaEstado * en = (EntradaTablaEstado *) malloc(sizeof(*en));
 
-	strcpy(rutas[0].ruta, "ruta1");
-	strcpy(rutas[1].ruta, "ruta2");
-	strcpy(rutas[2].ruta, "ruta3");
-	strcpy(rutas[3].ruta, "ruta4");
+	for(i = 0; i < entradas; ++i){
+		EntradaTablaEstado * trafo = (EntradaTablaEstado *) list_get(transformacionesRealizadas, i);
 
-	for (i = 0; i < op.cantidadTemporales; i++) {
-		log_info(logger, "ruta %s\n", &rutas[i]);
+		if(trafo != NULL){
+			if(i == 0){
+				zsend(socket, trafo->nombreNodo, sizeof(char) * 100, 0);
+				zsend(socket, trafo->ip, sizeof(char) * 20, 0);
+				zsend(socket, &trafo->puerto, sizeof(trafo->puerto), 0);
+				zsend(socket, &entradas, sizeof(entradas), 0);
+				generarArchivoTemporal(trafo->nombreNodo, en->archivoTemporal);
+				strcpy(en->nombreNodo, trafo->nombreNodo);
+				strcpy(en->ip, trafo->ip);
+				en->puerto = trafo->puerto;
+				en->estado = ENPROCESO;
+				en->etapa = REDUCCIONLOCAL;
+				en->numeroBloque = 0;
+				en->jobId = trafo->jobId;
+				en->masterId = trafo->masterId;
+			}
+
+			zsend(socket, trafo->archivoTemporal, sizeof(char) * 255, 0);
+		}
 	}
 
-	zsend(socket, &op, sizeof(op), 0);
+	zsend(socket, en->archivoTemporal, sizeof(char) *  255, 0);
 
-	while (op.cantidadTemporales--) {
-		zsend(socket, &rutas[op.cantidadTemporales], sizeof(rutaArchivo), 0);
-	}
+	list_add(tablaEstado, en);
+
+	log_info(logger, "\nMasterId\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n"
+					 "%d\t\t%d\t%s\t%s\t%d\t%s\t%s",
+			 en->masterId,
+			 en->jobId,
+			 "EN PROCESO",
+			 en->nombreNodo,
+			 en->numeroBloque,
+			 "REDUCCION LOCAL",
+			 en->archivoTemporal);
 }
-
 
 void manejarDatos(int buf, int socket){
 	switch(buf) {
 		case SOLICITUDJOB:
 			enviarTablaTransformacion(socket);
 			break;
-		case PEDIDOREDUCCION:
-			enviarSolicitudReduccion(socket);
-			break;
 		case FALLOTRANSFORMACION:
 			break;
 		case FALLOREDLOCAL:
 			break;
+		case TRANSFORMACIONOK:
+			transformacionOK(socket);
+			break;
 	}
-}
-
-void mandarOperacionTrafo(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
-	zsend(socket, nombNodo,sizeof(char)*100, 0);
-	zsend(socket, ip,sizeof(char)*20, 0);
-	zsend(socket, &puerto,sizeof(puerto), 0);
-	zsend(socket, &nroBloque,sizeof(nroBloque), 0);
-	zsend(socket, &bytes,sizeof(bytes), 0);
-	zsend(socket, "/temp/j1n1b8", 255 * sizeof(char), 0);
-
 }
 
 void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
@@ -161,6 +174,9 @@ void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long byte
 			bloque->bloque = nodos[i].bloque;
 			bloque->bytes = bytes;
 
+			strcpy(nuevoNodo->ip, nodos[i].ip);
+			nuevoNodo->puerto = nodos[i].puerto;
+
 			dictionary_put(nuevoNodo->bloques, numBloqueStr, bloque);
 
 			list_add(listaNodos, nuevoNodo);
@@ -176,4 +192,3 @@ void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long byte
 		}
 	}
 }
-

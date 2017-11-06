@@ -224,7 +224,15 @@ void crear_hilo_consola(){
 
 /************************FUNCIONES DE CONSOLA****************************/
 
-void formatFileSystem(){}
+void formatFileSystem(){
+	int i;
+	for(i = 1; i < 100; ++i){
+		tabla_Directorios[i].id = 0;
+		tabla_Directorios[i].padre = 0;
+		memset(tabla_Directorios[directorio].nombre, 0, sizeof(char) * 255);
+	}
+
+}
 
 void rm(char ** linea){
 	if(linea[1][0] == '-'){

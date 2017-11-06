@@ -23,6 +23,8 @@ typedef struct t_TablaEstado{
 	int jobId;
 	int masterId;
 	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
 	int numeroBloque;
 	TipoOperacion etapa;
 	char archivoTemporal[255];
@@ -125,8 +127,7 @@ int retardoPlanificacion;
 int sock_fs;
 t_list* tablaEstado;
 int disponibilidad_base;
-unsigned int wlMax;
-unsigned int wl;
+int cantidadJobs;
 
 /* FUNCIONES */
 void inicializarYAMA();

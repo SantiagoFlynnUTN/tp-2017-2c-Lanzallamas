@@ -1,35 +1,115 @@
 #include "planificacionYama.h"
 #include <string.h>
+#include <sys/time.h>
+#include <sockets.h>
 
+int _buscarMax(t_list * nodos);
+int _getTareasHistoricas(InfoNodo * nodo);
+int _pWl(InfoNodo * nodo, int max);
+void _setAvailability(t_list * nodos);
+void _sumarTrabajos(t_list * nodos);
+void _enviarAMaster(int socket_master, InfoNodo * nodo, TamanoBloque * bloque, TipoOperacion operacion);
+void _sumarDisponiblidadBase(t_list * listaNodos);
+void _sortNodos(t_list * nodos);
 
-void planificacion(t_list * nodos, int cantBloques, int socketMaster){
-	setAvailability(nodos);
-	sumarTrabajos(nodos);
-	sortByAvailability(nodos);
-	sortByTareasRealizadas(nodos);
-	/*pClock = nodos;
-	while (bloques != NULL){
-		while (!estaEnNodo(bloques, &pClock));
-		bloques = bloques->siguiente;
-	}*/
-
+void ordenarNodos(t_list * nodos){
+	_sumarTrabajos(nodos);
+	_setAvailability(nodos);
+	_sortNodos(nodos);
 }
 
-//FUNCIONES AUXILIARES//
+void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * listaNodos){
+	int clock = 0, i;
+	int cantidadNodos = list_size(listaNodos);
+	for(i = 0; i < bloques; ++i){
+		int inicial = clock;
+		int planificado = 0;
 
-void setAvailability(t_list * nodos){
+		while(!planificado){
+
+			InfoNodo * nodo = (InfoNodo *) list_get(listaNodos, clock);
+			char numeroBloqueStr[5];
+			intToString(i, numeroBloqueStr);
+
+			TamanoBloque * bloque = (TamanoBloque *) dictionary_get(nodo->bloques,numeroBloqueStr);
+
+			if(bloque != NULL){
+				if(nodo->disponibilidad == 0) {
+					nodo->disponibilidad += disponibilidad_base;
+				}else{
+					if(clock == inicial){
+						_sumarDisponiblidadBase(listaNodos);
+					}
+
+					_enviarAMaster(socket_master, nodo, bloque, TRANSFORMACION);
+					planificado = 1;
+				}
+			}
+
+			clock = (clock + 1) % cantidadNodos;
+		}
+
+	}
+}
+
+void _enviarAMaster(int socket_master, InfoNodo * nodo, TamanoBloque * bloque, TipoOperacion operacion){
+	zsend(socket_master, nodo->nombre, sizeof(char)*100, 0);
+	zsend(socket_master, nodo->ip, sizeof(char)*20, 0);
+	zsend(socket_master, &nodo->puerto, sizeof(nodo->puerto), 0);
+	zsend(socket_master, &bloque->bloque, sizeof(bloque->bloque), 0);
+	zsend(socket_master, &bloque->bytes, sizeof(bloque->bytes), 0);
+
+	char tempFile[255];
+	memset(tempFile, 0, sizeof(char) * 255);
+
+	generarArchivoTemporal(nodo->nombre, tempFile);
+
+	zsend(socket_master, tempFile, 255 * sizeof(char), 0);
+
+	EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)malloc(sizeof(*entradaTablaEstado));
+
+	entradaTablaEstado->masterId = cantidadJobs;
+	entradaTablaEstado->jobId = cantidadJobs;
+	entradaTablaEstado->estado = ENPROCESO;
+	strcpy(entradaTablaEstado->nombreNodo, nodo->nombre);
+	entradaTablaEstado->numeroBloque = bloque->bloque;
+	entradaTablaEstado->etapa = operacion;
+	strcpy(entradaTablaEstado->archivoTemporal, tempFile);
+	strcpy(entradaTablaEstado->ip, nodo->ip);
+	entradaTablaEstado->puerto = nodo->puerto;
+
+	log_info(logger, "\nMasterId\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n"
+			"%d\t\t%d\t%s\t%s\t%d\t%s\t%s",
+			 entradaTablaEstado->masterId,
+			 entradaTablaEstado->jobId,
+			 "EN PROCESO",
+			 entradaTablaEstado->nombreNodo,
+			 entradaTablaEstado->numeroBloque,
+			 "TRANSFORMACION",
+			 entradaTablaEstado->archivoTemporal);
+
+	list_add(tablaEstado, entradaTablaEstado);
+}
+
+void generarArchivoTemporal(char * nombre, char * file){
+	struct timeval tv;
+	gettimeofday(&tv,NULL);
+
+	sprintf(file, "/temp/%s-%ld.%06ld\n", nombre, tv.tv_sec, tv.tv_usec);
+}
+
+void _setAvailability(t_list * nodos){
 	if(algoritmoBalanceo == WEIGHTEDCLOCK){
-
 		int max = _buscarMax(nodos);
 		void availability(void * nodo){
 			InfoNodo * infoNodo = (InfoNodo *) nodo;
-			infoNodo->disponibilidad += pWl(infoNodo, max);
+			infoNodo->disponibilidad += _pWl(infoNodo, max);
 		}
 		list_iterate(nodos, availability);
 	}
 }
 
-void sumarTrabajos(t_list * nodos){
+void _sumarTrabajos(t_list * nodos){
 	void sumarTrabajo(void * entrada){
 		EntradaTablaEstado * en = (EntradaTablaEstado *) entrada;
 		if(en->estado == ENPROCESO){
@@ -59,21 +139,44 @@ int _buscarMax(t_list * nodos){
 	return max;
 }
 
-int pWl(InfoNodo * nodo, int max){
+int _pWl(InfoNodo * nodo, int max){
 	return max - nodo->trabajosActuales;
 }
 
-
-void sortByAvailability(t_list * nodos){
-	list_sort(nodos, _ordenarPorDisponibilidad);
+void _sumarDisponiblidadBase(t_list * listaNodos){
+	void sumarDisponibilidad(void * nodo){
+		InfoNodo * in = (InfoNodo *) nodo;
+		in->disponibilidad += disponibilidad_base;
+	}
+	list_iterate(listaNodos, sumarDisponibilidad);
 }
 
-void sortByTareasRealizadas(t_list * nodos){
-}
-
-bool _ordenarPorDisponibilidad(void * n1, void * n2){
+void _sortNodos(t_list * nodos){
+	bool _ordenarPorDisponibilidad(void * n1, void * n2){
 		InfoNodo * nodo1 = (InfoNodo *) n1,
 				* nodo2 = (InfoNodo *) n2;
 
-		return strcmp(nodo1->disponibilidad, nodo2->disponibilidad) >= 0;
+		if(nodo1->disponibilidad == nodo2->disponibilidad){
+			return _getTareasHistoricas(nodo1) <  _getTareasHistoricas(nodo2);
+		}
+
+		return nodo1->disponibilidad > nodo2->disponibilidad;
 	}
+
+	list_sort(nodos, _ordenarPorDisponibilidad);
+}
+
+int _getTareasHistoricas(InfoNodo * nodo){
+	int tareas = 0;
+	void sumarTrabajoHistoricos(void * entrada){
+		EntradaTablaEstado * en = (EntradaTablaEstado *) entrada;
+
+		if(en->estado != ENPROCESO && strcmp(en->nombreNodo, nodo->nombre) == 0){
+			tareas++;
+		}
+	}
+
+	list_iterate(tablaEstado, sumarTrabajoHistoricos);
+
+	return tareas;
+}
