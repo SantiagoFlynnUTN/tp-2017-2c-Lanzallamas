@@ -20,6 +20,9 @@
 #include <protocoloComunicacion.h>
 #include <sockets.h>
 #include "reduccionMaster.h"
+#include <commons/collections/list.h>
+#include <sys/time.h>
+
 
 int YAMAsock;
 
@@ -68,6 +71,8 @@ void mandarReduccion(OperacionReduccion * op){
 void mandarSolicitudTransformacion(workerTransformacion* t){
 	int socketWorker;
 	int tipoMensaje;
+
+	gettimeofday(&t->tv1, NULL);
 	conexionTransfWorker(&socketWorker, *t);
 
 	mensajeTransformacion mensaje;
@@ -91,6 +96,9 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 		int mensajeOK = TRANSFORMACIONOK;
 		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
 		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
+		gettimeofday(&t->tv2, NULL);
+		t->averageTime = (double) (t->tv2.tv_usec - t->tv1.tv_usec) / 1000000 +
+		         (double) (t->tv2.tv_sec - t->tv1.tv_sec);
 	}
 
 	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
@@ -100,12 +108,13 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 }
 
 void mandarTransformacionNodo(int socket_nodo, int socket_yama,
-							  int cantidadWorkers) {
+							  int cantidadWorkers, t_list* tiemposTransf) {
 	workerTransformacion t[cantidadWorkers];
 	pthread_t tid[cantidadWorkers];
 	int rc[cantidadWorkers];
 	int i = 0;
 	YAMAsock = socket_yama; //no me puteen por esto, tengo mucha paja.
+
 	while (cantidadWorkers--) {
 		zrecv(socket_yama, t[cantidadWorkers].nombreNodo, sizeof(char)*100, 0);
 		zrecv(socket_yama, t[cantidadWorkers].ipWorker, sizeof(char)*20, 0);
@@ -113,9 +122,14 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		zrecv(socket_yama, &t[cantidadWorkers].numBloque, sizeof(t[cantidadWorkers].numBloque), 0);
 		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados, sizeof(t[cantidadWorkers].bytesOcupados), 0);
 		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
+		t[cantidadWorkers].tv2.tv_usec = 0;
+		t[cantidadWorkers].tv2.tv_sec = 0;
 
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
 											 (void*)mandarSolicitudTransformacion, &t[cantidadWorkers]);
+
+		list_add(tiemposTransf, &t[cantidadWorkers]);
+
 		if (rc[cantidadWorkers])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;
@@ -132,5 +146,14 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 				break;
 		}
 	}
+
+
+	bool criterioFilter(void * tiempo) {
+		workerTransformacion * t = (workerTransformacion *) tiempo;
+		return t->tv2.tv_usec != 0 && t->tv2.tv_sec != 0;
+	}
+
+	tiemposTransf = list_filter(tiemposTransf, criterioFilter);
+
 	log_info(logger, "Terminaron las transformaciones\n");
 }

@@ -19,6 +19,7 @@
 #include "reduccionMaster.h"
 #include <sys/time.h>
 #include "RGMaster.h"
+#include <commons/collections/list.h>
 
 
 int socket_yama;
@@ -42,16 +43,17 @@ int main(int argc, char *argv[]){
 
 	int cantidadWorkersEjemplo;
 	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);
-
-	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo);
+	t_list* tiemposTransformaciones = list_create();
+	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo, tiemposTransformaciones);
 
 	reduccionLocal(socket_yama);
 
 	reduccionGlobal(socket_yama);
 
 	gettimeofday(&tv2, NULL);
+	double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+	         (double) (tv2.tv_sec - tv1.tv_sec);
 	printf ("Tiempo de ejecución del Job = %f segundos\n",
-	         (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
-	         (double) (tv2.tv_sec - tv1.tv_sec));
+	         tiempoTotal);
 	return 0;
 }
