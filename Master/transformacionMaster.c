@@ -150,7 +150,10 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 
 	bool criterioFilter(void * tiempo) {
 		workerTransformacion * t = (workerTransformacion *) tiempo;
-		return t->tv2.tv_usec != 0 && t->tv2.tv_sec != 0;
+
+		double time = (double) (t->tv2.tv_usec/ 1000000 +
+				         (double) (t->tv2.tv_sec));
+		return time != 0;
 	}
 
 	tiemposTransf = list_filter(tiemposTransf, criterioFilter);
