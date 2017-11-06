@@ -50,6 +50,13 @@ void asociarNodo(int socket){
     printNodo(dictionary_get(nodos, newNodo->nombreNodo));
 }
 
+void crearRootDir(){
+    strcpy(tabla_Directorios[0].nombre, ROOT_DIR);
+    tabla_Directorios[0].padre = -1;
+    tabla_Directorios[0].id = 0;
+    listaArchivosDirectorios[0] = list_create();
+}
+
 void _cargarConfiguracion(){
     config = config_create(ARCHIVO_CONFIGURACION);
 
@@ -75,10 +82,7 @@ void _cargarFileSystem(){
     if(cargarTablaDirectorio() != 0){ // no hay directorios
         log_info(logger, "No hay directorios registrados\n");
 
-        strcpy(tabla_Directorios[0].nombre, ROOT_DIR);
-        tabla_Directorios[0].padre = -1;
-        tabla_Directorios[0].id = 0;
-        listaArchivosDirectorios[0] = list_create();
+        crearRootDir();
         return;
     }
 

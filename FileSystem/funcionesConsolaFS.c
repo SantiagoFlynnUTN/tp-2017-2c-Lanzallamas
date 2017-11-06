@@ -20,6 +20,7 @@
 #include "md5/md5.h"
 #include <sys/stat.h>
 #include "envioBloques.h"
+#include "estructurasFileSystem.h"
 
 void formatFileSystem();
 void rm(char ** linea);
@@ -33,6 +34,7 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo);
 void md5Consola(char * archivo);
 void ls(char * dir);
 void info(char * archivo);
+void infoNodos();
 
 void hiloConsola(){
 	printf("Consola disponible par uso\n");
@@ -208,12 +210,15 @@ void hiloConsola(){
 			continue;
 		}
 
+		if (strcmp("nodos", linea[0]) == 0){
+			infoNodos();
+		}
+
 		printf("Error: comando desconocido\n");
 		free(linea);
 	}
 	pthread_exit(NULL);
 }
-
 
 void crear_hilo_consola(){
 	int rc;
@@ -227,11 +232,37 @@ void crear_hilo_consola(){
 void formatFileSystem(){
 	int i;
 	for(i = 1; i < 100; ++i){
-		tabla_Directorios[i].id = 0;
-		tabla_Directorios[i].padre = 0;
-		memset(tabla_Directorios[directorio].nombre, 0, sizeof(char) * 255);
+		if(strlen(tabla_Directorios[i].nombre) > 0){
+			tabla_Directorios[i].id = 0;
+			tabla_Directorios[i].padre = 0;
+			memset(tabla_Directorios[i].nombre, 0, sizeof(char) * 255);
+
+			list_destroy(listaArchivosDirectorios[i]);
+		}
 	}
 
+	void destructorArchivo(void * descriptorArchivo){
+		Archivo * archivo = (Archivo *) descriptorArchivo;
+
+		list_destroy_and_destroy_elements(archivo->bloques, free);
+
+		free(archivo);
+	}
+
+	dictionary_clean_and_destroy_elements(archivos, destructorArchivo);
+
+	crearRootDir();
+
+	void formatNodo(char * nombreNodo, void * nodo){
+		DescriptorNodo * descriptorNodo = (DescriptorNodo *) nodo;
+
+		descriptorNodo->bloquesLibres = descriptorNodo->bloques;
+
+		bitarray_destroy(descriptorNodo->bitmap);
+		crearBitMap(descriptorNodo);
+	}
+
+	dictionary_iterator(nodos, formatNodo);
 }
 
 void rm(char ** linea){
@@ -573,4 +604,15 @@ void info(char * archivo){
 		printf("Bloque %d:\t\tNodo\t\tNumero Bloque\nCopia 0:\t\t%s\t\t%d\nCopia 1:\t\t%s\t\t%d\n",
 			   i, bloque->copia0.nodo, bloque->copia0.numeroBloque, bloque->copia1.nodo, bloque->copia1.numeroBloque);
 	}
+}
+
+void infoNodos(){
+	void infoNodo(char * nombre, void * nodo){
+		DescriptorNodo * descriptorNodo = (DescriptorNodo *) nodo;
+
+		printf("%s\nBloques: %d\nBloques Libres: %d\nIP: %s\nPuerto: %d\nSocket: %d\n", nombre, descriptorNodo->bloques, descriptorNodo->bloquesLibres,
+		descriptorNodo->ip, descriptorNodo->puerto, descriptorNodo->socket);
+	}
+
+	dictionary_iterator(nodos, infoNodo);
 }

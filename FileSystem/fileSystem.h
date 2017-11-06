@@ -87,5 +87,6 @@ t_config * config;
 void asociarNodo(int socket);
 void inicializarFileSystem();
 void persistirFileSystem();
+void crearRootDir();
 
 #endif /* FILESYSTEM_H_ */
