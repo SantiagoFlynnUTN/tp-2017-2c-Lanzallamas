@@ -15,7 +15,6 @@
 #include "chat.h"
 #include "enviarArchivo.h"
 #include "cliente.h"
-#include "servidorMaster.h"
 #include "conexionesYAMA.h"
 #include "transformacionMaster.h"
 #include <protocoloComunicacion.h>
@@ -116,7 +115,7 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
 
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
-											 mandarSolicitudTransformacion, &t[cantidadWorkers]);
+											 (void*)mandarSolicitudTransformacion, &t[cantidadWorkers]);
 		if (rc[cantidadWorkers])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
 		i++;

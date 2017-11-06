@@ -37,10 +37,7 @@ void enviarStructFileSystem(int socket){
 int main(int argc, char *argv[]){
 	inicializarDataNode();
 	iniciarConexionAServer(&sockfd);
-	//escribir_chat(sockfd);
 	enviarStructFileSystem(sockfd);
-
-	escuchar_chat(sockfd);
 
 	for(;;);
 

@@ -15,7 +15,6 @@
 #include "chat.h"
 #include "enviarArchivo.h"
 #include "cliente.h"
-#include "servidorMaster.h"
 #include "conexionesYAMA.h"
 #include "transformacionMaster.h"
 #include <protocoloComunicacion.h>

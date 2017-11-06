@@ -13,7 +13,6 @@
 #include <pthread.h>
 #include "chat.h"
 #include "cliente.h"
-#include "servidorMaster.h"
 #include "conexionesYAMA.h"
 #include <protocoloComunicacion.h>
 #include "transformacionMaster.h"

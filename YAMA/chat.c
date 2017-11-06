@@ -64,6 +64,7 @@ void escuchar(int* socket){
 	}
 }
 
+/*
 void escuchar_chat(int socket){
 	int rc;
 	pthread_t tid;
@@ -77,3 +78,4 @@ void escribir_chat(int socket){
 	rc = pthread_create(&tid, NULL, escribir, &socket);
 		if(rc) printf("no pudo crear el hilo");
 }
+*/

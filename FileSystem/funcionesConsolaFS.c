@@ -223,7 +223,7 @@ void hiloConsola(){
 void crear_hilo_consola(){
 	int rc;
 	pthread_t tid;
-	rc = pthread_create(&tid, NULL, hiloConsola, NULL);
+	rc = pthread_create(&tid, NULL, (void*)hiloConsola, NULL);
 	if(rc) printf("no pudo crear el hilo");
 }
 
