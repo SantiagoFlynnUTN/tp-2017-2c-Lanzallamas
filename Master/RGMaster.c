@@ -1,45 +1,49 @@
-/*
- * RGMaster.c
- *
- *  Created on: 22/10/2017
- *      Author: utnso
- */
-
 #include <stdint.h>
 #include <protocoloComunicacion.h>
 #include <sockets.h>
 #include "cliente.h"
 #include "RGMaster.h"
-
-
+#include "master.h"
 
 void reduccionGlobal(int socket_yama){
+	int cantidad;
 
+	int i = 0;
 
-	NodoEncargado encargado;
-	NodoGlobal* nodos;
-	int redGlo, cantNodos;
-	redGlo = REDGLOBAL;
-	int operacionGlobal = REDUCCIONGLOBAL;
+	zrecv(socket_yama, &cantidad, sizeof(cantidad), 0);
 
-	zsend(socket_yama, &redGlo, sizeof(int), 0);
-	zrecv(socket_yama, &encargado, sizeof(encargado), 0);
+	OperacionReduccionGlobal operacionReduccion[cantidad - 1];
+	OperacionReduccionGlobal encargado;
 
-	zrecv(socket_yama, &cantNodos, sizeof(int), 0);
-	int socket_encargado;
-	iniciarConexionANodo(&socket_encargado, encargado.ip, encargado.puerto);
-	zsend(socket_encargado, &operacionGlobal, sizeof(int), 0);
-	zsend(socket_encargado, &cantNodos, sizeof(int), 0);
-	nodos = (NodoGlobal*)malloc(sizeof(NodoGlobal) * cantNodos);
+	char archivoFinal[255];
 
+	int salteos = 0;
 
-	int i;
-	for(i=0; i < cantNodos; i++){
-		zrecv(socket_yama, &nodos[i], sizeof(NodoGlobal), 0);
-		zsend(socket_encargado, &nodos[i], sizeof(NodoGlobal), 0);
+	for(i = 0; i < cantidad; ++i){
+		int esEncargado;
+
+		zrecv(socket_yama, &esEncargado, sizeof(esEncargado), 0);
+
+		if(esEncargado == 1){
+			zrecv(socket_yama, encargado.nombreNodo, sizeof(char) * 100, 0);
+			zrecv(socket_yama, encargado.ip, sizeof(char) * 20, 0);
+			zrecv(socket_yama, &encargado.puerto, sizeof(encargado.puerto), 0);
+			zrecv(socket_yama, encargado.archivoReducido, sizeof(char) * 255, 0);
+
+			salteos++;
+
+			log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:SI\n", encargado.nombreNodo, encargado.ip, encargado.puerto, encargado.archivoReducido);
+		}else{
+			zrecv(socket_yama, operacionReduccion[i - salteos].nombreNodo, sizeof(char) * 100, 0);
+			zrecv(socket_yama, operacionReduccion[i - salteos].ip, sizeof(char) * 20, 0);
+			zrecv(socket_yama, &operacionReduccion[i - salteos].puerto, sizeof(encargado.puerto), 0);
+			zrecv(socket_yama, operacionReduccion[i - salteos].archivoReducido, sizeof(char) * 255, 0);
+
+			log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", operacionReduccion[i - salteos].nombreNodo, operacionReduccion[i - salteos].ip, operacionReduccion[i - salteos].puerto, operacionReduccion[i - salteos].archivoReducido);
+		}
 	}
-	int j = 0;
-	zrecv(socket_encargado, &j, sizeof(int), 0);
-	if(j) printf("el Job termino ok\n");
 
+	zrecv(socket_yama, archivoFinal, sizeof(char) * 255, 0);
+
+	printf("ARCHIVO FINAL:%s", archivoFinal);
 }

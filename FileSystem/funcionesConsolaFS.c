@@ -212,6 +212,7 @@ void hiloConsola(){
 
 		if (strcmp("nodos", linea[0]) == 0){
 			infoNodos();
+			continue;
 		}
 
 		printf("Error: comando desconocido\n");

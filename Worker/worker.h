@@ -1,10 +1,3 @@
-/*
- * worker.h
- *
- *  Created on: 11/9/2017
- *      Author: utnso
- */
-
 #include <commons/config.h>
 #include <commons/log.h>
 #include <stdint.h>
@@ -54,11 +47,14 @@ mensajeReduc;
 #define PUERTO_FILESYSTEM "PUERTO_FILESYSTEM"
 #define NOMBRE_NODO "NOMBRE_NODO"
 #define RUTA_DATABIN "RUTA_DATABIN"
+#define PUERTO_WORKER "PUERTO_WORKER"
+#define PUERTO_DATANODE "PUERTO_DATANODE"
 
 t_config * config;
 t_log * logger;
 ConexionFileSystem conexionFileSystem;
 InfoNodo infoNodo;
+char * mapeoDataBin;
 
 /* FUNCIONES */
 void inicializarWorker();

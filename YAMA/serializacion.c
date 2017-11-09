@@ -134,6 +134,9 @@ void manejarDatos(int buf, int socket){
 		case TRANSFORMACIONOK:
 			transformacionOK(socket);
 			break;
+		case REDLOCALOK:
+			reduccionLocalOK(socket);
+			break;
 	}
 }
 

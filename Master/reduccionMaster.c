@@ -22,34 +22,6 @@
 
 int YAMAsock;
 
-
-void mandarReduccionNodo(OperacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos);
-
-void solicitudReduccion(int socket_yama) {
-
-	YAMAsock = socket_yama; //como dije, no me puteen, je.
-	int pedRed;
-	pedRed = PEDIDOREDUCCION;
-	zsend(socket_yama, &pedRed, sizeof(int), 0);
-	OperacionReduccion op;
-	recv(socket_yama, &op, sizeof(op), 0);
-
-	rutaArchivo rutas[op.cantidadTemporales];
-
-	int i = 0;
-	while (op.cantidadTemporales--) {
-		printf("llegue\n");
-		zrecv(socket_yama, rutas[op.cantidadTemporales].ruta, sizeof(rutaArchivo),
-			  0);
-		printf("ruta: %s\n", rutas[op.cantidadTemporales].ruta);
-		i++;
-	}
-
-	int cantidadNodosEjemplo = 3;
-
-	mandarReduccionNodo(op, rutas, i, cantidadNodosEjemplo);
-}
-
 void conexionReduccionWorker(int *sockfd, OperacionReduccion op) {
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
@@ -60,7 +32,8 @@ void conexionReduccionWorker(int *sockfd, OperacionReduccion op) {
 	}
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = op.puerto;  // short, Ordenación de bytes de la red
+	their_addr.sin_port = op.puerto;
+	//their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
 	their_addr.sin_addr.s_addr = inet_addr(op.ip);
 	memset(&(their_addr.sin_zero), 0, 8); // poner a cero el resto de la estructura
 
@@ -71,48 +44,40 @@ void conexionReduccionWorker(int *sockfd, OperacionReduccion op) {
 	}
 }
 
-void mandarSolicitudReduccion(OperacionReduccion* op) {
+void * mandarSolicitudReduccion(OperacionReduccion* op) {
 	int socketNodo;
 	int tipoMensaje;
 	conexionReduccionWorker(&socketNodo, *op);
 
-	reduccionWorker mensaje;
 	tipoMensaje = PEDIDOREDUCCION;
 
-	mensaje.cantidadTemporales = op->cantidadTemporales;
-	strcpy(mensaje.archivoReducido, op->archivoReducido);
-
 	zsend(socketNodo, &tipoMensaje, sizeof(int), 0);
-	zsend(socketNodo, &mensaje, sizeof(reduccionWorker), 0);
+	zsend(socketNodo, &op->cantidadTemporales, sizeof(op->cantidadTemporales), 0);
 
-	int status, bytes;
-	bytes= recv(socketNodo, &status, sizeof(int), 0);
-	if(bytes == -1 || status != 0){
+	int i;
+	for(i = 0; i < op->cantidadTemporales; ++i){
+		zsend(socketNodo, op->temporales[i], sizeof(char) * 255, 0);
+	}
+
+	zsend(socketNodo, op->archivoReducido, sizeof(char) * 255, 0);
+
+	int status;
+	if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
 		int mensajeError = FALLOREDLOCAL;
 		log_error(logger, "Fallo reduccion en nodo %s\n", op->nombreNodo);
 		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
 	}else{
+		int mensajeOK = REDLOCALOK;
 		log_info(logger, "worker %d finalizó reduccion\n", socketNodo);
+		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
 	}
+
+	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
+	zsend(YAMAsock, op->archivoReducido, sizeof(char) * 255, 0);
+
 	pthread_exit(NULL);
-}
 
-void mandarReduccionNodo(OperacionReduccion op, rutaArchivo* rutas, int cantidadRutas, int cantNodos) {
-	pthread_t tid[cantNodos];
-	int rc[cantNodos];
-	int i = 0;
-	while (cantNodos--) {
-		rc[cantNodos] = pthread_create(&tid[cantNodos], NULL,
-									   (void*)mandarSolicitudReduccion, &op);
-		if (rc[cantNodos])
-			log_error(logger, "no pudo crear el hilo %d\n", i);
-		i++;
-	}
-
-	while (i--) {
-		pthread_join(tid[i], NULL);
-		log_info(logger, "Terminaron las reducciones\n");
-	}
+	return NULL;
 }
 
 void reduccionLocal(int socket_yama) {
@@ -125,15 +90,19 @@ void reduccionLocal(int socket_yama) {
 
 	int i;
 
-	printf("Reduccion a Realizar:\nNODO: %s\nIP: %s\nPUERTO: %d\n", op.nombreNodo, op.ip, op.puerto);
+	log_info(logger, "Reduccion a Realizar:\nNODO: %s\nIP: %s\nPUERTO: %d\n", op.nombreNodo, op.ip, op.puerto);
+
+
 
 	for(i = 0; i < op.cantidadTemporales; ++i){
 		zrecv(socket_yama, op.temporales[i], sizeof(char) * 255, 0);
 
-		printf("TEMPORAL %d: %s\n", i+1, op.temporales[i]);
+		log_info(logger, "TEMPORAL %d: %s\n", i+1, op.temporales[i]);
 	}
 
 	zrecv(socket_yama, op.archivoReducido, sizeof(char) *  255, 0);
 
-	printf("REDUCIDO: %s\n", op.archivoReducido);
+	pthread_t tid;
+
+	int threadStatus = pthread_create(&tid, NULL, mandarSolicitudReduccion, &op);
 }

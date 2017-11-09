@@ -54,7 +54,7 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
     long ocupados = 0;
 
     ssize_t bytesLeidos;
-    char * linea;
+    char * linea = NULL;
     size_t len;
     int numeroBloque = 0;
 
@@ -202,6 +202,5 @@ int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
     if(recv(nodo->socket, &resultado, sizeof(resultado), 0) <= 0 || !resultado){
         return -1;
     }
-
     return 0;
 }

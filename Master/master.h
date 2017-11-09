@@ -51,6 +51,14 @@ typedef struct{
 OperacionReduccion;
 
 typedef struct{
+	char nombreNodo[100];
+	char ip[20];
+	uint16_t puerto;
+	char archivoReducido[255];
+} __attribute__((packed))
+OperacionReduccionGlobal;
+
+typedef struct{
 	int cantidadTemporales;
 	char archivoReducido[255];
 } __attribute__((packed))

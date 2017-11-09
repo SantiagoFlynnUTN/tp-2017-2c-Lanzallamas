@@ -51,10 +51,8 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 	log_info(logger, "ip: %s\nport: %d\n", t.ipWorker, t.puertoWorker);
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	//their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
-	their_addr.sin_port = htons(PORTNODO);  // short, Ordenación de bytes de la red
-	//their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
-	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
+	their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
@@ -62,10 +60,6 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 		perror("connect");
 		exit(1);
 	}
-}
-
-void mandarReduccion(OperacionReduccion * op){
-
 }
 
 void mandarSolicitudTransformacion(workerTransformacion* t){

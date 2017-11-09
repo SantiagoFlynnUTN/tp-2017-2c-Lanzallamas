@@ -39,6 +39,8 @@ int main(int argc, char *argv[]){
 	iniciarConexionAServer(&sockfd);
 	enviarStructFileSystem(sockfd);
 
+	escuchar_chat(sockfd);
+
 	for(;;);
 
 	close(sockfd);

@@ -1,10 +1,3 @@
-/*
- * servidor.c
- *
- *  Created on: 4/9/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +11,7 @@
 #include "servidor.h"
 #include "mainWorker.h"
 #include <protocoloComunicacion.h>
-
+#include "worker.h"
 
 int socketFork;
 int listener;    // descriptor de socket a la escucha
@@ -72,7 +65,7 @@ void setServer(){
 		struct sockaddr_in myaddr;     // dirección del servidor
 		myaddr.sin_family = AF_INET;
 		myaddr.sin_addr.s_addr = INADDR_ANY;
-		myaddr.sin_port = htons(PORTNODO);
+		myaddr.sin_port = htons(config_get_int_value(config, PUERTO_WORKER));
 		memset(&(myaddr.sin_zero), '\0', 8);
 		if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
 			perror("bind");

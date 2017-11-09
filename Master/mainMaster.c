@@ -46,8 +46,6 @@ int main(int argc, char *argv[]){
 	t_list* tiemposTransformaciones = list_create();
 	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo, tiemposTransformaciones);
 
-	reduccionLocal(socket_yama);
-
 	reduccionGlobal(socket_yama);
 
 	gettimeofday(&tv2, NULL);

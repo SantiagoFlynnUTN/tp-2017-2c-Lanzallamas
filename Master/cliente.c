@@ -1,10 +1,3 @@
-/*
- * cliente.c
- *
- *  Created on: 7/9/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -17,6 +10,7 @@
 #include <arpa/inet.h>
 #include "cliente.h"
 #include <protocoloComunicacion.h>
+#include "master.h"
 
 void iniciarConexionAYAMA(int *sockfd){
 
@@ -29,8 +23,8 @@ void iniciarConexionAYAMA(int *sockfd){
 	}
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
-	their_addr.sin_port = htons(PORTYAMA);  // short, Ordenación de bytes de la red
-	their_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	their_addr.sin_port = conexionYAMA.puerto;
+	their_addr.sin_addr.s_addr = inet_addr(conexionYAMA.ip);
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
