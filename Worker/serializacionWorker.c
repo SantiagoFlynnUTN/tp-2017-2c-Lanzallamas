@@ -1,9 +1,3 @@
-/*
- * serializacionWorker.c
- *
- *  Created on: 12/9/2017
- *      Author: utnso
- */
 #include "serializacionWorker.h"
 #include "transformacionWorker.h"
 #include "reduccionWorker.h"
@@ -18,7 +12,7 @@ void manejarDatos(int buf, int socket){
 	case REDUCLOCAL:
 		iniciarReduccion(socket);
 		break;
-	case REDUCCIONGLOBAL:
+	case SOLICITUDREDUCCIONGLOBAL:
 		iniciarGlobal(socket);
 		break;
 	case ALMACENAMIENTO:
