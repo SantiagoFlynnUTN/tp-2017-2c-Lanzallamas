@@ -33,14 +33,13 @@ void iniciarTransformacion(int socket){
 	zrecv(socket, &t.cantidadBytes, sizeof(t.cantidadBytes), 0);
 	zrecv(socket, &t.bloque, sizeof(t.bloque), 0);
 	zrecv(socket, t.nombreTemp, sizeof(char) * 255, 0);
-
 	char ruta[255];
-	sprintf(ruta, "scripts/transformacion%d.sh", getpid());
+	//sprintf(ruta, "scripts/transformacion%d.sh", getpid());
 	recibirArchivo(socket, ruta);
 	char command[255];
-	sprintf(command, "./%s\n", ruta);
+	sprintf(command, "echo \"hola\ncomo\nestas\nbien\nvos\ntodo\nbien\nque\nsuerte\nte\nfelicito\" | sort >> %s\n", t.nombreTemp);
 	printf("EJECUTANDO %s\n", command);
-	//system(command);
+	system(command);
 	int num = 0;
 	zsend(socket, &num, sizeof(int), 0);
 	exit(1);

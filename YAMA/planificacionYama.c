@@ -95,7 +95,7 @@ void generarArchivoTemporal(char * nombre, char * file){
 	struct timeval tv;
 	gettimeofday(&tv,NULL);
 
-	sprintf(file, "/temp/%s-%ld.%06ld", nombre, tv.tv_sec, tv.tv_usec);
+	sprintf(file, "temp/%s-%ld.%06ld", nombre, tv.tv_sec, tv.tv_usec);
 }
 
 void _setAvailability(t_list * nodos){
