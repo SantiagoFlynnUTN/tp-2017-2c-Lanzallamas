@@ -24,6 +24,49 @@
 
 int socket_yama;
 int socket_nodo;
+pthread_mutex_t mutexTransformacion = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutexReduccion = PTHREAD_MUTEX_INITIALIZER;
+double tiempoTotalJob = 0;
+double tiempoTotalTransf = 0;
+double tiempoTotalRedu = 0;
+int cantTransfActual = 0;
+int cantReduActual = 0;
+int transformacionesOk = 0;
+int reduccionesOk = 0;
+int fallosTransf = 0;
+int fallosRedu = 0;
+int cargaMaxima = 0;
+int maxT = 0;
+int maxR = 0;
+
+
+void printMetrics(){
+	log_info(logger,"\n\n\n----------->  METRICAS  <-----------");
+	printf("[Tiempo] Job: %f sec\n", tiempoTotalJob);
+	printf("[Tiempo Promedio] Transformacion: %f sec\n",
+			tiempoTotalTransf / transformacionesOk);
+	printf("[Tiempo Promedio] Reduccion: %f sec\n",
+			tiempoTotalRedu / reduccionesOk);
+	printf(
+			"[Cantidad] Operaciones en forma paralela:\n-> Total: %i\n-> Transformaciones: %i\n-> Reducciones: %i\n",
+			 cargaMaxima, maxT, maxR);
+	printf("[Cantidad] Transformaciones OK: %i\n", transformacionesOk);
+	printf("[Cantidad] Reducciones OK: %i\n", reduccionesOk);
+	printf("[Cantidad] Fallos en Transformacion: %i\n", fallosTransf);
+	printf("[Cantidad] Fallos en Reduccion: %i\n", fallosRedu);
+}
+
+void calcularMaximos(){
+	int cargaActual;
+	if(cantTransfActual && cantReduActual){
+		cargaActual = cantTransfActual + cantReduActual;
+		if (cargaMaxima < cargaActual){
+			cargaMaxima = cargaActual;
+			maxT = cantTransfActual;
+			maxR = cantReduActual;
+		}
+	}
+}
 
 int main(int argc, char *argv[]){
 
@@ -49,9 +92,11 @@ int main(int argc, char *argv[]){
 	reduccionGlobal(socket_yama);
 
 	gettimeofday(&tv2, NULL);
-	double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+	tiempoTotalJob = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
 	         (double) (tv2.tv_sec - tv1.tv_sec);
 	printf ("Tiempo de ejecución del Job = %f segundos\n",
-	         tiempoTotal);
+	         tiempoTotalJob);
+
+	printMetrics();
 	return 0;
 }

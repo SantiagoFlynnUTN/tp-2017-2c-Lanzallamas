@@ -23,7 +23,6 @@
 #include <commons/collections/list.h>
 #include <sys/time.h>
 
-
 int YAMAsock;
 
 int respuestaSolicitud(int socket_yama) {
@@ -65,8 +64,14 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 void mandarSolicitudTransformacion(workerTransformacion* t){
 	int socketWorker;
 	int tipoMensaje;
+	struct timeval tv1, tv2;
 
-	gettimeofday(&t->tv1, NULL);
+	pthread_mutex_lock(&mutexTransformacion);
+	cantTransfActual++;
+	calcularMaximos();
+	pthread_mutex_unlock(&mutexTransformacion);
+
+	gettimeofday(&tv1, NULL);
 	conexionTransfWorker(&socketWorker, *t);
 
 	mensajeTransformacion mensaje;
@@ -85,14 +90,29 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	if(bytes == -1 || status != 0){
 		int mensajeError = FALLOTRANSFORMACION;
 		log_error(logger, "fallo la transformacion en el nodo %s\n", t->nombreNodo);
+		pthread_mutex_lock(&mutexTransformacion);
+		cantTransfActual--;
+		fallosTransf++;
+		pthread_mutex_unlock(&mutexTransformacion);
 		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
+
 	}else{
 		int mensajeOK = TRANSFORMACIONOK;
-		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
+
+		gettimeofday(&tv2, NULL);
 		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
-		gettimeofday(&t->tv2, NULL);
-		t->averageTime = (double) (t->tv2.tv_usec - t->tv1.tv_usec) / 1000000 +
-		         (double) (t->tv2.tv_sec - t->tv1.tv_sec);
+
+		double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+		         (double) (tv2.tv_sec - tv1.tv_sec);
+		printf ("Tiempo de ejecución del Job = %f segundos\n",
+		         tiempoTotal);
+
+		pthread_mutex_lock(&mutexTransformacion);
+		tiempoTotalTransf += tiempoTotal;
+		transformacionesOk++;
+		cantTransfActual--;
+		pthread_mutex_unlock(&mutexTransformacion);
+		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
 	}
 
 	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
@@ -116,13 +136,9 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		zrecv(socket_yama, &t[cantidadWorkers].numBloque, sizeof(t[cantidadWorkers].numBloque), 0);
 		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados, sizeof(t[cantidadWorkers].bytesOcupados), 0);
 		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
-		t[cantidadWorkers].tv2.tv_usec = 0;
-		t[cantidadWorkers].tv2.tv_sec = 0;
 
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
 											 (void*)mandarSolicitudTransformacion, &t[cantidadWorkers]);
-
-		list_add(tiemposTransf, &t[cantidadWorkers]);
 
 		if (rc[cantidadWorkers])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
@@ -141,16 +157,6 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 		}
 	}
 
-
-	bool criterioFilter(void * tiempo) {
-		workerTransformacion * t = (workerTransformacion *) tiempo;
-
-		double time = (double) (t->tv2.tv_usec/ 1000000 +
-				         (double) (t->tv2.tv_sec));
-		return time != 0;
-	}
-
-	tiemposTransf = list_filter(tiemposTransf, criterioFilter);
 
 	log_info(logger, "Terminaron las transformaciones\n");
 }
