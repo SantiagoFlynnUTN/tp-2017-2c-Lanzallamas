@@ -4,10 +4,13 @@
 #include "apareo.h"
 
 void apareo(char * rutaArchivo1, char * rutaArchivo2, char * rutaArchivoDefinitivo){
-	char * lineaFile1, * lineaFile2;
-	size_t longitudLineaFile1, longitudLineaFile2;
+	char * lineaFile1 = NULL, * lineaFile2 = NULL;
+	size_t longitudLineaFile1 = 255, longitudLineaFile2 = 255;
 	ssize_t caracteresLeidosFile1, caracteresLeidosFile2;
 	FILE * archivo1, * archivo2, * archivoDefinitivo;
+
+	lineaFile1 = (char *)malloc(longitudLineaFile1 * sizeof(char));
+	lineaFile2 = (char *)malloc(longitudLineaFile2 * sizeof(char));
 
 	archivo1 = fopen(rutaArchivo1, "r");
 	archivo2 = fopen(rutaArchivo2, "r");
