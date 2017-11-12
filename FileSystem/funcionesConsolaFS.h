@@ -13,6 +13,7 @@ Directorio yamaCrearDirectorio(int id, char* nombre, int id_padre);
 void asignarEspacioEnTabla(Directorio newDir);
 void hiloConsola();
 void crear_hilo_consola();
+int cpfrom(char * archivo, char * archivoFS);
 
 void formatFileSystem();
 

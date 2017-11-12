@@ -131,11 +131,19 @@ void manejarDatos(int buf, int socket){
 			break;
 		case FALLOREDLOCAL:
 			break;
+		case FALLOREDGLOBAL:
+			break;
 		case TRANSFORMACIONOK:
 			transformacionOK(socket);
 			break;
 		case REDLOCALOK:
 			reduccionLocalOK(socket);
+			break;
+		case REDGLOBALOK:
+			reduccionGlobalOk(socket);
+			break;
+		case ALMACENAMIENTOOK:
+			almacenamientoOK(socket);
 			break;
 	}
 }

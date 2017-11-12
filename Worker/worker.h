@@ -55,6 +55,7 @@ t_log * logger;
 ConexionFileSystem conexionFileSystem;
 InfoNodo infoNodo;
 char * mapeoDataBin;
+int socketFS;
 
 /* FUNCIONES */
 void inicializarWorker();

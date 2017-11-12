@@ -20,10 +20,14 @@
 #include <sys/time.h>
 #include "RGMaster.h"
 #include <commons/collections/list.h>
+#include <sockets.h>
 
 
 int socket_yama;
 int socket_nodo;
+
+void _almacenamiento(int socket_yama, char * archivoFinal);
+void _conexionAlmacenamientoWorker(int *sockfd, OperacionReduccionGlobal op);
 
 int main(int argc, char *argv[]){
 
@@ -48,10 +52,74 @@ int main(int argc, char *argv[]){
 
 	reduccionGlobal(socket_yama);
 
+	_almacenamiento(socket_yama, argv[4]);
+
 	gettimeofday(&tv2, NULL);
 	double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
 	         (double) (tv2.tv_sec - tv1.tv_sec);
 	printf ("Tiempo de ejecución del Job = %f segundos\n",
 	         tiempoTotal);
 	return 0;
+}
+
+void _almacenamiento(int socket_yama, char * archivoFinal){
+	int almacenamiento;
+	zrecv(socket_yama, &almacenamiento, sizeof(almacenamiento), 0);
+
+	if(almacenamiento != SOLICITUDALMACENAMIENTO){
+		return;
+	}
+
+	OperacionReduccionGlobal op;
+
+	zrecv(socket_yama, op.nombreNodo, sizeof(char) * 100,  0);
+	zrecv(socket_yama, op.ip, sizeof(char) * 20, 0);
+	zrecv(socket_yama, &op.puerto, sizeof(op.puerto), 0);
+	zrecv(socket_yama, op.archivoReducido, sizeof(char) * 255, 0);
+
+	log_info(logger, "ALMACENANDO: %s  %s:%d\t%s", op.nombreNodo, op.ip, op.puerto, op.archivoReducido);
+
+	int socketWorker;
+	_conexionAlmacenamientoWorker(&socketWorker, op);
+
+	int mensaje = ALMACENAMIENTO;
+	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
+	zsend(socketWorker, op.archivoReducido, sizeof(char) * 255, 0);
+	zsend(socketWorker, archivoFinal, sizeof(char) * 255, 0);
+
+	int status;
+	if(recv(socketWorker, &status, sizeof(int), 0) == -1 || status != 0){
+		int mensajeError = ERRORALMACENAMIENTO;
+		log_error(logger, "Fallo el almacenamiento en nodo %s\n", op.nombreNodo);
+		zsend(socket_yama, &mensajeError, sizeof(int), 0);
+	}else{
+		int mensajeOK = ALMACENAMIENTOOK;
+		log_info(logger, "worker %d finalizó el almacenamiento\n", socketWorker);
+		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
+	}
+
+	zsend(socket_yama, &jobId, sizeof(jobId), 0);
+}
+
+
+void _conexionAlmacenamientoWorker(int *sockfd, OperacionReduccionGlobal op) {
+
+	struct sockaddr_in their_addr; // información de la dirección de destino
+
+	if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		perror("socket");
+		exit(1);
+	}
+
+	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
+	their_addr.sin_port = op.puerto;
+	//their_addr.sin_addr.s_addr = inet_addr(t.ipWorker);
+	their_addr.sin_addr.s_addr = inet_addr(op.ip);
+	memset(&(their_addr.sin_zero), 0, 8); // poner a cero el resto de la estructura
+
+	if (connect(*sockfd, (struct sockaddr *) &their_addr,
+				sizeof(struct sockaddr)) == -1) {
+		perror("connect");
+		exit(1);
+	}
 }

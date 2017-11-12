@@ -15,8 +15,6 @@ typedef struct {
 } __attribute__((packed))
 mensajeCorto;
 
-void escuchar_chat(int socket);
-void escribir_chat(int socket);
-void leerMensaje(int socket);
+void iniciarConexionAServer(int* sockfd);
 
 #endif /* CHAT_H_ */

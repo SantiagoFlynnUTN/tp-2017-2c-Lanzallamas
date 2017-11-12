@@ -28,7 +28,6 @@ void renameFs(char * nombreOriginal, char * nombreFinal);
 void mv(char * nombreOriginal, char * nombreFinal);
 void cat(char * nombre);
 void mkdirConsola(char * dir);
-void cpfrom(char * archivo, char * archivoFS);
 void cpto(char * archivoFS, char * archivo);
 void cpblock(char * archivo, char * numeroBloque, char * nodo);
 void md5Consola(char * archivo);
@@ -503,10 +502,13 @@ void mkdirConsola(char * dir){
 	listaArchivosDirectorios[idDirectorio] = list_create();
 }
 
-void cpfrom(char * archivo, char * archivoFS){
+int cpfrom(char * archivo, char * archivoFS){
 	if(enviarBloques(archivo, archivoFS) != 0){
 		printf("No se pudo guardar el archivo en el file system\n");
+		return 1;
 	}
+
+	return 0;
 }
 
 void cpto(char * archivoFS, char * archivo){
@@ -516,7 +518,6 @@ void cpto(char * archivoFS, char * archivo){
 }
 
 void cpblock(char * archivo, char * numeroBloque, char * nodo){
-
 
 
 
