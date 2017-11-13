@@ -151,15 +151,20 @@ void mandarTransformacionNodo() {
 	int i = 0;
 
 	while (cantidadWorkers--) {
-		zrecv(socket_yama, t[cantidadWorkers].nombreNodo, sizeof(char)*100, 0);
-		zrecv(socket_yama, t[cantidadWorkers].ipWorker, sizeof(char)*20, 0);
-		zrecv(socket_yama, &t[cantidadWorkers].puertoWorker, sizeof(t[cantidadWorkers].puertoWorker), 0);
-		zrecv(socket_yama, &t[cantidadWorkers].numBloque, sizeof(t[cantidadWorkers].numBloque), 0);
-		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados, sizeof(t[cantidadWorkers].bytesOcupados), 0);
-		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
+		zrecv(socket_yama, t[cantidadWorkers].nombreNodo, sizeof(char) * 100,
+				0);
+		zrecv(socket_yama, t[cantidadWorkers].ipWorker, sizeof(char) * 20, 0);
+		zrecv(socket_yama, &t[cantidadWorkers].puertoWorker,
+				sizeof(t[cantidadWorkers].puertoWorker), 0);
+		zrecv(socket_yama, &t[cantidadWorkers].numBloque,
+				sizeof(t[cantidadWorkers].numBloque), 0);
+		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados,
+				sizeof(t[cantidadWorkers].bytesOcupados), 0);
+		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char),
+				0);
 
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
-											 (void*)mandarSolicitudTransformacion, &t[cantidadWorkers]);
+				(void*) mandarSolicitudTransformacion, &t[cantidadWorkers]);
 
 		if (rc[cantidadWorkers])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
@@ -167,18 +172,25 @@ void mandarTransformacionNodo() {
 	}
 
 	int operacion = 0;
-	while(operacion != SOLICITUDREDUCCIONGLOBAL){
+	while (operacion != SOLICITUDREDUCCIONGLOBAL) {
 		zrecv(socket_yama, &operacion, sizeof(operacion), 0);
-		switch(operacion){
-			case REPLANIFICACION:
-				mandarReplanificado();
-				break;
-			case SOLICITUDREDUCCIONLOCAL:
-				reduccionLocal(socket_yama);
-				break;
+		switch (operacion) {
+		case REPLANIFICACION:
+			mandarReplanificado();
+			break;
+		case SOLICITUDREDUCCIONLOCAL:
+			reduccionLocal(socket_yama);
+			break;
+		case FALLOTRANSFORMACION:
+			log_info(logger,
+					"[ABORTADO] YAMA no pudo replanificar transformacion.\n");
+			exit(1);
+		case FALLOREDLOCAL:
+			log_info(logger,
+					"[ABORTADO] YAMA no puede replanificar una reduccion.\n");
+			exit(1);
 		}
 	}
-
 
 	log_info(logger, "Terminaron las transformaciones\n");
 }

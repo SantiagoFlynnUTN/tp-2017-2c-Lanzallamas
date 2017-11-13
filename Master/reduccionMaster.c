@@ -74,8 +74,8 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		pthread_mutex_lock(&mutexReduccion);
 		cantReduActual--;
 		fallosRedu++;
-		pthread_mutex_unlock(&mutexReduccion);
 		zsend(socket_yama, &mensajeError, sizeof(int), 0);
+		pthread_mutex_unlock(&mutexReduccion);
 
 	}else{
 		int mensajeOK = REDLOCALOK;
@@ -90,12 +90,11 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		tiempoTotalRedu += tiempoTotal;
 		reduccionesOk++;
 		cantReduActual--;
-		pthread_mutex_unlock(&mutexReduccion);
 		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
+		zsend(socket_yama, &jobId, sizeof(jobId), 0);
+		zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
+		pthread_mutex_unlock(&mutexReduccion);
 	}
-
-	zsend(socket_yama, &jobId, sizeof(jobId), 0);
-	zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
 
 	pthread_exit(NULL);
 

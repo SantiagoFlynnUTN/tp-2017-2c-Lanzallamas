@@ -59,6 +59,9 @@ void replanificar(int socket){
 		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
+	}else {
+		int muerte = FALLOTRANSFORMACION;
+		zsend(socket, &muerte, sizeof(int), 0);
 	}
 }
 

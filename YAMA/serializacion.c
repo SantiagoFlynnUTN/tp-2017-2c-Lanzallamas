@@ -122,6 +122,10 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 			 en->archivoTemporal);
 }
 
+void matarMaster(int socket){
+	int muerte = FALLOREDLOCAL;
+	zsend(socket, &muerte, sizeof(int), 0);
+}
 
 void manejarDatos(int buf, int socket){
 	switch(buf) {
@@ -132,6 +136,7 @@ void manejarDatos(int buf, int socket){
 			replanificar(socket);
 			break;
 		case FALLOREDLOCAL:
+			matarMaster(socket);
 			break;
 		case TRANSFORMACIONOK:
 			transformacionOK(socket);
