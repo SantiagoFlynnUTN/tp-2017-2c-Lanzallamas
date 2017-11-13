@@ -77,6 +77,9 @@ YamaConexion conexionYAMA;
 t_log * logger;
 t_config * config;
 int jobId;
+char * transformador;
+char * reductor;
+
 
 /* FUNCIONES */
 void inicializarMaster();

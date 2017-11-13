@@ -82,6 +82,9 @@ int main(int argc, char *argv[]){
 		exit(-1);
 	}
 
+	transformador = argv[1];
+	reductor = argv[2];
+
 	inicializarMaster();
 	log_info(logger, "Conectando a YAMA...\n");
 	iniciarConexionAYAMA(&socket_yama);

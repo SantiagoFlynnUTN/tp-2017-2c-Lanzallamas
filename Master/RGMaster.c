@@ -4,6 +4,7 @@
 #include "cliente.h"
 #include "RGMaster.h"
 #include "master.h"
+#include "enviarArchivo.h"
 
 void _conexionReduccionWorker(int *sockfd, OperacionReduccionGlobal op);
 
@@ -66,6 +67,8 @@ void reduccionGlobal(int socket_yama){
         zsend(socketNodo, &encargado.puerto, sizeof(encargado.puerto), 0);
         zsend(socketNodo, encargado.archivoReducido, sizeof(char) * 255, 0);
     }
+
+    enviarArchivo(socketNodo, reductor);
 
     int status;
     if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){

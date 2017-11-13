@@ -69,6 +69,8 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 
 	zsend(socketNodo, op->archivoReducido, sizeof(char) * 255, 0);
 
+	enviarArchivo(socketNodo, reductor);
+
 	int status;
 	if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
 		int mensajeError = FALLOREDLOCAL;
@@ -127,5 +129,5 @@ void reduccionLocal(int socket_yama) {
 
 	pthread_t tid;
 
-	int threadStatus = pthread_create(&tid, NULL, mandarSolicitudReduccion, &op);
+	pthread_create(&tid, NULL, mandarSolicitudReduccion, op);
 }

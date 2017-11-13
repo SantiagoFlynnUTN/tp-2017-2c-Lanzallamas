@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "RGWorker.h"
 #include "worker.h"
+#include "transformacionWorker.h"
 
 void rutinaNoEncargado(encargadofd){
 	NodoGlobal yo;
@@ -37,13 +38,16 @@ void iniciarGlobal(int mastersock){
 		printf("NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
 	}
 
+	char ruta[255];
+	sprintf(ruta, "scripts/reduccionGlobal%d.sh", getpid());
+
+	recibirArchivo(mastersock, ruta);
+
+
 	if(cantidad == 0){
 		int ok = 0;
 		zsend(mastersock, &ok, sizeof(ok), 0);
 	}
-
-
-
 
 
 

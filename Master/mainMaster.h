@@ -1,9 +1,3 @@
-/*
- * main.h
- *
- *  Created on: 3/9/2017
- *      Author: utnso
- */
 #include "master.h"
 #include <pthread.h>
 
@@ -14,6 +8,7 @@ pthread_mutex_t mutexTransformacion;
 pthread_mutex_t mutexReduccion;
 void nuevoCliente(int socket_cliente);
 void atenderConexion(int socket);
+void calcularMaximos();
 double tiempoTotalJob;
 double tiempoTotalTransf;
 double tiempoTotalRedu;
