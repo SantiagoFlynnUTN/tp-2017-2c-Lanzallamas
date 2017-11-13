@@ -122,12 +122,14 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 			 en->archivoTemporal);
 }
 
+
 void manejarDatos(int buf, int socket){
 	switch(buf) {
 		case SOLICITUDJOB:
 			enviarTablaTransformacion(socket);
 			break;
 		case FALLOTRANSFORMACION:
+			replanificar(socket);
 			break;
 		case FALLOREDLOCAL:
 			break;

@@ -2,13 +2,14 @@
 #include <string.h>
 #include <sys/time.h>
 #include <sockets.h>
+#include <protocoloComunicacion.h>
 
 int _buscarMax(t_list * nodos);
 int _getTareasHistoricas(InfoNodo * nodo);
 int _pWl(InfoNodo * nodo, int max);
 void _setAvailability(t_list * nodos);
 void _sumarTrabajos(t_list * nodos);
-void _enviarAMaster(int socket_master, InfoNodo * nodo, TamanoBloque * bloque, TipoOperacion operacion);
+void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, TamanoBloque * bloque, TipoOperacion operacion);
 void _sumarDisponiblidadBase(t_list * listaNodos);
 void _sortNodos(t_list * nodos);
 
@@ -16,6 +17,49 @@ void ordenarNodos(t_list * nodos){
 	_sumarTrabajos(nodos);
 	_setAvailability(nodos);
 	_sortNodos(nodos);
+}
+
+InfoNodo * buscarCopia(char numeroBloqueStr[5], t_list * listaNodos){
+	int encontrado = 0, i = 0;
+	while (!encontrado && i < list_size(listaNodos)) {
+		InfoNodo * nodo = (InfoNodo *) list_get(listaNodos, i);
+		TamanoBloque * bloque = (TamanoBloque *) dictionary_get(nodo->bloques,
+				numeroBloqueStr);
+		if (bloque != NULL) {
+			encontrado = 1;
+			return nodo;
+		}
+		i++;
+	}
+	return NULL;
+}
+
+
+void replanificar(int socket){
+	InfoNodo* nodoCopia = NULL;
+	transfError transf;
+	zrecv(socket, &transf, sizeof(transf), 0);
+
+	void buscarNodoCopia(void * entrada){
+		EntradaTablaEstado * en = (EntradaTablaEstado *) entrada;
+
+		if(strcmp(en->nombreNodo, transf.nombreNodo) == 0 && en->numeroBloque == transf.numBloque && strcmp(en->archivoTemporal, transf.nombreTemp)){
+			en->estado = ERRORYAMA;
+			nodoCopia = en->nodoCopia;
+		}
+	}
+
+	list_iterate(tablaEstado, buscarNodoCopia);
+
+	if(nodoCopia!=NULL){
+		int tipoOperacion = REPLANIFICACION;
+		TamanoBloque * bloque;
+		bloque->bloque = transf.numBloque;
+		bloque->bytes = transf.bytes;
+		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
+
+		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
+	}
 }
 
 void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * listaNodos){
@@ -27,11 +71,12 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 
 		while(!planificado){
 
-			InfoNodo * nodo = (InfoNodo *) list_get(listaNodos, clock);
+			InfoNodo * nodo = (InfoNodo *) list_get(listaNodos, clock), *nodoCopia;
 			char numeroBloqueStr[5];
 			intToString(i, numeroBloqueStr);
 
-			TamanoBloque * bloque = (TamanoBloque *) dictionary_get(nodo->bloques,numeroBloqueStr);
+			TamanoBloque * bloque = (TamanoBloque *) dictionary_remove(nodo->bloques,numeroBloqueStr);
+			nodoCopia = buscarCopia(numeroBloqueStr, listaNodos);
 
 			if(bloque != NULL){
 				if(nodo->disponibilidad == 0) {
@@ -40,8 +85,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 					if(clock == inicial){
 						_sumarDisponiblidadBase(listaNodos);
 					}
-
-					_enviarAMaster(socket_master, nodo, bloque, TRANSFORMACION);
+					_enviarAMaster(socket_master, nodo, nodoCopia, bloque, TRANSFORMACION);
 					planificado = 1;
 				}
 			}
@@ -52,7 +96,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 	}
 }
 
-void _enviarAMaster(int socket_master, InfoNodo * nodo, TamanoBloque * bloque, TipoOperacion operacion){
+void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, TamanoBloque * bloque, TipoOperacion operacion){
 	zsend(socket_master, nodo->nombre, sizeof(char)*100, 0);
 	zsend(socket_master, nodo->ip, sizeof(char)*20, 0);
 	zsend(socket_master, &nodo->puerto, sizeof(nodo->puerto), 0);
@@ -77,6 +121,7 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, TamanoBloque * bloque, T
 	strcpy(entradaTablaEstado->archivoTemporal, tempFile);
 	strcpy(entradaTablaEstado->ip, nodo->ip);
 	entradaTablaEstado->puerto = nodo->puerto;
+	entradaTablaEstado->nodoCopia = nodoCopia;
 
 	log_info(logger, "\nMasterId\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n"
 			"%d\t\t%d\t%s\t%s\t%d\t%s\t%s",
@@ -180,3 +225,5 @@ int _getTareasHistoricas(InfoNodo * nodo){
 
 	return tareas;
 }
+
+

@@ -8,6 +8,6 @@
 #ifndef REDUCCIONMASTER_H_
 #define REDUCCIONMASTER_H_
 
-void reduccionLocal(int socket_yama);
+void reduccionLocal();
 
 #endif /* REDUCCIONMASTER_H_ */

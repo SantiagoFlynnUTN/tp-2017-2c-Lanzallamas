@@ -84,10 +84,7 @@ int main(int argc, char *argv[]){
 	log_info(logger, "Enviando solicitud de Job\n");
 	solicitudJob(socket_yama, argv[3]);
 
-	int cantidadWorkersEjemplo;
-	cantidadWorkersEjemplo = respuestaSolicitud(socket_yama);
-	t_list* tiemposTransformaciones = list_create();
-	mandarTransformacionNodo(socket_nodo, socket_yama, cantidadWorkersEjemplo, tiemposTransformaciones);
+	mandarTransformacionNodo();
 
 	reduccionGlobal(socket_yama);
 

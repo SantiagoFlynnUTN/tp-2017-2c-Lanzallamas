@@ -20,8 +20,6 @@
 #include <protocoloComunicacion.h>
 #include <sockets.h>
 
-int YAMAsock;
-
 void conexionReduccionWorker(int *sockfd, OperacionReduccion op) {
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
@@ -77,7 +75,7 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		cantReduActual--;
 		fallosRedu++;
 		pthread_mutex_unlock(&mutexReduccion);
-		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
+		zsend(socket_yama, &mensajeError, sizeof(int), 0);
 
 	}else{
 		int mensajeOK = REDLOCALOK;
@@ -93,18 +91,18 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		reduccionesOk++;
 		cantReduActual--;
 		pthread_mutex_unlock(&mutexReduccion);
-		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
+		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
 	}
 
-	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
-	zsend(YAMAsock, op->archivoReducido, sizeof(char) * 255, 0);
+	zsend(socket_yama, &jobId, sizeof(jobId), 0);
+	zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
 
 	pthread_exit(NULL);
 
 	return NULL;
 }
 
-void reduccionLocal(int socket_yama) {
+void reduccionLocal() {
 	OperacionReduccion op;
 
 	zrecv(socket_yama, op.nombreNodo, sizeof(char) * 100, 0);
