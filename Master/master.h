@@ -34,9 +34,6 @@ typedef struct {
 	int numBloque;
 	int bytesOcupados;
 	char rutaArchivo[255];
-	struct timeval tv1;
-	struct timeval tv2;
-	double averageTime;
 } __attribute__((packed))
 workerTransformacion;
 

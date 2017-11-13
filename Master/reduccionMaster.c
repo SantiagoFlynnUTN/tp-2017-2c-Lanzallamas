@@ -47,6 +47,14 @@ void conexionReduccionWorker(int *sockfd, OperacionReduccion op) {
 void * mandarSolicitudReduccion(OperacionReduccion* op) {
 	int socketNodo;
 	int tipoMensaje;
+	struct timeval tv1, tv2;
+
+	pthread_mutex_lock(&mutexReduccion);
+	cantReduActual++;
+	calcularMaximos();
+	pthread_mutex_unlock(&mutexReduccion);
+	gettimeofday(&tv1, NULL);
+
 	conexionReduccionWorker(&socketNodo, *op);
 
 	tipoMensaje = PEDIDOREDUCCION;
@@ -65,10 +73,26 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 	if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
 		int mensajeError = FALLOREDLOCAL;
 		log_error(logger, "Fallo reduccion en nodo %s\n", op->nombreNodo);
+		pthread_mutex_lock(&mutexReduccion);
+		cantReduActual--;
+		fallosRedu++;
+		pthread_mutex_unlock(&mutexReduccion);
 		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
+
 	}else{
 		int mensajeOK = REDLOCALOK;
 		log_info(logger, "worker %d finalizó reduccion\n", socketNodo);
+		gettimeofday(&tv2, NULL);
+
+		double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
+				+ (double) (tv2.tv_sec - tv1.tv_sec);
+		printf("Tiempo de ejecución del Job = %f segundos\n", tiempoTotal);
+
+		pthread_mutex_lock(&mutexReduccion);
+		tiempoTotalRedu += tiempoTotal;
+		reduccionesOk++;
+		cantReduActual--;
+		pthread_mutex_unlock(&mutexReduccion);
 		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
 	}
 
@@ -93,8 +117,6 @@ void reduccionLocal(int socket_yama) {
 
 	log_info(logger, "Reduccion a Realizar:\nNODO: %s\nIP: %s\nPUERTO: %d\n", op->nombreNodo, op->ip, op->puerto);
 
-
-
 	for(i = 0; i < op->cantidadTemporales; ++i){
 		zrecv(socket_yama, op->temporales[i], sizeof(char) * 255, 0);
 
@@ -105,5 +127,5 @@ void reduccionLocal(int socket_yama) {
 
 	pthread_t tid;
 
-	int threadStatus = pthread_create(&tid, NULL, mandarSolicitudReduccion, op);
+	int threadStatus = pthread_create(&tid, NULL, mandarSolicitudReduccion, &op);
 }
