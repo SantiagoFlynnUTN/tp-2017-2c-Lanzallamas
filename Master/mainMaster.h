@@ -4,6 +4,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+int socket_yama;
 pthread_mutex_t mutexTransformacion;
 pthread_mutex_t mutexReduccion;
 void nuevoCliente(int socket_cliente);
@@ -21,5 +22,7 @@ int fallosRedu;
 int cargaMaxima;
 int maxT;
 int maxR;
+
+void calcularMaximos();
 
 #endif /* MAIN_H_ */

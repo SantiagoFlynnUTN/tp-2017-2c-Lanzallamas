@@ -9,8 +9,16 @@ typedef struct{
 }__attribute__((packed))
 mensajeTransformacion;
 
-int respuestaSolicitud(int socket_yama);
-void mandarTransformacionNodo(int socket_nodo, int socket_yama, int cantidadWorkers, t_list* tiemposTransformacion);
+typedef struct{
+	char nombreNodo[100];
+	int numBloque;
+	int bytes;
+	char nombreTemp[255];
+}__attribute__((packed))
+transfError;
+
+int respuestaSolicitud();
+void mandarTransformacionNodo();
 void atenderConexion(int socket);
 
 #endif /* TRANSFORMACIONMASTER_H_ */

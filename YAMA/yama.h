@@ -19,6 +19,16 @@ typedef struct{
 	char ruta[255];
 } __attribute__((packed)) SolicitudFS;
 
+typedef struct t_InfoNodo{
+	char nombre[100];
+	char ip[20];
+	uint16_t puerto;
+	long bytes;
+	int disponibilidad;
+	int trabajosActuales;
+	t_dictionary * bloques;
+} InfoNodo;
+
 typedef struct t_TablaEstado{
 	int jobId;
 	int masterId;
@@ -29,6 +39,7 @@ typedef struct t_TablaEstado{
 	TipoOperacion etapa;
 	char archivoTemporal[255];
 	Estado estado;
+	InfoNodo * nodoCopia;
 } EntradaTablaEstado;
 
 typedef struct{
@@ -69,15 +80,7 @@ typedef struct {
 	uint16_t puerto;
 } ConexionFileSystem;
 
-typedef struct t_InfoNodo{
-	char nombre[100];
-	char ip[20];
-	uint16_t puerto;
-	long bytes;
-	int disponibilidad;
-	int trabajosActuales;
-	t_dictionary * bloques;
-} InfoNodo;
+
 
 typedef struct {
 	char nombreNodo[100];
