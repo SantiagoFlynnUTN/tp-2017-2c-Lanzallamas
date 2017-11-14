@@ -23,9 +23,7 @@
 #include <commons/collections/list.h>
 #include <sys/time.h>
 
-int YAMAsock;
-
-int respuestaSolicitud(int socket_yama) {
+int respuestaSolicitud() {
 
 	int cantidadWorkers;
 
@@ -37,14 +35,14 @@ int respuestaSolicitud(int socket_yama) {
 	return cantidadWorkers;
 }
 
-void conexionTransfWorker(int *sockfd, workerTransformacion t){
+int conexionTransfWorker(int *sockfd, workerTransformacion t){
 
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
 
 	if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket");
-		exit(1);
+		return(1);
 	}
 
 	log_info(logger, "ip: %s\nport: %d\n", t.ipWorker, t.puertoWorker);
@@ -57,11 +55,12 @@ void conexionTransfWorker(int *sockfd, workerTransformacion t){
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
 				sizeof(struct sockaddr)) == -1) {
 		perror("connect");
-		exit(1);
+		return(1);
 	}
+	return 0;
 }
 
-void mandarSolicitudTransformacion(workerTransformacion* t){
+void mandarSolicitudTransformacion(workerTransformacion* t) {
 	int socketWorker;
 	int tipoMensaje;
 	struct timeval tv1, tv2;
@@ -72,7 +71,9 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 	pthread_mutex_unlock(&mutexTransformacion);
 
 	gettimeofday(&tv1, NULL);
-	conexionTransfWorker(&socketWorker, *t);
+	if (conexionTransfWorker(&socketWorker, *t)) {
+		log_error(logger, "No se pudo conectar al worker. Replanificar.\n");
+	}
 
 	mensajeTransformacion mensaje;
 	tipoMensaje = 1;
@@ -87,58 +88,83 @@ void mandarSolicitudTransformacion(workerTransformacion* t){
 
 	int status, bytes;
 	bytes = recv(socketWorker, &status, sizeof(int), 0);
-	if(bytes == -1 || status != 0){
-		int mensajeError = FALLOTRANSFORMACION;
-		log_error(logger, "fallo la transformacion en el nodo %s\n", t->nombreNodo);
+	if (bytes == -1 || status != 0) {
+		int tipomensaje = FALLOTRANSFORMACION;
+		transfError mensajeError;
+		strcpy(mensajeError.nombreNodo, t->nombreNodo);
+		strcpy(mensajeError.nombreTemp, t->rutaArchivo);
+		mensajeError.numBloque = t->numBloque;
+		mensajeError.bytes = t->bytesOcupados;
+		log_error(logger, "fallo la transformacion en el nodo %s\n",
+				t->nombreNodo);
 		pthread_mutex_lock(&mutexTransformacion);
 		cantTransfActual--;
 		fallosTransf++;
+		zsend(socket_yama, &tipomensaje, sizeof(tipomensaje), 0);
+		zsend(socket_yama, &mensajeError, sizeof(mensajeError), 0);
 		pthread_mutex_unlock(&mutexTransformacion);
-		zsend(YAMAsock, &mensajeError, sizeof(int), 0);
 
-	}else{
+	} else {
 		int mensajeOK = TRANSFORMACIONOK;
 
 		gettimeofday(&tv2, NULL);
 		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
 
-		double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
-		         (double) (tv2.tv_sec - tv1.tv_sec);
-		printf ("Tiempo de ejecución del Job = %f segundos\n",
-		         tiempoTotal);
+		double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
+				+ (double) (tv2.tv_sec - tv1.tv_sec);
+		printf("Tiempo de ejecución del Job = %f segundos\n", tiempoTotal);
 
 		pthread_mutex_lock(&mutexTransformacion);
 		tiempoTotalTransf += tiempoTotal;
 		transformacionesOk++;
 		cantTransfActual--;
+		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
+		zsend(socket_yama, &jobId, sizeof(jobId), 0);
+		zsend(socket_yama, mensaje.nombreTemp, sizeof(char) * 255, 0);
 		pthread_mutex_unlock(&mutexTransformacion);
-		zsend(YAMAsock, &mensajeOK, sizeof(int), 0);
 	}
-
-	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
-	zsend(YAMAsock, mensaje.nombreTemp, sizeof(char) * 255, 0);
 
 	pthread_exit(NULL);
 }
 
-void mandarTransformacionNodo(int socket_nodo, int socket_yama,
-							  int cantidadWorkers, t_list* tiemposTransf) {
+void mandarReplanificado(){
+	pthread_t tid;
+	int rc;
+	workerTransformacion t;
+	zrecv(socket_yama, t.nombreNodo, sizeof(char) * 100, 0);
+	zrecv(socket_yama, t.ipWorker, sizeof(char) * 20, 0);
+	zrecv(socket_yama, &t.puertoWorker, sizeof(t.puertoWorker), 0);
+	zrecv(socket_yama, &t.numBloque, sizeof(t.numBloque), 0);
+	zrecv(socket_yama, &t.bytesOcupados, sizeof(t.bytesOcupados), 0);
+	zrecv(socket_yama, t.rutaArchivo, 255 * sizeof(char), 0);
+	rc = pthread_create(&tid, NULL, (void*) mandarSolicitudTransformacion, &t);
+
+	if (rc)
+		log_error(logger, "no pudo crear el hilo %d\n");
+}
+
+void mandarTransformacionNodo() {
+	int cantidadWorkers = respuestaSolicitud();
 	workerTransformacion t[cantidadWorkers];
 	pthread_t tid[cantidadWorkers];
 	int rc[cantidadWorkers];
 	int i = 0;
-	YAMAsock = socket_yama; //no me puteen por esto, tengo mucha paja.
 
 	while (cantidadWorkers--) {
-		zrecv(socket_yama, t[cantidadWorkers].nombreNodo, sizeof(char)*100, 0);
-		zrecv(socket_yama, t[cantidadWorkers].ipWorker, sizeof(char)*20, 0);
-		zrecv(socket_yama, &t[cantidadWorkers].puertoWorker, sizeof(t[cantidadWorkers].puertoWorker), 0);
-		zrecv(socket_yama, &t[cantidadWorkers].numBloque, sizeof(t[cantidadWorkers].numBloque), 0);
-		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados, sizeof(t[cantidadWorkers].bytesOcupados), 0);
-		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char), 0);
+		zrecv(socket_yama, t[cantidadWorkers].nombreNodo, sizeof(char) * 100,
+				0);
+		zrecv(socket_yama, t[cantidadWorkers].ipWorker, sizeof(char) * 20, 0);
+		zrecv(socket_yama, &t[cantidadWorkers].puertoWorker,
+				sizeof(t[cantidadWorkers].puertoWorker), 0);
+		zrecv(socket_yama, &t[cantidadWorkers].numBloque,
+				sizeof(t[cantidadWorkers].numBloque), 0);
+		zrecv(socket_yama, &t[cantidadWorkers].bytesOcupados,
+				sizeof(t[cantidadWorkers].bytesOcupados), 0);
+		zrecv(socket_yama, t[cantidadWorkers].rutaArchivo, 255 * sizeof(char),
+				0);
 
 		rc[cantidadWorkers] = pthread_create(&tid[cantidadWorkers], NULL,
-											 (void*)mandarSolicitudTransformacion, &t[cantidadWorkers]);
+				(void*) mandarSolicitudTransformacion, &t[cantidadWorkers]);
 
 		if (rc[cantidadWorkers])
 			log_error(logger, "no pudo crear el hilo %d\n", i);
@@ -146,17 +172,25 @@ void mandarTransformacionNodo(int socket_nodo, int socket_yama,
 	}
 
 	int operacion = 0;
-	while(operacion != SOLICITUDREDUCCIONGLOBAL){
+	while (operacion != SOLICITUDREDUCCIONGLOBAL) {
 		zrecv(socket_yama, &operacion, sizeof(operacion), 0);
-		switch(operacion){
-			case REPLANIFICACION:
-				break;
-			case SOLICITUDREDUCCIONLOCAL:
-				reduccionLocal(socket_yama);
-				break;
+		switch (operacion) {
+		case REPLANIFICACION:
+			mandarReplanificado();
+			break;
+		case SOLICITUDREDUCCIONLOCAL:
+			reduccionLocal(socket_yama);
+			break;
+		case FALLOTRANSFORMACION:
+			log_info(logger,
+					"[ABORTADO] YAMA no pudo replanificar transformacion.\n");
+			exit(1);
+		case FALLOREDLOCAL:
+			log_info(logger,
+					"[ABORTADO] YAMA no puede replanificar una reduccion.\n");
+			exit(1);
 		}
 	}
-
 
 	log_info(logger, "Terminaron las transformaciones\n");
 }
