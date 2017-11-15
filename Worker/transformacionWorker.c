@@ -16,6 +16,21 @@
 #include "cliente.h"
 #include <sockets.h>
 
+void _guardarBloqueComoTemporal(char * tempFile, int numBloque, int bytes);
+
+void _guardarBloqueComoTemporal(char * tempFile, int numBloque, int bytes){
+	char bloque[bytes + 1];
+
+	strncpy(bloque, mapeoDataBin + MB * numBloque, bytes);
+	memset(bloque + bytes, 0, sizeof(char));
+
+	FILE * tempFD = fopen(tempFile, "w");
+
+	fwrite(bloque, sizeof(char) * bytes, 1, tempFD);
+
+	fclose(tempFD);
+}
+
 void recibirArchivo(int socket, char * ruta){
 	int longitud;
 	zrecv(socket, &longitud, sizeof(longitud), 0);
@@ -34,14 +49,22 @@ void iniciarTransformacion(int socket){
 	zrecv(socket, &t.bloque, sizeof(t.bloque), 0);
 	zrecv(socket, t.nombreTemp, sizeof(char) * 255, 0);
 	char ruta[255];
-	//sprintf(ruta, "scripts/transformacion%d.sh", getpid());
+	sprintf(ruta, "scripts/transformacion%d.sh", getpid());
+
 	recibirArchivo(socket, ruta);
-	char command[255];
-	sprintf(command, "echo \"hola\ncomo\nestas\nbien\nvos\ntodo\nbien\nque\nsuerte\nte\nfelicito\" | sort >> %s\n", t.nombreTemp);
-	printf("EJECUTANDO %s\n", command);
-	system(command);
+
+	char tempFile[255];
+	sprintf(tempFile, "temp/transformacion%d.sh", getpid());
+
+	_guardarBloqueComoTemporal(tempFile, t.bloque, t.cantidadBytes);
+
+	char command[512];
+	sprintf(command, "cat %s | %s | sort >> %s \n", tempFile, ruta, t.nombreTemp);
+
 	int num = 0;
+
+	num = system(command);
+
 	zsend(socket, &num, sizeof(int), 0);
 	exit(1);
 }
-

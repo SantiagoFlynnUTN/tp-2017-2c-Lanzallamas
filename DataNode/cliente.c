@@ -1,10 +1,3 @@
-/*
- * cliente.c
- *
- *  Created on: 7/9/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

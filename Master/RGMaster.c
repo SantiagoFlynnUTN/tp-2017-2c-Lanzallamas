@@ -4,6 +4,7 @@
 #include "cliente.h"
 #include "RGMaster.h"
 #include "master.h"
+#include "enviarArchivo.h"
 
 void _conexionReduccionWorker(int *sockfd, OperacionReduccionGlobal op);
 
@@ -44,6 +45,7 @@ void reduccionGlobal(int socket_yama){
 			log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", operacionReduccion[i - salteos].nombreNodo, operacionReduccion[i - salteos].ip, operacionReduccion[i - salteos].puerto, operacionReduccion[i - salteos].archivoReducido);
 		}
 	}
+
     cantidad--; // no cuento el encargado
 
 	zrecv(socket_yama, archivoFinal, sizeof(char) * 255, 0);
@@ -57,6 +59,7 @@ void reduccionGlobal(int socket_yama){
 
     zsend(socketNodo, &tipoMensaje, sizeof(int), 0);
     zsend(socketNodo, encargado.archivoReducido, sizeof(char) * 255, 0);
+    zsend(socketNodo, archivoFinal, sizeof(char) * 255, 0);
     zsend(socketNodo, &cantidad, sizeof(cantidad), 0);
 
     for(i = 0; i < cantidad; ++i){
@@ -66,14 +69,16 @@ void reduccionGlobal(int socket_yama){
         zsend(socketNodo, encargado.archivoReducido, sizeof(char) * 255, 0);
     }
 
+    enviarArchivo(socketNodo, reductor);
+
     int status;
     if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
-        int mensajeError = REDGLOBAL;
+        int mensajeError = FALLOREDGLOBAL;
         log_error(logger, "Fallo reduccion global en nodo %s\n", encargado.nombreNodo);
         zsend(socket_yama, &mensajeError, sizeof(int), 0);
     }else{
         int mensajeOK = REDGLOBALOK;
-        log_info(logger, "worker %d finalizó reduccion\n", socketNodo);
+        log_info(logger, "worker %d finalizó reduccion global\n", socketNodo);
         zsend(socket_yama, &mensajeOK, sizeof(int), 0);
     }
 

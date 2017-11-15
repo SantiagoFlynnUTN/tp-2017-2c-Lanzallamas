@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <protocoloComunicacion.h>
+#include <sockets.h>
 
 void _getBloque(int socket);
 void _setBloque(int socket);
@@ -24,7 +25,7 @@ void manejarDatos(int buf, int socket){
 void _getBloque(int socket){
 	int bloque, status;
 	char data[MB];
-	recv(socket, &bloque, sizeof(bloque), 0);
+	zrecv(socket, &bloque, sizeof(bloque), 0);
 
 	status = getBloque(bloque, data);
 
@@ -43,8 +44,8 @@ void _setBloque(int socket){
 
 	memset(data, 0, MB);
 
-	recv(socket, &bloque, sizeof(bloque), 0);
-	recv(socket, data, sizeof(char) * MB, 0);
+	zrecv(socket, &bloque, sizeof(bloque), 0);
+	zrecv(socket, data, sizeof(char) * MB, 0);
 
 	status = setBloque(bloque, data);
 
@@ -55,7 +56,5 @@ void _setBloque(int socket){
 		mensaje = DATANODEOK;
 	}
 
-	if(send(socket, &mensaje, sizeof(mensaje), 0) == -1){
-		log_error(logger, "No se pudo enviar el mensaje.\n");
-	}
+	zsend(socket, &mensaje, sizeof(mensaje), 0);
 }

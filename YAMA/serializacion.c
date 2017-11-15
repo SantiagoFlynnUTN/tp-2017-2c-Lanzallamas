@@ -19,7 +19,6 @@
 #include "planificacionYama.h"
 #include "respuestaTransformacion.h"
 
-void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes);
 void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
 
 void enviarTablaTransformacion(int socket_master){
@@ -138,25 +137,21 @@ void manejarDatos(int buf, int socket){
 		case FALLOREDLOCAL:
 			matarMaster(socket);
 			break;
+		case FALLOREDGLOBAL:
+			break;
 		case TRANSFORMACIONOK:
 			transformacionOK(socket);
 			break;
 		case REDLOCALOK:
 			reduccionLocalOK(socket);
 			break;
+		case REDGLOBALOK:
+			reduccionGlobalOk(socket);
+			break;
+		case ALMACENAMIENTOOK:
+			almacenamientoOK(socket);
+			break;
 	}
-}
-
-void _registrarTransformacion(int socket, char nombNodo[100], char ip[20], uint16_t puerto, int nroBloque, long bytes){
-	EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) malloc(sizeof(*entradaTablaEstado));
-	entradaTablaEstado->jobId = 0;
-	entradaTablaEstado->masterId = 0;
-	strcpy(entradaTablaEstado->nombreNodo, nombNodo);
-	entradaTablaEstado->numeroBloque = nroBloque;
-	entradaTablaEstado->etapa = TRANSFORMACION;
-	strcpy(entradaTablaEstado->archivoTemporal, "/temp/j1n1b8");
-
-	list_add(tablaEstado, entradaTablaEstado);
 }
 
 void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos){

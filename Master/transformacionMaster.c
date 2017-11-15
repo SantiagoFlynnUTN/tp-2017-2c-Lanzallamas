@@ -84,7 +84,7 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 	zsend(socketWorker, &tipoMensaje, sizeof(int), 0);
 	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
 
-	enviarArchivo(socketWorker, "prueba.sh");
+	enviarArchivo(socketWorker, transformador);
 
 	int status, bytes;
 	bytes = recv(socketWorker, &status, sizeof(int), 0);

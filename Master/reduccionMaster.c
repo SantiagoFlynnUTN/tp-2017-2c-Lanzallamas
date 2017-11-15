@@ -67,6 +67,8 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 
 	zsend(socketNodo, op->archivoReducido, sizeof(char) * 255, 0);
 
+	enviarArchivo(socketNodo, reductor);
+
 	int status;
 	if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
 		int mensajeError = FALLOREDLOCAL;
@@ -96,34 +98,36 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		pthread_mutex_unlock(&mutexReduccion);
 	}
 
+	zsend(socket_yama, &jobId, sizeof(jobId), 0);
+	zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
+
+	free(op);
 	pthread_exit(NULL);
 
 	return NULL;
 }
 
 void reduccionLocal() {
-	OperacionReduccion op;
+	OperacionReduccion * op = (OperacionReduccion *) malloc(sizeof(*op));
 
-	zrecv(socket_yama, op.nombreNodo, sizeof(char) * 100, 0);
-	zrecv(socket_yama, op.ip, sizeof(char) * 20, 0);
-	zrecv(socket_yama, &op.puerto, sizeof(op.puerto), 0);
-	zrecv(socket_yama, &op.cantidadTemporales, sizeof(op.cantidadTemporales), 0);
+	zrecv(socket_yama, op->nombreNodo, sizeof(char) * 100, 0);
+	zrecv(socket_yama, op->ip, sizeof(char) * 20, 0);
+	zrecv(socket_yama, &op->puerto, sizeof(op->puerto), 0);
+	zrecv(socket_yama, &op->cantidadTemporales, sizeof(op->cantidadTemporales), 0);
 
 	int i;
 
-	log_info(logger, "Reduccion a Realizar:\nNODO: %s\nIP: %s\nPUERTO: %d\n", op.nombreNodo, op.ip, op.puerto);
+	log_info(logger, "Reduccion a Realizar:\nNODO: %s\nIP: %s\nPUERTO: %d\n", op->nombreNodo, op->ip, op->puerto);
 
+	for(i = 0; i < op->cantidadTemporales; ++i){
+		zrecv(socket_yama, op->temporales[i], sizeof(char) * 255, 0);
 
-
-	for(i = 0; i < op.cantidadTemporales; ++i){
-		zrecv(socket_yama, op.temporales[i], sizeof(char) * 255, 0);
-
-		log_info(logger, "TEMPORAL %d: %s\n", i+1, op.temporales[i]);
+		log_info(logger, "TEMPORAL %d: %s\n", i+1, op->temporales[i]);
 	}
 
-	zrecv(socket_yama, op.archivoReducido, sizeof(char) *  255, 0);
+	zrecv(socket_yama, op->archivoReducido, sizeof(char) *  255, 0);
 
 	pthread_t tid;
 
-	int threadStatus = pthread_create(&tid, NULL, mandarSolicitudReduccion, &op);
+	pthread_create(&tid, NULL, mandarSolicitudReduccion, op);
 }

@@ -53,7 +53,7 @@ void replanificar(int socket){
 
 	if(nodoCopia!=NULL){
 		int tipoOperacion = REPLANIFICACION;
-		TamanoBloque * bloque;
+		TamanoBloque * bloque = (TamanoBloque *) malloc(sizeof(*bloque));
 		bloque->bloque = transf.numBloque;
 		bloque->bytes = transf.bytes;
 		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);

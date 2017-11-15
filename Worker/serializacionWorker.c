@@ -3,6 +3,11 @@
 #include "reduccionWorker.h"
 #include <protocoloComunicacion.h>
 #include "RGWorker.h"
+#include <sockets.h>
+#include "worker.h"
+#include "enviarArchivo.h"
+
+void _almacenamiento(int socket);
 
 void manejarDatos(int buf, int socket){
 	switch(buf){
@@ -16,6 +21,7 @@ void manejarDatos(int buf, int socket){
 		iniciarGlobal(socket);
 		break;
 	case ALMACENAMIENTO:
+		_almacenamiento(socket);
 		break;
     case SOLICITUDARCHIVOWORKER:
     	rutinaNoEncargado(socket);
@@ -26,5 +32,31 @@ void manejarDatos(int buf, int socket){
 		break;
 	case FILESYSTEMERROR:
 		break;
+	}
+}
+
+void _almacenamiento(int socket){
+	char archivo[255];
+	char archivoFS[255];
+
+	zrecv(socket, archivo, sizeof(char) * 255, 0);
+	zrecv(socket, archivoFS, sizeof(char) * 255, 0);
+
+	printf("ARCHIVO GLOBAL: %s\nARCHIVO FS: %s\n", archivo, archivoFS);
+	int mensaje = 4;
+	zsend(socketFS, &mensaje, sizeof(mensaje), 0);
+
+	zsend(socketFS, archivoFS, sizeof(char) * 255, 0);
+
+	enviarArchivo(socketFS, "archivos/archivo1.txt");
+
+	int respuesta;
+
+	int status;
+	if(recv(socketFS, &status, sizeof(int), 0) == -1 || status != 0){
+		zsend(socket, &respuesta, sizeof(respuesta), 0);
+	}else{
+		int respuesta = 0;
+		zsend(socket, &respuesta, sizeof(respuesta), 0);
 	}
 }

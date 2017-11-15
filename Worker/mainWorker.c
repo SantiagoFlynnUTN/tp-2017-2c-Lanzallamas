@@ -15,8 +15,9 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include "cliente.h"
 
-void inicializarDataNode();
+void inicializarWorker();
 void _cargarConfiguracion();
 void _mapearDataBin();
 void _crearLogger();
@@ -28,7 +29,7 @@ void nuevoCliente(char* remoteHost, int newfd){
 
 
 int main(int argc, char *argv[]) {
-	inicializarDataNode();
+	inicializarWorker();
 
 
 	setServer();
@@ -38,9 +39,10 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void inicializarDataNode(){
+void inicializarWorker(){
 	_crearLogger();
 	_cargarConfiguracion();
+	iniciarConexionAServer(&socketFS);
 }
 
 void _crearLogger(){

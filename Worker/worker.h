@@ -49,12 +49,14 @@ mensajeReduc;
 #define RUTA_DATABIN "RUTA_DATABIN"
 #define PUERTO_WORKER "PUERTO_WORKER"
 #define PUERTO_DATANODE "PUERTO_DATANODE"
+#define MB 1048576
 
 t_config * config;
 t_log * logger;
 ConexionFileSystem conexionFileSystem;
 InfoNodo infoNodo;
 char * mapeoDataBin;
+int socketFS;
 
 /* FUNCIONES */
 void inicializarWorker();

@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include "conexionesFileSystem.h"
 #include "utilidadesFileSystem.h"
+#include <sockets.h>
 
 int _controlarEspacioDisponible(int cantidadBloques);
 void _contarBloquesLibres(char * key, void * nodo);
@@ -187,19 +188,29 @@ int _obtenerNumeroBloqueLibre(t_bitarray * bitmap) {
 }
 
 int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
-    int resultado;
-    if(_enviarBloque(bloque, descriptorBloque->copia0) != 0 ||
-       _enviarBloque(bloque, descriptorBloque->copia1) != 0){
+    int resultado = 0;
+    if(_enviarBloque(bloque, descriptorBloque->copia0) != 0){
         return -1;
     }
 
     DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, descriptorBloque->copia0.nodo);
-    if(recv(nodo->socket, &resultado, sizeof(resultado), 0) <= 0 || !resultado){
+
+    zrecv(nodo->socket, &resultado, sizeof(resultado), 0);
+
+    if(!resultado){
+        return -1;
+    }
+
+    if(_enviarBloque(bloque, descriptorBloque->copia1) != 0){
         return -1;
     }
 
     nodo = (DescriptorNodo *) dictionary_get(nodos, descriptorBloque->copia1.nodo);
-    if(recv(nodo->socket, &resultado, sizeof(resultado), 0) <= 0 || !resultado){
+
+    resultado = 0;
+    zrecv(nodo->socket, &resultado, sizeof(resultado), 0);
+
+    if(!resultado){
         return -1;
     }
     return 0;

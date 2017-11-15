@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 #include "envioBloques.h"
 #include "estructurasFileSystem.h"
+#include <ctype.h>
 
 void formatFileSystem();
 void rm(char ** linea);
@@ -28,7 +29,6 @@ void renameFs(char * nombreOriginal, char * nombreFinal);
 void mv(char * nombreOriginal, char * nombreFinal);
 void cat(char * nombre);
 void mkdirConsola(char * dir);
-void cpfrom(char * archivo, char * archivoFS);
 void cpto(char * archivoFS, char * archivo);
 void cpblock(char * archivo, char * numeroBloque, char * nodo);
 void md5Consola(char * archivo);
@@ -466,13 +466,19 @@ void cat(char * nombre){
 			return;
 		}
 
-		char contenido[fileStats.st_size];
+		int megas = fileStats.st_size / MB + 1;
 
-		if(fread(contenido, fileStats.st_size * sizeof(char), 1, fd) != 1){
-			printf("Error leyendo el archivo\n");
+		while(megas--){
+			char contenido[MB];
+
+			if(fread(contenido, MB * sizeof(char), 1, fd) != 1){
+				printf("Error leyendo el archivo\n");
+			}
+
+			printf("%s", contenido);
 		}
 
-		printf("%s\n", contenido);
+		printf("\n");
 	}
 }
 
@@ -503,10 +509,20 @@ void mkdirConsola(char * dir){
 	listaArchivosDirectorios[idDirectorio] = list_create();
 }
 
-void cpfrom(char * archivo, char * archivoFS){
+int cpfrom(char * archivo, char * archivoFS){
+	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivo);
+
+	if(descriptorArchivo != NULL){
+		printf("EL archivo %s ya existe\n", archivoFS);
+		return 1;
+	}
+
 	if(enviarBloques(archivo, archivoFS) != 0){
 		printf("No se pudo guardar el archivo en el file system\n");
+		return 1;
 	}
+
+	return 0;
 }
 
 void cpto(char * archivoFS, char * archivo){
@@ -523,31 +539,13 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
 
 
 
-
 }
 
 void md5Consola(char * archivo){
 	if(obtenerArchivo(archivo, TEMPFILE) == 0){
-		FILE * fd = fopen(TEMPFILE, "r");
-
-		struct stat fileStats;
-
-		if(fd == NULL || stat(TEMPFILE, &fileStats) != 0){ // error
-			printf("No se pudo traer correctamente el archivo de los data node\n");
-			return;
-		}
-
-		char contenido[fileStats.st_size];
-
-		if(fread(contenido, fileStats.st_size * sizeof(char), 1, fd) != 1){
-			printf("Error leyendo el archivo\n");
-		}
-
-		char md5Value[32];
-
-		getMD5(contenido, fileStats.st_size, md5Value);
-
-		printf("%s\n", md5Value);
+		char command[20];
+		sprintf(command, "md5sum %s", TEMPFILE);
+		system(command);
 	}
 }
 
