@@ -3,7 +3,7 @@
 #include <protocoloComunicacion.h>
 #include "apareo.h"
 #include "reduccionWorker.h"
-#include "transformacionWorker.h
+#include "transformacionWorker.h"
 
 void iniciarReduccion(int socket) {
 
@@ -32,7 +32,7 @@ void iniciarReduccion(int socket) {
 		apareo(nombreArchivo[i], nombreArchivo[i + 1], tempFile);
 		strcpy(nombreArchivo[i + 1], tempFile);
 	}
-	log_info("nombre del archivo apareado: %s\n", tempFile);
+	log_info(logger, "nombre del archivo apareado: %s\n", tempFile);
 
 	//rutinaTransformacion
 	char command[512];

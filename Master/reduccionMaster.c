@@ -98,8 +98,8 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		pthread_mutex_unlock(&mutexReduccion);
 	}
 
-	zsend(YAMAsock, &jobId, sizeof(jobId), 0);
-	zsend(YAMAsock, op->archivoReducido, sizeof(char) * 255, 0);
+	zsend(socket_yama, &jobId, sizeof(jobId), 0);
+	zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
 
 	free(op);
 	pthread_exit(NULL);

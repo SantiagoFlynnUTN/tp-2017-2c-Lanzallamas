@@ -35,13 +35,6 @@ void md5Consola(char * archivo);
 void ls(char * dir);
 void info(char * archivo);
 void infoNodos();
-int CalcFileMD5(char *file_name, char *md5_sum);
-
-#define STR_VALUE(val) #val
-#define STR(name) STR_VALUE(name)
-
-#define PATH_LEN 256
-#define MD5_LEN 32
 
 void hiloConsola(){
 	printf("Consola disponible par uso\n");
@@ -550,28 +543,9 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
 
 void md5Consola(char * archivo){
 	if(obtenerArchivo(archivo, TEMPFILE) == 0){
-		char md5Value[33];
-
-		CalcFileMD5(TEMPFILE, md5Value);
-
-		/*struct stat fileStats;
-
-		if(fd == NULL || stat(TEMPFILE, &fileStats) != 0){ // error
-			printf("No se pudo traer correctamente el archivo de los data node\n");
-			return;
-		}
-
-		char contenido[fileStats.st_size];
-
-		if(fread(contenido, fileStats.st_size * sizeof(char), 1, fd) != 1){
-			printf("Error leyendo el archivo\n");
-		}
-
-		char md5Value[33];
-
-		getMD5(contenido, fileStats.st_size, md5Value);*/
-
-		printf("%s\n", md5Value);
+		char command[20];
+		sprintf(command, "md5sum %s", TEMPFILE);
+		system(command);
 	}
 }
 
@@ -640,23 +614,4 @@ void infoNodos(){
 	}
 
 	dictionary_iterator(nodos, infoNodo);
-}
-
-int CalcFileMD5(char *file_name, char *md5_sum) {
-	#define MD5SUM_CMD_FMT "md5sum %." STR(PATH_LEN) "s 2>/dev/null"
-	char cmd[PATH_LEN + sizeof (MD5SUM_CMD_FMT)];
-	sprintf(cmd, MD5SUM_CMD_FMT, file_name);
-	#undef MD5SUM_CMD_FMT
-
-	FILE *p = popen(cmd, "r");
-	if (p == NULL) return 0;
-
-	int i, ch;
-	for (i = 0; i < MD5_LEN && isxdigit(ch = fgetc(p)); i++) {
-		*md5_sum++ = ch;
-	}
-
-	*md5_sum = '\0';
-	pclose(p);
-	return i == MD5_LEN;
 }
