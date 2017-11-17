@@ -63,10 +63,10 @@ void reduccionGlobal(int socket_yama){
     zsend(socketNodo, &cantidad, sizeof(cantidad), 0);
 
     for(i = 0; i < cantidad; ++i){
-        zsend(socketNodo, encargado.nombreNodo, sizeof(char) * 100, 0);
-        zsend(socketNodo, encargado.ip, sizeof(char) * 20, 0);
-        zsend(socketNodo, &encargado.puerto, sizeof(encargado.puerto), 0);
-        zsend(socketNodo, encargado.archivoReducido, sizeof(char) * 255, 0);
+        zsend(socketNodo, operacionReduccion[i].nombreNodo, sizeof(char) * 100, 0);
+        zsend(socketNodo, operacionReduccion[i].ip, sizeof(char) * 20, 0);
+        zsend(socketNodo, &operacionReduccion[i].puerto, sizeof(operacionReduccion[i].puerto), 0);
+        zsend(socketNodo, operacionReduccion[i].archivoReducido, sizeof(char) * 255, 0);
     }
 
     enviarArchivo(socketNodo, reductor);

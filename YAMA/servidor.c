@@ -66,7 +66,6 @@ void gestionarNuevaConexion(){
 	if ((newfd = accept(listener, (struct sockaddr *)&remoteaddr,
 											 &addrlen)) == -1) {
 		perror("accept");
-		exit(1);
 	}
 
 	else {
