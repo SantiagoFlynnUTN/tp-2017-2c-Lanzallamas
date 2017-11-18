@@ -14,6 +14,8 @@ void _crearLogger();
 void _logConfig();
 void _cargarFileSystem();
 
+pthread_mutex_t semaforoConsola = PTHREAD_MUTEX_INITIALIZER;
+
 void inicializarFileSystem(){
     nodos = dictionary_create();
     nombreNodos = list_create();

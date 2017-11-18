@@ -5,6 +5,7 @@
 #include <commons/bitarray.h>
 #include <commons/collections/dictionary.h>
 #include <commons/collections/list.h>
+#include <pthread.h>
 
 #ifndef FILESYSTEM_H_
 #define FILESYSTEM_H_
@@ -82,6 +83,7 @@ t_list * nombreNodos;
 t_dictionary* archivos;
 t_log * logger;
 t_config * config;
+extern pthread_mutex_t semaforoConsola;
 
 /* FUNCIONES */
 void asociarNodo(int socket);

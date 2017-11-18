@@ -190,18 +190,22 @@ int _obtenerNumeroBloqueLibre(t_bitarray * bitmap) {
 int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
     int resultado = 0;
     if(_enviarBloque(bloque, descriptorBloque->copia0) != 0){
+    	printf("HOLA 1\n");
         return -1;
     }
 
     DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, descriptorBloque->copia0.nodo);
 
+    printf("TENGO UN %d\n", resultado);
     zrecv(nodo->socket, &resultado, sizeof(resultado), 0);
 
     if(!resultado){
+    	printf("HOLA 2\n");
         return -1;
     }
 
     if(_enviarBloque(bloque, descriptorBloque->copia1) != 0){
+    	printf("HOLA 3\n");
         return -1;
     }
 
@@ -211,6 +215,7 @@ int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
     zrecv(nodo->socket, &resultado, sizeof(resultado), 0);
 
     if(!resultado){
+    	printf("HOLA 4\n");
         return -1;
     }
     return 0;

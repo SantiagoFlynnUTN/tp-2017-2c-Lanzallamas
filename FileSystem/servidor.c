@@ -35,12 +35,14 @@ void comprobarConexion(int numbytes, int socket){
 }
 
 void manejarCliente(int newfd){
-
 	int numbytes;
 	int buf;
 
 	buf = 0;
+
+	pthread_mutex_lock(&semaforoConsola);
 	numbytes = recv(newfd, &buf, sizeof(int), 0); //leo el primer byte. Me dirá el tipo de paquete. (es un int)
+	pthread_mutex_unlock(&semaforoConsola);
 
 	comprobarConexion(numbytes, newfd); //Me fijo si lo que recibí esta todo ok.
 

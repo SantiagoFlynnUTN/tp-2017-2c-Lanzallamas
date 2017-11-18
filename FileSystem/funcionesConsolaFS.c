@@ -139,7 +139,9 @@ void hiloConsola(){
 			}else if(linea[2] == NULL) {
 				printf("Error: falta el nombre de archivo en YAMA FS\n");
 			}else{
+				pthread_mutex_lock(&semaforoConsola);
 				cpfrom(linea[1], linea[2]);
+				pthread_mutex_unlock(&semaforoConsola);
 			}
 
 			continue;
