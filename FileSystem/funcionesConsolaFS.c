@@ -512,7 +512,7 @@ void mkdirConsola(char * dir){
 }
 
 int cpfrom(char * archivo, char * archivoFS){
-	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivo);
+	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivoFS);
 
 	if(descriptorArchivo != NULL){
 		printf("EL archivo %s ya existe\n", archivoFS);
