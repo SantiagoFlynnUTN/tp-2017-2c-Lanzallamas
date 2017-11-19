@@ -100,9 +100,11 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 		pthread_mutex_lock(&mutexTransformacion);
 		cantTransfActual--;
 		fallosTransf++;
+		pthread_mutex_unlock(&mutexTransformacion);
+		pthread_mutex_lock(&yamaMensajes);
 		zsend(socket_yama, &tipomensaje, sizeof(tipomensaje), 0);
 		zsend(socket_yama, &mensajeError, sizeof(mensajeError), 0);
-		pthread_mutex_unlock(&mutexTransformacion);
+		pthread_mutex_unlock(&yamaMensajes);
 
 	} else {
 		int mensajeOK = TRANSFORMACIONOK;
@@ -112,16 +114,17 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 
 		double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
 				+ (double) (tv2.tv_sec - tv1.tv_sec);
-		printf("Tiempo de ejecución del Job = %f segundos\n", tiempoTotal);
 
 		pthread_mutex_lock(&mutexTransformacion);
 		tiempoTotalTransf += tiempoTotal;
 		transformacionesOk++;
 		cantTransfActual--;
+		pthread_mutex_unlock(&mutexTransformacion);
+		pthread_mutex_lock(&yamaMensajes);
 		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
 		zsend(socket_yama, &jobId, sizeof(jobId), 0);
 		zsend(socket_yama, mensaje.nombreTemp, sizeof(char) * 255, 0);
-		pthread_mutex_unlock(&mutexTransformacion);
+		pthread_mutex_unlock(&yamaMensajes);
 	}
 
 	pthread_exit(NULL);

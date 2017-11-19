@@ -7,12 +7,14 @@
 int socket_yama;
 pthread_mutex_t mutexTransformacion;
 pthread_mutex_t mutexReduccion;
+pthread_mutex_t yamaMensajes;
 void nuevoCliente(int socket_cliente);
 void atenderConexion(int socket);
 void calcularMaximos();
 double tiempoTotalJob;
 double tiempoTotalTransf;
 double tiempoTotalRedu;
+double tiempoTotalGlo;
 int cantTransfActual;
 int cantReduActual;
 int transformacionesOk;

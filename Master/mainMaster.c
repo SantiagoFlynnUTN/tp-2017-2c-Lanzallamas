@@ -25,11 +25,13 @@
 
 int socket_yama;
 int socket_nodo;
+pthread_mutex_t yamaMensajes = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutexTransformacion = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutexReduccion = PTHREAD_MUTEX_INITIALIZER;
 double tiempoTotalJob = 0;
 double tiempoTotalTransf = 0;
 double tiempoTotalRedu = 0;
+double tiempoTotalGlo = 0;
 int cantTransfActual = 0;
 int cantReduActual = 0;
 int transformacionesOk = 0;
@@ -46,8 +48,9 @@ void printMetrics(){
 	printf("[Tiempo] Job: %f sec\n", tiempoTotalJob);
 	printf("[Tiempo Promedio] Transformacion: %f sec\n",
 			tiempoTotalTransf / transformacionesOk);
-	printf("[Tiempo Promedio] Reduccion: %f sec\n",
+	printf("[Tiempo Promedio] Reducciones: %f sec\n",
 			tiempoTotalRedu / reduccionesOk);
+	printf("[Tiempo Total] Global: %f sec\n", tiempoTotalGlo);
 	printf(
 			"[Cantidad] Operaciones en forma paralela:\n-> Total: %i\n-> Transformaciones: %i\n-> Reducciones: %i\n",
 			 cargaMaxima, maxT, maxR);
