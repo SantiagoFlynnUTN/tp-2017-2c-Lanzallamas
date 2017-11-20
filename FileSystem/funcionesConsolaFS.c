@@ -17,7 +17,6 @@
 #include <readline/readline.h>
 #include "utilidadesFileSystem.h"
 #include "recepcionBloques.h"
-#include "md5/md5.h"
 #include <sys/stat.h>
 #include "envioBloques.h"
 #include "estructurasFileSystem.h"
