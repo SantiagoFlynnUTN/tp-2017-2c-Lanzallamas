@@ -63,6 +63,8 @@ void transformacionOK(int socket){
         if(list_all_satisfy(transformaciones, estanFinalizadas)){
             enviarSolicitudReduccion(socket, transformaciones);
         }
+    }else{
+        log_error(logger, "NO ENCONTRO LA Transformacion\njob: %d\ntempFile: %s\n", jobId, tempFile);
     }
 }
 
@@ -102,7 +104,7 @@ void reduccionLocalOK(int socket){
             reduccionGlobal(socket, jobId);
         }
     }else{
-        log_error(logger, "NO ENCONTRO LA ENTRADA\n");
+        log_error(logger, "NO ENCONTRO LA Reduccion Local\njob: %d\ntempFile: %s\n", jobId, tempFile);
     }
 }
 
@@ -123,6 +125,8 @@ void reduccionGlobalOk(int socket){
         reduccionGlobal->estado = FINALIZADO;
 
         _enviarOperacionAlmacenamiento(socket, reduccionGlobal);
+    }else{
+        log_error(logger, "NO ENCONTRO LA Reduccion Global\njob: %d\n", jobId);
     }
 }
 

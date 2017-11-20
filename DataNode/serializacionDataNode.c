@@ -47,16 +47,6 @@ void _setBloque(int socket){
 	zrecv(socket, &bloque, sizeof(bloque), 0);
 	zrecv(socket, data, sizeof(char) * MB, 0);
 
-	static int a;
-
-	char r[255];
-	sprintf(r, "archivos/%d.txt", a++);
-
-	FILE * fd = fopen(r, "w");
-
-	fwrite(data, sizeof(char) *MB, 1, fd);
-	fclose(f);
-
 	status = setBloque(bloque, data);
 
 	if(status == -1){

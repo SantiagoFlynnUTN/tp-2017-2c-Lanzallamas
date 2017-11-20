@@ -79,6 +79,8 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		pthread_mutex_unlock(&mutexReduccion);
 		pthread_mutex_lock(&yamaMensajes);
 		zsend(socket_yama, &mensajeError, sizeof(int), 0);
+		zsend(socket_yama, &jobId, sizeof(jobId), 0);
+		zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
 		pthread_mutex_unlock(&yamaMensajes);
 
 	}else{
@@ -101,10 +103,6 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 		zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
 		pthread_mutex_unlock(&yamaMensajes);
 	}
-	pthread_mutex_lock(&yamaMensajes);
-	zsend(socket_yama, &jobId, sizeof(jobId), 0);
-	zsend(socket_yama, op->archivoReducido, sizeof(char) * 255, 0);
-	pthread_mutex_unlock(&yamaMensajes);
 
 	free(op);
 	pthread_exit(NULL);
