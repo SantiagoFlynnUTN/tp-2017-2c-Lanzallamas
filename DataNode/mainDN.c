@@ -15,6 +15,7 @@
 #include "chat.h"
 #include "cliente.h"
 #include "dataNode.h"
+#include <ifaddrs.h>
 
 int sockfd;
 
@@ -23,11 +24,28 @@ void enviarStructFileSystem(int socket){
 	handshake.tipomensaje = 2;
 	strcpy(handshake.nombreNodo, infoNodo.nombreNodo);
 
-	struct sockaddr_in address;
-	socklen_t addr_size = sizeof(struct sockaddr_in);
-	getpeername(socket, (struct sockaddr *)&address, &addr_size);
-	memset(handshake.ip, 0, 20);
-	strcpy(handshake.ip, inet_ntoa(address.sin_addr));
+	  struct ifaddrs * ifAddrStruct=NULL;
+	struct ifaddrs * ifa=NULL;
+	void * tmpAddrPtr=NULL;
+
+	getifaddrs(&ifAddrStruct);
+
+	for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
+		if (!ifa->ifa_addr || strcmp("eth0", ifa->ifa_name) != 0) {
+			continue;
+		}
+		if (ifa->ifa_addr->sa_family == AF_INET) { // check it is IP4
+			// is a valid IP4 Address
+			tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+			char addressBuffer[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+			printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
+			strcpy(handshake.ip, addressBuffer);
+		}
+	}
+	if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+
+
 	handshake.puerto = infoNodo.puertoWorker;
 	handshake.bloques = infoNodo.cantidadBloques;
 
