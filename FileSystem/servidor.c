@@ -140,7 +140,7 @@ void setListener(){
 	}
 }
 
-void iniciarServer(){
+void * iniciarServer(){
 
 	FD_ZERO(&master);    		// borra los conjuntos maestro y temporal
 
@@ -152,6 +152,8 @@ void iniciarServer(){
 	fdmax = listener; 			// por ahora es éste
 
 	doSelect();// bucle principal
+
+	return NULL;
 }
 
 void inicializarServer(){

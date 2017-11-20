@@ -72,10 +72,15 @@ void crearBitMap(DescriptorNodo * newNodo){
 void guardarTablaNodos(){
     char * archivo = config_get_string_value(config, PATH_TABLA_NODOS);
 
+    int cantidadNodos = dictionary_size(nodos);
+
+    if(cantidadNodos == 0){
+        return;
+    }
+
     FILE * archivoNodos = fopen(archivo, "w"); // hago esto para crear el archivo si no existe
     fclose(archivoNodos);
 
-    int cantidadNodos = dictionary_size(nodos);
     /*
      * 100 para el nombre de cada nodo
      * 1 coma por cada nodo

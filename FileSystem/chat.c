@@ -61,7 +61,7 @@ void escuchar(int* socket){
 	while(nbytesReceived != 0){		//Tanto FS, como memoria, y cpu saben solo escuchar mensajes por el momento, asi q quedamos en bucle hasta la muerte.
 		buf = 0;
 
-		if((nbytesReceived = recv(sockfd, &buf, 1, 0)) <= 0)				//recibo y compruebo q recibí correctamente
+		if((nbytesReceived = recv(sockfd, &buf, sizeof(int), 0)) <= 0)				//recibo y compruebo q recibí correctamente
 			log_error(logger, "No puedo recibir información, o el servidor colgó\n");
 		else manejarDatos(buf, sockfd);
 	}

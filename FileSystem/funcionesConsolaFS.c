@@ -47,7 +47,9 @@ void hiloConsola(){
 		 *  Funcion Exit de consola
 		 */
 		if (!linea || strcmp("exit", linea[0]) == 0) {
-			printf("Te aburriste de la consola\n");
+			printf("Guardando consola\n");
+			guardarFileSystem();
+			exit(0);
 			break;
 		}
 
@@ -111,7 +113,9 @@ void hiloConsola(){
 			if(linea[1] == NULL){
 				printf("Error: falta el nombre de archivo\n");
 			}else{
+				pthread_mutex_lock(&semaforoConsola);
 				cat(linea[1]);
+				pthread_mutex_unlock(&semaforoConsola);
 			}
 			continue;
 		}
@@ -157,7 +161,9 @@ void hiloConsola(){
 			}else if(linea[2] == NULL) {
 				printf("Error: falta el nombre de archivo\n");
 			}else{
+				pthread_mutex_lock(&semaforoConsola);
 				cpto(linea[1], linea[2]);
+				pthread_mutex_unlock(&semaforoConsola);
 			}
 
 			continue;
@@ -168,7 +174,9 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("cpblock", linea[0]) == 0){
+			pthread_mutex_lock(&semaforoConsola);
 			cpblock(linea[1], linea[2], linea[3]);
+			pthread_mutex_unlock(&semaforoConsola);
 			continue;
 		}
 
@@ -180,7 +188,9 @@ void hiloConsola(){
 			if(linea[1] == NULL){
 				printf("Error: falta el nombre de archivo\n");
 			}else{
+				pthread_mutex_lock(&semaforoConsola);
 				md5Consola(linea[1]);
+				pthread_mutex_unlock(&semaforoConsola);
 			}
 			continue;
 		}
@@ -534,13 +544,67 @@ void cpto(char * archivoFS, char * archivo){
 }
 
 void cpblock(char * archivo, char * numeroBloque, char * nodo){
+	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivo);
+
+	if(descriptorArchivo == NULL){
+		printf("EL archivo %s no existe\n", archivo);
+		return;
+	}
+
+	int numBloque = atoi(numeroBloque);
+
+	Bloque * bloque = (Bloque * ) list_get(descriptorArchivo->bloques, numBloque);
+
+	if(bloque == NULL){
+		printf("El bloque %d no existe\n", numBloque);
+		return;
+	}
 
 
+	DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, nodo);
 
+	if(descriptorNodo == NULL){
+		printf("El nodo %s no existe\n", nodo);
+		return;
+	}
 
+	if(descriptorNodo->socket == -1){
+		printf("El nodo %s está desconectado\n", nodo);
+		return;
+	}
 
+	if(descriptorNodo->bloquesLibres == 0){
+		printf("El nodo %s no tiene bloques libres\n", nodo);
+		return;
+	}
 
+	DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
 
+	int bloqueAsignado = generarCopia(bloque, descriptorNodo);
+
+	if(bloqueAsignado == -1){
+		printf("No se pudo crear la copia en nodo %s\n", nodo);
+		return;
+	}
+
+	descriptorNodo->bloquesLibres--;
+
+	if(descriptorNodoCopia0->socket == -1){
+		descriptorNodoCopia0->bloquesLibres++;
+		bitarray_clean_bit(descriptorNodoCopia0->bitmap, bloque->copia0.numeroBloque);
+
+		bloque->copia0.numeroBloque = bloqueAsignado;
+
+		strcpy(bloque->copia0.nodo, nodo);
+	}else{
+		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
+		descriptorNodoCopia1->bloquesLibres++;
+		bitarray_clean_bit(descriptorNodoCopia1->bitmap, bloque->copia1.numeroBloque);
+
+		bloque->copia1.numeroBloque = bloqueAsignado;
+
+		strcpy(bloque->copia1.nodo, nodo);
+	}
 }
 
 void md5Consola(char * archivo){

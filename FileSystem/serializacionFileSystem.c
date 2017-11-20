@@ -26,7 +26,6 @@ void manejarStructs(int socket){
 }
 
 void manejarDatos(int buf, int socket){
-	printf("recibi un %d", buf);
 	switch(buf){
 	case OK:
 		log_debug(logger, "Socket %i dice OK\n", socket);

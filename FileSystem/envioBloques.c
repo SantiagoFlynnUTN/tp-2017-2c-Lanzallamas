@@ -17,6 +17,7 @@ Bloque * _crearBloque(int numeroBloque, long bytes);
 void _calcularUbicacionBloque(Bloque * bloque);
 int _obtenerNumeroBloqueLibre(t_bitarray * bitmap);
 int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque);
+int _obtenerData(int socket, int bloque,  char * contenidoBloque);
 
 int bloquesLibres = 0;
 
@@ -106,6 +107,58 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
     return 0;
 }
 
+int generarCopia(Bloque * bloque, DescriptorNodo * descriptorNodo){
+    if(descriptorNodo->bloquesLibres == 0){
+        return -1;
+    }
+    Ubicacion ubicacion;
+    ubicacion.numeroBloque = _obtenerNumeroBloqueLibre(descriptorNodo->bitmap);
+    strcpy(ubicacion.nodo, descriptorNodo->nombreNodo);
+
+    if(ubicacion.numeroBloque == -1){
+        return -1;
+    }
+
+    char data[MB];
+    memset(data, 0, sizeof(char) * MB);
+
+    DescriptorNodo * copia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
+    DescriptorNodo * copia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
+
+    if(copia0->socket > -1){
+        if(_obtenerData(copia0->socket, bloque->copia0.numeroBloque, data) != 0){
+            return -1;
+        }
+    }else if(copia1->socket > -1){
+        if(_obtenerData(copia1->socket, bloque->copia1.numeroBloque, data) != 0){
+            return -1;
+        }
+    }else{
+        return -1;
+    }
+
+    if(_enviarBloque(data, ubicacion) != 0){
+        return -1;
+    }
+
+    return ubicacion.numeroBloque;
+}
+
+int _obtenerData(int socket, int bloque,  char * contenidoBloque){
+    int mensaje = GETBLOQUE;
+
+    if (send(socket, &mensaje, sizeof(mensaje), 0) == -1 ||
+        send(socket, &bloque, sizeof(bloque), 0) == -1){
+        return -1;
+    }
+
+    if(recv(socket, contenidoBloque, sizeof(char) * MB, 0) <= 0){
+        return -1;
+    }
+
+    return 0;
+}
+
 int _controlarEspacioDisponible(int cantidadBloques){
     bloquesLibres = 0;
     dictionary_iterator(nodos,_contarBloquesLibres);
@@ -190,22 +243,18 @@ int _obtenerNumeroBloqueLibre(t_bitarray * bitmap) {
 int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
     int resultado = 0;
     if(_enviarBloque(bloque, descriptorBloque->copia0) != 0){
-    	printf("HOLA 1\n");
         return -1;
     }
 
     DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, descriptorBloque->copia0.nodo);
 
-    printf("TENGO UN %d\n", resultado);
     zrecv(nodo->socket, &resultado, sizeof(resultado), 0);
 
     if(!resultado){
-    	printf("HOLA 2\n");
         return -1;
     }
 
     if(_enviarBloque(bloque, descriptorBloque->copia1) != 0){
-    	printf("HOLA 3\n");
         return -1;
     }
 
@@ -215,7 +264,6 @@ int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque){
     zrecv(nodo->socket, &resultado, sizeof(resultado), 0);
 
     if(!resultado){
-    	printf("HOLA 4\n");
         return -1;
     }
     return 0;
