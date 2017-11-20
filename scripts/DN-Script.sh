@@ -4,7 +4,12 @@ echo "Copiando Repo Git"
 git clone "https://github.com/sisoputnfrba/tp-2017-2c-Lanzallamas.git"
 cd tp-2017-2c-Lanzallamas
 
-echo "Compilando bibliotecas"
+echo "Instalando/Compilando bibliotecas"
+
+git clone "https://github.com/sisoputnfrba/so-commons-library"
+cd so-commons-library
+sudo make install
+cd ..
 
 cd Z-Commons
 
