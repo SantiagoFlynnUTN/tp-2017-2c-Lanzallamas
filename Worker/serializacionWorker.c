@@ -48,7 +48,7 @@ void _almacenamiento(int socket){
 
 	zsend(socketFS, archivoFS, sizeof(char) * 255, 0);
 
-	enviarArchivo(socketFS, "archivos/archivo1.txt");
+	enviarArchivo(socketFS, archivo);
 
 	int respuesta;
 

@@ -79,6 +79,7 @@ t_config * config;
 int jobId;
 char * transformador;
 char * reductor;
+char * pathArchivoFS;
 
 
 /* FUNCIONES */

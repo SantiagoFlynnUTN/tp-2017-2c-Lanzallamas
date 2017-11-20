@@ -35,6 +35,10 @@ void enviarTablaTransformacion(int socket_master){
 	if (respuesta != 0){
 		//zsend(socket_master, )  -- Mandar a master que aborte la trafo
 		log_error(logger, "El archivo %s no pudo no se encuentra disponible", solFs.ruta);
+		int respuesta = 0;
+		cantidadJobs++;
+		zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
+		zsend(socket_master, &respuesta, sizeof(respuesta), 0);
 		return;
 	}
 
@@ -154,26 +158,26 @@ void manejarDatos(int buf, int socket){
 	}
 }
 
-void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos){
+void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos) {
 	int i;
 
-	for(i = 0; i < cantidadNodos; ++i){
-		bool criterio(void * nodo){
-			InfoNodo * infoNodo = (InfoNodo *) nodo;
+	for (i = 0; i < cantidadNodos; ++i) {
+		bool criterio(void *nodo) {
+			InfoNodo *infoNodo = (InfoNodo *) nodo;
 
 			return strcmp(infoNodo->nombre, nodos[i].nombreNodo) == 0;
 		}
 
-		InfoNodo * nodo = (InfoNodo *) list_find(listaNodos, criterio);
+		InfoNodo *nodo = (InfoNodo *) list_find(listaNodos, criterio);
 
-		if(nodo == NULL){
-			InfoNodo * nuevoNodo = (InfoNodo *) malloc(sizeof(*nuevoNodo));
-			strcpy(nuevoNodo->nombre,nodos[i].nombreNodo);
+		if (nodo == NULL) {
+			InfoNodo *nuevoNodo = (InfoNodo *) malloc(sizeof(*nuevoNodo));
+			strcpy(nuevoNodo->nombre, nodos[i].nombreNodo);
 			nuevoNodo->disponibilidad = disponibilidad_base;
 			nuevoNodo->bloques = dictionary_create();
 
-			TamanoBloque * bloque = (TamanoBloque *)malloc(sizeof(*bloque));
-			char * numBloqueStr = (char *) malloc(sizeof(char) * 5);
+			TamanoBloque *bloque = (TamanoBloque *) malloc(sizeof(*bloque));
+			char *numBloqueStr = (char *) malloc(sizeof(char) * 5);
 			intToString(numBloque, numBloqueStr);
 
 			bloque->bloque = nodos[i].bloque;
@@ -185,9 +189,9 @@ void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long byte
 			dictionary_put(nuevoNodo->bloques, numBloqueStr, bloque);
 
 			list_add(listaNodos, nuevoNodo);
-		}else{
-			TamanoBloque * bloque = (TamanoBloque *)malloc(sizeof(*bloque));
-			char * numBloqueStr = (char *) malloc(sizeof(char) * 5);
+		} else {
+			TamanoBloque *bloque = (TamanoBloque *) malloc(sizeof(*bloque));
+			char *numBloqueStr = (char *) malloc(sizeof(char) * 5);
 			intToString(numBloque, numBloqueStr);
 
 			bloque->bloque = nodos[i].bloque;

@@ -30,7 +30,6 @@ void cat(char * nombre);
 void mkdirConsola(char * dir);
 void cpto(char * archivoFS, char * archivo);
 void cpblock(char * archivo, char * numeroBloque, char * nodo);
-void md5Consola(char * archivo);
 void ls(char * dir);
 void info(char * archivo);
 void infoNodos();
@@ -318,23 +317,28 @@ void rm(char ** linea){
 			printf("Error: opción desconocida");
 		}
 	}else{
-		Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, linea[1]);
-
-		if(descriptorArchivo == NULL){
-			printf("Error: No existe el archivo %s", linea[1]);
-			return;
-		}
-
-		bool criterio(void * elemento){
-			Archivo * descriptor = (Archivo *) elemento;
-			return strcmp(descriptor->ruta, descriptorArchivo->ruta) == 0;
-		}
-
-		list_remove_by_condition(listaArchivosDirectorios[descriptorArchivo->directorioPadre], criterio);
-
-		destruirArchivo(descriptorArchivo);
+		rmArchivo(linea[1]);
 	}
 }
+
+void rmArchivo(char * path){
+	Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, path);
+
+	if(descriptorArchivo == NULL){
+		printf("Error: No existe el archivo %s", path);
+		return;
+	}
+
+	bool criterio(void * elemento){
+		Archivo * descriptor = (Archivo *) elemento;
+		return strcmp(descriptor->ruta, descriptorArchivo->ruta) == 0;
+	}
+
+	list_remove_by_condition(listaArchivosDirectorios[descriptorArchivo->directorioPadre], criterio);
+
+	destruirArchivo(descriptorArchivo);
+}
+
 
 void renameFs(char * nombreOriginal, char * nombreFinal){
 	int directorioPadre = calcularDirectorioPadre(nombreOriginal);
@@ -481,6 +485,7 @@ void cat(char * nombre){
 
 		while(megas--){
 			char contenido[MB];
+			memset(contenido, 0, sizeof(char) * MB);
 
 			if(fread(contenido, MB * sizeof(char), 1, fd) != 1){
 				printf("Error leyendo el archivo\n");

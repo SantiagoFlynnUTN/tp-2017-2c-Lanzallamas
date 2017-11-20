@@ -13,6 +13,7 @@ void _cargarConfiguracion();
 void _crearLogger();
 void _logConfig();
 void _cargarFileSystem();
+void _probarConexion(DescriptorNodo * nodo);
 
 pthread_mutex_t semaforoConsola = PTHREAD_MUTEX_INITIALIZER;
 
@@ -50,6 +51,8 @@ void asociarNodo(int socket){
     agregarNodoEnTabla(newNodo);
 
     printNodo(dictionary_get(nodos, newNodo->nombreNodo));
+
+    _probarConexion(newNodo);
 }
 
 void crearRootDir(){
@@ -115,4 +118,11 @@ void _logConfig(){
               config_get_string_value(config, PATH_TABLA_DIRECTORIO),
               config_get_string_value(config, PATH_DIR_ARCHIVOS),
               config_get_string_value(config, PATH_DIR_ARCHIVOS_FORMAT));
+}
+
+
+void _probarConexion(DescriptorNodo * nodo){
+    cpfrom("archivo.txt", "/prueba");
+    md5Consola("/prueba");
+    rmArchivo("/prueba");
 }

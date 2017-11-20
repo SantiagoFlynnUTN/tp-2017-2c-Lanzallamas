@@ -87,6 +87,7 @@ int main(int argc, char *argv[]){
 
 	transformador = argv[1];
 	reductor = argv[2];
+	pathArchivoFS = argv[4];
 
 	inicializarMaster();
 	log_info(logger, "Conectando a YAMA...\n");

@@ -14,6 +14,8 @@ void asignarEspacioEnTabla(Directorio newDir);
 void hiloConsola();
 void crear_hilo_consola();
 int cpfrom(char * archivo, char * archivoFS);
+void md5Consola(char * archivo);
+void rmArchivo(char * path);
 
 void formatFileSystem();
 

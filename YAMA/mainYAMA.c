@@ -12,7 +12,9 @@
 #include "yama.h"
 #include "clienteFS.h"
 #include <signal.h>
-
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 void signal_handler(int signum){
 	if (signum == SIGUSR1) {

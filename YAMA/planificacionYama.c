@@ -43,7 +43,9 @@ void replanificar(int socket){
 	void buscarNodoCopia(void * entrada){
 		EntradaTablaEstado * en = (EntradaTablaEstado *) entrada;
 
-		if(strcmp(en->nombreNodo, transf.nombreNodo) == 0 && en->numeroBloque == transf.numBloque && strcmp(en->archivoTemporal, transf.nombreTemp)){
+		if(strcmp(en->nombreNodo, transf.nombreNodo) == 0 &&
+			en->numeroBloque == transf.numBloque &&
+			strcmp(en->archivoTemporal, transf.nombreTemp) == 0){
 			en->estado = ERRORYAMA;
 			nodoCopia = en->nodoCopia;
 		}
@@ -58,9 +60,13 @@ void replanificar(int socket){
 		bloque->bytes = transf.bytes;
 		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 
+		log_info(logger, "Replanificando...\n");
+
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
 	}else {
 		int muerte = FALLOTRANSFORMACION;
+
+		log_error(logger, "No se puede replanificar la transformacion\n");
 		zsend(socket, &muerte, sizeof(int), 0);
 	}
 }
@@ -228,5 +234,3 @@ int _getTareasHistoricas(InfoNodo * nodo){
 
 	return tareas;
 }
-
-
