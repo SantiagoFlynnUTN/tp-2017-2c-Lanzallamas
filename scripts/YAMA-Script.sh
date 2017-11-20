@@ -15,28 +15,26 @@ gcc -O0 -g3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -MF"sockets.d" -MT"socket
 gcc -O0 -g3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -MF"structUtiles.d" -MT"structUtiles.d" -o "structUtiles.o" structUtiles.c
 gcc -shared -o "libZ-Commons.so"  ./archivos.o ./cosas.o ./prueba.o ./sockets.o ./structUtiles.o
 
-echo "Compilando FileSystem"
+echo "Compilando YAMA"
 
 cd ..
-cd FileSystem
+cd YAMA
 
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"RGYAMA.d" -MT"RGYAMA.d" -o "RGYAMA.o" RGYAMA.c
 gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesFileSystem.d" -MT"conexionesFileSystem.d" -o "conexionesFileSystem.o" conexionesFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"configuracionFileSystem.d" -MT"configuracionFileSystem.d" -o "configuracionFileSystem.o" configuracionFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"envioBloques.d" -MT"envioBloques.d" -o "envioBloques.o" envioBloques.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"estructurasFileSystem.d" -MT"estructurasFileSystem.d" -o "estructurasFileSystem.o" estructurasFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"fileSystem.d" -MT"fileSystem.d" -o "fileSystem.o" fileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"funcionesConsolaFS.d" -MT"funcionesConsolaFS.d" -o "funcionesConsolaFS.o" funcionesConsolaFS.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"inicializacionFileSystem.d" -MT"inicializacionFileSystem.d" -o "inicializacionFileSystem.o" inicializacionFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainFS.d" -MT"mainFS.d" -o "mainFS.o" mainFS.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"recepcionBloques.d" -MT"recepcionBloques.d" -o "recepcionBloques.o" recepcionBloques.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionFileSystem.d" -MT"serializacionFileSystem.d" -o "serializacionFileSystem.o" serializacionFileSystem.c
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"clienteFS.d" -MT"clienteFS.d" -o "clienteFS.o" clienteFS.c
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexiones.d" -MT"conexiones.d" -o "conexiones.o" conexiones.c
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainYAMA.d" -MT"mainYAMA.d" -o "mainYAMA.o" mainYAMA.c
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"planificacionYama.d" -MT"planificacionYama.d" -o "planificacionYama.o" planificacionYama.c
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"respuestaTransformacion.d" -MT"respuestaTransformacion.d" -o "respuestaTransformacion.o" respuestaTransformacion.c
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacion.d" -MT"serializacion.d" -o "serializacion.o" serializacion.c
 gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"servidor.d" -MT"servidor.d" -o "servidor.o" servidor.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"utilidadesFileSystem.d" -MT"utilidadesFileSystem.d" -o "utilidadesFileSystem.o" utilidadesFileSystem.c
-gcc -L"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "FileSystem"  ./chat.o ./conexionesFileSystem.o ./configuracionFileSystem.o ./envioBloques.o ./estructurasFileSystem.o ./fileSystem.o ./funcionesConsolaFS.o ./inicializacionFileSystem.o ./mainFS.o ./recepcionBloques.o ./serializacionFileSystem.o ./servidor.o ./utilidadesFileSystem.o   -lZ-Commons -lreadline -lcommons -lpthread
+gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"yama.d" -MT"yama.d" -o "yama.o" yama.c
+gcc -L"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "YAMA"  ./RGYAMA.o ./chat.o ./clienteFS.o ./conexiones.o ./mainYAMA.o ./planificacionYama.o ./respuestaTransformacion.o ./serializacion.o ./servidor.o ./yama.o   -lZ-Commons -lcommons -lpthread
 
-echo "Ejecutando FileSystem"
 
-./FileSystem
+echo "Ejecutando YAMA"
+
+./YAMA
 
 exit 0

@@ -3,7 +3,7 @@
 	<name>DataNode</name>
 	<comment></comment>
 	<projects>
-		<project>z-commons</project>
+		<project>Z-Commons</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
