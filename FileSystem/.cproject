@@ -50,7 +50,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.941679375" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.1302219096" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.910707247" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/z-commons}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Z-Commons}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1810232013" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -59,11 +59,11 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="z-commons;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="Z-Commons;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/z-commons"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/z-commons/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="z-commons" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Z-Commons"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Z-Commons/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="Z-Commons" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
