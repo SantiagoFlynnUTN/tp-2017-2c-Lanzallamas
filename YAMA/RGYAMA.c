@@ -79,14 +79,13 @@ void reduccionGlobal(int socket, int jobId){
 
 	list_add(tablaEstado, en);
 
-	log_info(logger, "\nMasterId\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\t\tTemporal\n"
-					 "%d\t\t%d\t%s\t%s\t%d\t%s\t%s",
+	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n",
 			 en->masterId,
 			 en->jobId,
 			 "EN PROCESO",
 			 en->nombreNodo,
-			 en->numeroBloque,
-			 "REDUCCION GLOBAL",
+			 "-",
+			 "REDUC. GLOBAL",
 			 en->archivoTemporal);
 }
 

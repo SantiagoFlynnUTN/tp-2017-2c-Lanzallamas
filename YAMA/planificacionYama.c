@@ -60,7 +60,7 @@ void replanificar(int socket){
 		bloque->bytes = transf.bytes;
 		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 
-		log_info(logger, "Replanificando...\n");
+		log_info(logger, "Replanificando...");
 
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
 	}else {
@@ -132,15 +132,15 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 	entradaTablaEstado->puerto = nodo->puerto;
 	entradaTablaEstado->nodoCopia = nodoCopia;
 
-	log_info(logger, "\nMasterId\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n"
-			"%d\t\t%d\t%s\t%s\t%d\t%s\t%s",
-			 entradaTablaEstado->masterId,
-			 entradaTablaEstado->jobId,
-			 "EN PROCESO",
-			 entradaTablaEstado->nombreNodo,
-			 entradaTablaEstado->numeroBloque,
-			 "TRANSFORMACION",
-			 entradaTablaEstado->archivoTemporal);
+
+	if (!cabecera) {
+		printf("\nMaster\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+		cabecera = 1;
+	}
+	printf("%d\t%d\t%s\t%s\t%d\t%s\t%s\n", entradaTablaEstado->masterId,
+			entradaTablaEstado->jobId, "EN PROCESO",
+			entradaTablaEstado->nombreNodo, entradaTablaEstado->numeroBloque,
+			"TRANSFORMACION", entradaTablaEstado->archivoTemporal);
 
 	list_add(tablaEstado, entradaTablaEstado);
 }

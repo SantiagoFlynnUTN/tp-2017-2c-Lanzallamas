@@ -24,7 +24,8 @@ void signal_handler(int signum){
 }
 
 void nuevoCliente(char* remoteHost, int newfd){
-	printf("new conection from %s on socket %d\n", remoteHost, newfd);
+	printf("Nueva conexion de %s en socket %d\n", remoteHost, newfd);
+	cabecera = 0;
 	//Y acá hacer algo con el nuevo cliente conectado
 }
 

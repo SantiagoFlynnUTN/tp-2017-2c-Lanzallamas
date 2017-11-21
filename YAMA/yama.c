@@ -16,6 +16,7 @@ void inicializarYAMA(){
 	_cargarConfiguracion();
 	_logConfig();
 	tablaEstado = list_create();
+	cabecera = 0;
 }
 
 void recargarConfiguracion(){

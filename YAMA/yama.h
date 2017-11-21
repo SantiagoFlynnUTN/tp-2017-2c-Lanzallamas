@@ -131,6 +131,7 @@ int sock_fs;
 t_list* tablaEstado;
 int disponibilidad_base;
 int cantidadJobs;
+int cabecera;
 
 /* FUNCIONES */
 void inicializarYAMA();

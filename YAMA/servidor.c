@@ -17,6 +17,7 @@
 #include "serializacion.h"
 #include "servidor.h"
 #include "mainYAMA.h"
+#include "yama.h"
 #include <protocoloComunicacion.h>
 
 
@@ -32,7 +33,8 @@ void comprobarConexion(int numbytes, int socket){
 		// error o conexión cerrada por el cliente
 		if (numbytes == 0) {
 			// conexión cerrada
-			printf("selectserver: socket %d hung up\n", socket);
+			printf("Servidor: socket %d colgo\n", socket);
+			cabecera = 0;
 		} else {
 			perror("recv");
 		}

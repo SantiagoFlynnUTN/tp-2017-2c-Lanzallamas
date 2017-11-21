@@ -24,6 +24,7 @@ void almacenamientoOK(int socket){
     if(entradaFinalizada != NULL) {
         entradaFinalizada->estado = FINALIZADO;
         log_info(logger, "El job %d ha sido finalizado", jobId);
+        cabecera = 0;
     }
 }
 
@@ -146,15 +147,9 @@ void _enviarOperacionAlmacenamiento(int socket, EntradaTablaEstado * reduccion){
 
     list_add(tablaEstado, en);
 
-    log_info(logger, "\nMasterId\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\t\tTemporal\n"
-                     "%d\t\t%d\t%s\t%s\t%d\t%s\t%s",
-             en->masterId,
-             en->jobId,
-             "EN PROCESO",
-             en->nombreNodo,
-             en->numeroBloque,
-             "ALMACENAMIENTO",
-             en->archivoTemporal);
+	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n", en->masterId, en->jobId,
+			"EN PROCESO", en->nombreNodo, "-", "ALMACENAMIENTO",
+			en->archivoTemporal);
 
     int almacenamiento = SOLICITUDALMACENAMIENTO;
     zsend(socket, &almacenamiento, sizeof(almacenamiento), 0);
