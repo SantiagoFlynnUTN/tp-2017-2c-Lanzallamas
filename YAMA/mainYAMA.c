@@ -20,6 +20,7 @@ void signal_handler(int signum){
 	if (signum == SIGUSR1) {
 		recargarConfiguracion();
 		log_info(logger, "Recarga de configurcion OK\n");
+		cabecera = 0;
 	}
 }
 
@@ -53,7 +54,7 @@ void conectarAFileSystem() {
 int main(){
 	signal(SIGUSR1, signal_handler);
 	inicializarYAMA();
-	log_info(logger, "Para recargar la configuracion utilice el comando kill -USR1 %d\n", getpid());
+	log_info(logger, "Para recargar la configuracion utilice el comando kill -USR1 %d", getpid());
 	inicializarServer();
 	iniciarConexionAFS(&sock_fs);
 

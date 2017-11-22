@@ -66,6 +66,7 @@ void transformacionOK(int socket){
         }
     }else{
         log_error(logger, "NO ENCONTRO LA Transformacion\njob: %d\ntempFile: %s\n", jobId, tempFile);
+        cabecera = 0;
     }
 }
 
@@ -106,6 +107,7 @@ void reduccionLocalOK(int socket){
         }
     }else{
         log_error(logger, "NO ENCONTRO LA Reduccion Local\njob: %d\ntempFile: %s\n", jobId, tempFile);
+        cabecera = 0;
     }
 }
 
@@ -128,6 +130,7 @@ void reduccionGlobalOk(int socket){
         _enviarOperacionAlmacenamiento(socket, reduccionGlobal);
     }else{
         log_error(logger, "NO ENCONTRO LA Reduccion Global\njob: %d\n", jobId);
+        cabecera = 0;
     }
 }
 
@@ -146,7 +149,10 @@ void _enviarOperacionAlmacenamiento(int socket, EntradaTablaEstado * reduccion){
     memset(en->archivoTemporal, 0, sizeof(char) * 255);
 
     list_add(tablaEstado, en);
-
+    if (!cabecera) {
+    		printf("\nMaster\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+    		cabecera = 1;
+    	}
 	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n", en->masterId, en->jobId,
 			"EN PROCESO", en->nombreNodo, "-", "ALMACENAMIENTO",
 			en->archivoTemporal);

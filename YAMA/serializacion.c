@@ -41,6 +41,7 @@ void enviarTablaTransformacion(int socket_master){
 		cantidadJobs++;
 		zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
 		zsend(socket_master, &respuesta, sizeof(respuesta), 0);
+		cabecera = 0;
 		return;
 	}
 
@@ -142,6 +143,10 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 
 	list_add(tablaEstado, en);
 
+	if (!cabecera) {
+			printf("\nMaster\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+			cabecera = 1;
+		}
 	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n",
 			 en->masterId,
 			 en->jobId,
@@ -155,6 +160,14 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 void matarMaster(int socket){
 	int muerte = FALLOREDLOCAL;
 	zsend(socket, &muerte, sizeof(int), 0);
+}
+
+
+void almacenamientoError(int socket){
+	int job;
+	zrecv(socket, &job, sizeof(job), 0);
+	log_error(logger, "Error al almacenar el archivo en Job %d", job);
+	cabecera = 0;
 }
 
 void manejarDatos(int buf, int socket){
@@ -181,6 +194,9 @@ void manejarDatos(int buf, int socket){
 			break;
 		case ALMACENAMIENTOOK:
 			almacenamientoOK(socket);
+			break;
+		case ERRORALMACENAMIENTO:
+			almacenamientoError(socket);
 			break;
 	}
 }

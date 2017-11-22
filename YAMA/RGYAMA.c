@@ -79,6 +79,10 @@ void reduccionGlobal(int socket, int jobId){
 
 	list_add(tablaEstado, en);
 
+	if (!cabecera) {
+		printf("\nMaster\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+		cabecera = 1;
+	}
 	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n",
 			 en->masterId,
 			 en->jobId,

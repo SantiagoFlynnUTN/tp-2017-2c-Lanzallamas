@@ -19,6 +19,8 @@ void ordenarNodos(t_list * nodos){
 	_sortNodos(nodos);
 }
 
+int clock_ = 0;
+
 InfoNodo * buscarCopia(char numeroBloqueStr[5], t_list * listaNodos){
 	int encontrado = 0, i = 0;
 	while (!encontrado && i < list_size(listaNodos)) {
@@ -60,7 +62,7 @@ void replanificar(int socket){
 		bloque->bytes = transf.bytes;
 		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 
-		log_info(logger, "Replanificando...");
+		log_info(logger, "\tReplanificando...");
 
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
 	}else {
@@ -68,19 +70,20 @@ void replanificar(int socket){
 
 		log_error(logger, "No se puede replanificar la transformacion\n");
 		zsend(socket, &muerte, sizeof(int), 0);
+		cabecera = 0;
 	}
 }
 
 void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * listaNodos){
-	int clock = 0, i;
+	int i;
 	int cantidadNodos = list_size(listaNodos);
 	for(i = 0; i < bloques; ++i){
-		int inicial = clock;
+		int inicial = clock_;
 		int planificado = 0;
 
 		while(!planificado){
 
-			InfoNodo * nodo = (InfoNodo *) list_get(listaNodos, clock), *nodoCopia;
+			InfoNodo * nodo = (InfoNodo *) list_get(listaNodos, clock_), *nodoCopia;
 			char numeroBloqueStr[5];
 			intToString(i, numeroBloqueStr);
 
@@ -91,7 +94,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 				if(nodo->disponibilidad == 0) {
 					nodo->disponibilidad += disponibilidad_base;
 				}else{
-					if(clock == inicial){
+					if(clock_ == inicial){
 						_sumarDisponiblidadBase(listaNodos);
 					}
 					_enviarAMaster(socket_master, nodo, nodoCopia, bloque, TRANSFORMACION);
@@ -99,7 +102,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 				}
 			}
 
-			clock = (clock + 1) % cantidadNodos;
+			clock_ = (clock_ + 1) % cantidadNodos;
 		}
 
 	}
