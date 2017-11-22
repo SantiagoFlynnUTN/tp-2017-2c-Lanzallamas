@@ -24,16 +24,16 @@ echo "Compilando Master"
 cd ..
 cd Master
 
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"RGMaster.d" -MT"RGMaster.d" -o "RGMaster.o" RGMaster.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"cliente.d" -MT"cliente.d" -o "cliente.o" cliente.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesYAMA.d" -MT"conexionesYAMA.d" -o "conexionesYAMA.o" conexionesYAMA.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"enviarArchivo.d" -MT"enviarArchivo.d" -o "enviarArchivo.o" enviarArchivo.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainMaster.d" -MT"mainMaster.d" -o "mainMaster.o" mainMaster.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"master.d" -MT"master.d" -o "master.o" master.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"reduccionMaster.d" -MT"reduccionMaster.d" -o "reduccionMaster.o" reduccionMaster.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"transformacionMaster.d" -MT"transformacionMaster.d" -o "transformacionMaster.o" transformacionMaster.c
-gcc -L"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "Master"  ./RGMaster.o ./chat.o ./cliente.o ./conexionesYAMA.o ./enviarArchivo.o ./mainMaster.o ./master.o ./reduccionMaster.o ./transformacionMaster.o   -lZ-Commons -lcommons -lpthread
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"RGMaster.d" -MT"RGMaster.d" -o "RGMaster.o" RGMaster.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"cliente.d" -MT"cliente.d" -o "cliente.o" cliente.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesYAMA.d" -MT"conexionesYAMA.d" -o "conexionesYAMA.o" conexionesYAMA.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"enviarArchivo.d" -MT"enviarArchivo.d" -o "enviarArchivo.o" enviarArchivo.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainMaster.d" -MT"mainMaster.d" -o "mainMaster.o" mainMaster.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"master.d" -MT"master.d" -o "master.o" master.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"reduccionMaster.d" -MT"reduccionMaster.d" -o "reduccionMaster.o" reduccionMaster.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"transformacionMaster.d" -MT"transformacionMaster.d" -o "transformacionMaster.o" transformacionMaster.c
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "Master"  ./RGMaster.o ./chat.o ./cliente.o ./conexionesYAMA.o ./enviarArchivo.o ./mainMaster.o ./master.o ./reduccionMaster.o ./transformacionMaster.o   -lZ-Commons -lcommons -lpthread
 
 
 echo "Ejecutando Master"

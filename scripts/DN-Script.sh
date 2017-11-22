@@ -24,14 +24,14 @@ echo "Compilando DataNode"
 cd ..
 cd DataNode
 
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"cliente.d" -MT"cliente.d" -o "cliente.o" cliente.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesDataNode.d" -MT"conexionesDataNode.d" -o "conexionesDataNode.o" conexionesDataNode.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"dataNode.d" -MT"dataNode.d" -o "dataNode.o" dataNode.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainDN.d" -MT"mainDN.d" -o "mainDN.o" mainDN.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"operacionesDataNode.d" -MT"operacionesDataNode.d" -o "operacionesDataNode.o" operacionesDataNode.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionDataNode.d" -MT"serializacionDataNode.d" -o "serializacionDataNode.o" serializacionDataNode.c
-gcc -L"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "DataNode"  ./chat.o ./cliente.o ./conexionesDataNode.o ./dataNode.o ./mainDN.o ./operacionesDataNode.o ./serializacionDataNode.o   -lZ-Commons -lcommons -lpthread
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"cliente.d" -MT"cliente.d" -o "cliente.o" cliente.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesDataNode.d" -MT"conexionesDataNode.d" -o "conexionesDataNode.o" conexionesDataNode.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"dataNode.d" -MT"dataNode.d" -o "dataNode.o" dataNode.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainDN.d" -MT"mainDN.d" -o "mainDN.o" mainDN.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"operacionesDataNode.d" -MT"operacionesDataNode.d" -o "operacionesDataNode.o" operacionesDataNode.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionDataNode.d" -MT"serializacionDataNode.d" -o "serializacionDataNode.o" serializacionDataNode.c
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons" -o "DataNode"  ./chat.o ./cliente.o ./conexionesDataNode.o ./dataNode.o ./mainDN.o ./operacionesDataNode.o ./serializacionDataNode.o   -lZ-Commons -lcommons -lpthread
 
 echo "Generando data.bin"
 

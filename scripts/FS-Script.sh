@@ -24,20 +24,20 @@ echo "Compilando FileSystem"
 cd ..
 cd FileSystem
 
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesFileSystem.d" -MT"conexionesFileSystem.d" -o "conexionesFileSystem.o" conexionesFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"configuracionFileSystem.d" -MT"configuracionFileSystem.d" -o "configuracionFileSystem.o" configuracionFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"envioBloques.d" -MT"envioBloques.d" -o "envioBloques.o" envioBloques.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"estructurasFileSystem.d" -MT"estructurasFileSystem.d" -o "estructurasFileSystem.o" estructurasFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"fileSystem.d" -MT"fileSystem.d" -o "fileSystem.o" fileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"funcionesConsolaFS.d" -MT"funcionesConsolaFS.d" -o "funcionesConsolaFS.o" funcionesConsolaFS.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"inicializacionFileSystem.d" -MT"inicializacionFileSystem.d" -o "inicializacionFileSystem.o" inicializacionFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainFS.d" -MT"mainFS.d" -o "mainFS.o" mainFS.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"recepcionBloques.d" -MT"recepcionBloques.d" -o "recepcionBloques.o" recepcionBloques.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionFileSystem.d" -MT"serializacionFileSystem.d" -o "serializacionFileSystem.o" serializacionFileSystem.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"servidor.d" -MT"servidor.d" -o "servidor.o" servidor.c
-gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"utilidadesFileSystem.d" -MT"utilidadesFileSystem.d" -o "utilidadesFileSystem.o" utilidadesFileSystem.c
-gcc -L"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "FileSystem"  ./chat.o ./conexionesFileSystem.o ./configuracionFileSystem.o ./envioBloques.o ./estructurasFileSystem.o ./fileSystem.o ./funcionesConsolaFS.o ./inicializacionFileSystem.o ./mainFS.o ./recepcionBloques.o ./serializacionFileSystem.o ./servidor.o ./utilidadesFileSystem.o   -lZ-Commons -lreadline -lcommons -lpthread
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"chat.d" -MT"chat.d" -o "chat.o" chat.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"conexionesFileSystem.d" -MT"conexionesFileSystem.d" -o "conexionesFileSystem.o" conexionesFileSystem.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"configuracionFileSystem.d" -MT"configuracionFileSystem.d" -o "configuracionFileSystem.o" configuracionFileSystem.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"envioBloques.d" -MT"envioBloques.d" -o "envioBloques.o" envioBloques.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"estructurasFileSystem.d" -MT"estructurasFileSystem.d" -o "estructurasFileSystem.o" estructurasFileSystem.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"fileSystem.d" -MT"fileSystem.d" -o "fileSystem.o" fileSystem.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"funcionesConsolaFS.d" -MT"funcionesConsolaFS.d" -o "funcionesConsolaFS.o" funcionesConsolaFS.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"inicializacionFileSystem.d" -MT"inicializacionFileSystem.d" -o "inicializacionFileSystem.o" inicializacionFileSystem.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"mainFS.d" -MT"mainFS.d" -o "mainFS.o" mainFS.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"recepcionBloques.d" -MT"recepcionBloques.d" -o "recepcionBloques.o" recepcionBloques.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionFileSystem.d" -MT"serializacionFileSystem.d" -o "serializacionFileSystem.o" serializacionFileSystem.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"servidor.d" -MT"servidor.d" -o "servidor.o" servidor.c
+gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"utilidadesFileSystem.d" -MT"utilidadesFileSystem.d" -o "utilidadesFileSystem.o" utilidadesFileSystem.c
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "FileSystem"  ./chat.o ./conexionesFileSystem.o ./configuracionFileSystem.o ./envioBloques.o ./estructurasFileSystem.o ./fileSystem.o ./funcionesConsolaFS.o ./inicializacionFileSystem.o ./mainFS.o ./recepcionBloques.o ./serializacionFileSystem.o ./servidor.o ./utilidadesFileSystem.o   -lZ-Commons -lreadline -lcommons -lpthread
 
 echo "Ejecutando FileSystem"
 
