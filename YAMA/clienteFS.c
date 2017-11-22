@@ -1,10 +1,3 @@
-/*
- * cliente.c
- *
- *  Created on: 7/9/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,10 +7,13 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sockets.h>
 #include <arpa/inet.h>
 #include "clienteFS.h"
 #include "yama.h"
 #include <protocoloComunicacion.h>
+
+int CONEXIONYAMA = 10;
 
 
 void iniciarConexionAFS(int *sockfd){
@@ -40,5 +36,7 @@ void iniciarConexionAFS(int *sockfd){
 		perror("connect");
 		exit(1);
 	}
+
+	zsend(*sockfd, &CONEXIONYAMA, sizeof(CONEXIONYAMA), 0);
 }
 

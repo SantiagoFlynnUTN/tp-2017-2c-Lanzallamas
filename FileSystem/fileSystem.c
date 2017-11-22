@@ -14,6 +14,7 @@ void _crearLogger();
 void _logConfig();
 void _cargarFileSystem();
 void _probarConexion(DescriptorNodo * nodo);
+int _checkearArchivosDisponibles();
 
 pthread_mutex_t semaforoConsola = PTHREAD_MUTEX_INITIALIZER;
 
@@ -48,11 +49,30 @@ void asociarNodo(int socket){
 
     newNodo->bloquesLibres = newNodo->bloques;
 
+    DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, newNodo->nombreNodo);
+    if(descriptorNodo == NULL && hayData){
+        printf("Hay un estado previo de file system no se pueden agregar nodos nuevos\n");
+        free(newNodo);
+        return;
+    }
+
     agregarNodoEnTabla(newNodo);
 
     printNodo(dictionary_get(nodos, newNodo->nombreNodo));
 
     _probarConexion(newNodo);
+
+    if(!hayData){
+        fileSystemEstable = 1;
+    }else{
+        fileSystemEstable = _checkearArchivosDisponibles();
+    }
+
+    if(fileSystemEstable){
+        printf("El file system está estable\n");
+    }else{
+        printf("El file system no está estable\n");
+    }
 }
 
 void crearRootDir(){
@@ -92,9 +112,12 @@ void _cargarFileSystem(){
     }
 
     if(tablaNodos == NULL){
+        hayData = 0;
         log_info(logger, "No hay nodos registrados\n");
         return;
     }
+
+    hayData = 1;
 
     cargarTablaNodos(tablaNodos);
 
@@ -125,4 +148,29 @@ void _probarConexion(DescriptorNodo * nodo){
     cpfrom("archivo.txt", "/prueba");
     md5Consola("/prueba");
     rmArchivo("/prueba");
+}
+
+int _checkearArchivosDisponibles(){
+    int estable = 1;
+
+    void recorrerArchivos (char* nombre, void* arch){
+        Archivo * archivo = (Archivo *) arch;
+
+        bool hayCopia(void * b){
+            Bloque * bloque = (Bloque *) b;
+
+            DescriptorNodo * copia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
+            DescriptorNodo * copia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
+
+            return copia0->socket != -1 || copia1->socket != -1;
+        }
+
+        if(!list_all_satisfy(archivo->bloques, hayCopia)){
+            estable = 0;
+        }
+    }
+
+    dictionary_iterator(archivos, recorrerArchivos);
+
+    return estable;
 }

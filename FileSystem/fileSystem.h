@@ -84,6 +84,9 @@ t_dictionary* archivos;
 t_log * logger;
 t_config * config;
 extern pthread_mutex_t semaforoConsola;
+int fileSystemEstable;
+fd_set master;   // conjunto maestro de descriptores de fichero
+int hayData;
 
 /* FUNCIONES */
 void asociarNodo(int socket);

@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -12,8 +12,9 @@
 #include "serializacionFileSystem.h"
 #include "fileSystem.h"
 #include "estructurasFileSystem.h"
+#include <sys/ioctl.h>
+#include <errno.h>
 
-fd_set master;   // conjunto maestro de descriptores de fichero
 int listener;    // descriptor de socket a la escucha
 int fdmax;       // número máximo de descriptores de fichero
 fd_set read_fds; // conjunto temporal de descriptores de fichero para select()
@@ -40,9 +41,15 @@ void manejarCliente(int newfd){
 
 	buf = 0;
 
-	pthread_mutex_lock(&semaforoConsola);
+	int count;
+	ioctl(newfd, FIONREAD, &count);
+
+	if(count == 0){
+		return;
+	}
+
 	numbytes = recv(newfd, &buf, sizeof(int), 0); //leo el primer byte. Me dirá el tipo de paquete. (es un int)
-	pthread_mutex_unlock(&semaforoConsola);
+
 
 	comprobarConexion(numbytes, newfd); //Me fijo si lo que recibí esta todo ok.
 
@@ -91,6 +98,7 @@ void doSelect(){
 	for(;;) {
 
 		read_fds = master; // cópialo
+
 		if (select((fdmax)+1, &read_fds, NULL, NULL, NULL) == -1) {
 			perror("select");
 			exit(1);
@@ -99,11 +107,13 @@ void doSelect(){
 		// explorar conexiones existentes en busca de datos que leer
 		int actualfd;
 		for(actualfd = 0; actualfd <= fdmax; actualfd++) {
-			if (FD_ISSET(actualfd, &read_fds)) { // ¡¡tenemos datos!!
 
+			if (FD_ISSET(actualfd, &read_fds)) { // ¡¡tenemos datos!!
+				pthread_mutex_lock(&semaforoConsola);
 				if (actualfd == listener) gestionarNuevaConexion();
 
 				else manejarCliente(actualfd);
+				pthread_mutex_unlock(&semaforoConsola);
 			}
 		}
 	}

@@ -26,23 +26,29 @@ void manejarStructs(int socket){
 }
 
 void manejarDatos(int buf, int socket){
-	switch(buf){
-	case OK:
-		log_debug(logger, "Socket %i dice OK\n", socket);
-		break;
-	case CONEXIONNODO:
-		asociarNodo(socket);
-		break;
-	case SOLICITUDARCHIVOYAMA:
-		responderYAMA(socket);
-		break;
-    case RECEPCIONBLOQUE:
-		recibirArchivo(socket, "prueba1234.txt");
-        break;
-    case RECEPCIONARCHIVOWORKER:
-    	break;
-	case ERRORGUARDARBLOQUE:
-		break;
+	switch(buf) {
+		case OK:
+			log_debug(logger, "Socket %i dice OK\n", socket);
+			break;
+		case CONEXIONNODO:
+			asociarNodo(socket);
+			break;
+		case SOLICITUDARCHIVOYAMA:
+			responderYAMA(socket);
+			break;
+		case RECEPCIONBLOQUE:
+			recibirArchivo(socket, "prueba1234.txt");
+			break;
+		case RECEPCIONARCHIVOWORKER:
+			break;
+		case ERRORGUARDARBLOQUE:
+			break;
+		case CONEXIONYAMA:
+			if (!fileSystemEstable) {
+				close(socket);
+				FD_CLR(socket, &master); // eliminar del conjunto maestro
+			}
+			break;
 	}
 }
 

@@ -23,6 +23,8 @@
 #include <commons/collections/list.h>
 #include <sys/time.h>
 
+void mandarSolicitudTransformacion(workerTransformacion* t);
+
 int respuestaSolicitud() {
 
 	int cantidadWorkers = 0;

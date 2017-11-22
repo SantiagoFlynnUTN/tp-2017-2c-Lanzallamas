@@ -34,6 +34,10 @@ void pruebaZCommons(){
 }
 
 int main(int argc, char *argv[]){
+	if(argc > 1 && strcmp("--clean", argv[1]) == 0){
+		system("rm -r metadata-backup");
+		system("mv -f metadata metadata-backup && mkdir metadata && mkdir metadata/archivos && mkdir metadata/bitmaps");
+	}
 
 	inicializarFileSystem();
 	inicializarServer();

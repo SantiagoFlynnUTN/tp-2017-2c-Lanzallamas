@@ -172,9 +172,17 @@ void hiloConsola(){
 		 */
 
 		if (strcmp("cpblock", linea[0]) == 0){
-			pthread_mutex_lock(&semaforoConsola);
-			cpblock(linea[1], linea[2], linea[3]);
-			pthread_mutex_unlock(&semaforoConsola);
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de archivo\n");
+			}else if(linea[2] == NULL){
+				printf("Error: falta el numero de bloque\n");
+			}else if(linea[3] == NULL){
+				printf("Error: falta el nombre de nodo\n");
+			}else{
+				pthread_mutex_lock(&semaforoConsola);
+				cpblock(linea[1], linea[2], linea[3]);
+				pthread_mutex_unlock(&semaforoConsola);
+			}
 			continue;
 		}
 
@@ -526,7 +534,7 @@ void mkdirConsola(char * dir){
 }
 
 int cpfrom(char * archivo, char * archivoFS){
-	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivo);
+	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivoFS);
 
 	if(descriptorArchivo != NULL){
 		printf("EL archivo %s ya existe\n", archivoFS);

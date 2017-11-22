@@ -205,8 +205,29 @@ void _calcularUbicacionBloque(Bloque * bloque){
     int copiasUbicadas = 0;
     int i = 0;
 
+    DescriptorNodo * nodosDisponibles[cantidadNodos];
+
+    for(i = 0; i < cantidadNodos; ++i){
+        nodosDisponibles[i] = (DescriptorNodo *)dictionary_get(nodos, (char *)list_get(nombreNodos, i));
+    }
+
+    int ordenarPorEspacioLibre (const void * a, const void * b) {
+        DescriptorNodo * n1 = *(DescriptorNodo **) a;
+        DescriptorNodo * n2 = *(DescriptorNodo **) b;
+
+        if(n1->bloquesLibres >= n2->bloquesLibres){
+            return -1;
+        }else{
+            return 1;
+        }
+    }
+
+    qsort(nodosDisponibles, cantidadNodos, sizeof(DescriptorNodo * ), ordenarPorEspacioLibre);
+
+    i = 0;
+
     while(copiasUbicadas < 2){
-        DescriptorNodo * descriptorNodo = (DescriptorNodo *)dictionary_get(nodos, (char *)list_get(nombreNodos, i));
+        DescriptorNodo * descriptorNodo = nodosDisponibles[i];
 
         if(descriptorNodo->bloquesLibres > 0 && descriptorNodo->socket > -1){
             if(copiasUbicadas == 0){
