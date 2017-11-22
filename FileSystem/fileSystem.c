@@ -19,6 +19,7 @@ int _checkearArchivosDisponibles();
 pthread_mutex_t semaforoConsola = PTHREAD_MUTEX_INITIALIZER;
 
 void inicializarFileSystem(){
+    nodoConectado = NULL;
     nodos = dictionary_create();
     nombreNodos = list_create();
     archivos = dictionary_create();
@@ -145,9 +146,11 @@ void _logConfig(){
 
 
 void _probarConexion(DescriptorNodo * nodo){
+    nodoConectado = nodo;
     cpfrom("archivo.txt", "/prueba");
     md5Consola("/prueba");
     rmArchivo("/prueba");
+    nodoConectado = NULL;
 }
 
 int _checkearArchivosDisponibles(){

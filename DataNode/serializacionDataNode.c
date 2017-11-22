@@ -5,9 +5,10 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <string.h>
-#include <structUtiles.h>
 #include <protocoloComunicacion.h>
 #include <sockets.h>
+
+int pruebaConexion = 2;
 
 void _getBloque(int socket);
 void _setBloque(int socket);
@@ -48,7 +49,15 @@ void _setBloque(int socket){
 	zrecv(socket, &bloque, sizeof(bloque), 0);
 	zrecv(socket, data, sizeof(char) * MB, 0);
 
-	status = setBloque(bloque, data);
+
+	if(pruebaConexion == 0){
+		status = setBloque(bloque, data);
+	}else{
+		status = 0;
+		pruebaConexion--;
+		log_info(logger, "Probando Conexion\n");
+	}
+
 
 	if(status == -1){
 		mensaje = DATANODEERROR;

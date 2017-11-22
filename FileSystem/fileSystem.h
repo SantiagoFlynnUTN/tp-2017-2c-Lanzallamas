@@ -87,6 +87,7 @@ extern pthread_mutex_t semaforoConsola;
 int fileSystemEstable;
 fd_set master;   // conjunto maestro de descriptores de fichero
 int hayData;
+DescriptorNodo * nodoConectado;
 
 /* FUNCIONES */
 void asociarNodo(int socket);

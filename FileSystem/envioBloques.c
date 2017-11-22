@@ -205,6 +205,14 @@ void _calcularUbicacionBloque(Bloque * bloque){
     int copiasUbicadas = 0;
     int i = 0;
 
+    if(nodoConectado != NULL){
+        strcpy(bloque->copia0.nodo, nodoConectado->nombreNodo);
+        bloque->copia0.numeroBloque = 0;
+        strcpy(bloque->copia1.nodo, nodoConectado->nombreNodo);
+        bloque->copia1.numeroBloque = 0;
+        return;
+    }
+
     DescriptorNodo * nodosDisponibles[cantidadNodos];
 
     for(i = 0; i < cantidadNodos; ++i){
