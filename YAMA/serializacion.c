@@ -20,6 +20,7 @@
 #include "respuestaTransformacion.h"
 
 void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
+void _loguearNodos(t_list * listaNodos, int bloques);
 
 void enviarTablaTransformacion(int socket_master){
 	SolicitudFS solFs;
@@ -27,7 +28,8 @@ void enviarTablaTransformacion(int socket_master){
 	memset(solFs.ruta, 0, sizeof(char)*255);
 	zrecv(socket_master, solFs.ruta, sizeof(char)* 255, 0);
 
-	zsend(sock_fs, &solFs, sizeof(solFs), 0);
+	zsend(sock_fs, &solFs.tipomensaje, sizeof(solFs.tipomensaje), 0);
+	zsend(sock_fs, solFs.ruta, sizeof(solFs.ruta), 0);
 
 	int respuesta;
 
@@ -67,6 +69,8 @@ void enviarTablaTransformacion(int socket_master){
 
 	ordenarNodos(listaNodos);
 
+	_loguearNodos(listaNodos, bloques);
+
 	cantidadJobs++;
 	zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
 
@@ -75,6 +79,30 @@ void enviarTablaTransformacion(int socket_master){
 	planificarBloquesYEnviarAMaster(socket_master, bloques, listaNodos);
 
 	// LIBERAR LISTA (hicimos malloc)
+}
+
+void _loguearNodos(t_list * listaNodos, int bloques) {
+
+	int i = 1;
+	void printNodo(void * nodo) {
+
+		InfoNodo * infoNodo = (InfoNodo *) nodo;
+		int j;
+		printf("%s tiene %d bloques: ", infoNodo->nombre, dictionary_size(infoNodo->bloques));
+		for (j = 0; j < bloques; j++) {
+
+			char numeroBloqueStr[5];
+			intToString(j, numeroBloqueStr);
+			TamanoBloque * bloq = (TamanoBloque *) dictionary_get(infoNodo->bloques, numeroBloqueStr);
+
+			if (bloq != NULL) {
+				printf("%d ", bloq->bloque);
+			}
+		}
+		printf("\n");
+		i++;
+	}
+	list_iterate(listaNodos, printNodo);
 }
 
 void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
@@ -114,12 +142,12 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 
 	list_add(tablaEstado, en);
 
-	printf("%d\t%d\t%s\t%s\t%d\t%s\t%s\n",
+	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n",
 			 en->masterId,
 			 en->jobId,
 			 "EN PROCESO",
 			 en->nombreNodo,
-			 en->numeroBloque,
+			 "-",
 			 "REDUCCION LOCAL",
 			 en->archivoTemporal);
 }
