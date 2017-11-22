@@ -17,7 +17,7 @@ gcc -O0 -g3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -MF"protocoloComunicacion
 gcc -O0 -g3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -MF"prueba.d" -MT"prueba.d" -o "prueba.o" prueba.c
 gcc -O0 -g3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -MF"sockets.d" -MT"sockets.d" -o "sockets.o" sockets.c
 gcc -O0 -g3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -MF"structUtiles.d" -MT"structUtiles.d" -o "structUtiles.o" structUtiles.c
-gcc -shared -o "libZ-Commons.so"  ./archivos.o ./cosas.o ./prueba.o ./sockets.o ./structUtiles.o
+gcc -shared -o "libZ-Commons.so"  ./archivos.o ./cosas.o ./protocoloComunicacion.o ./prueba.o ./sockets.o ./structUtiles.o
 
 echo "Compilando DataNode"
 
@@ -32,6 +32,10 @@ gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c 
 gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"operacionesDataNode.d" -MT"operacionesDataNode.d" -o "operacionesDataNode.o" operacionesDataNode.c
 gcc -I"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionDataNode.d" -MT"serializacionDataNode.d" -o "serializacionDataNode.o" serializacionDataNode.c
 gcc -L"/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "DataNode"  ./chat.o ./cliente.o ./conexionesDataNode.o ./dataNode.o ./mainDN.o ./operacionesDataNode.o ./serializacionDataNode.o   -lZ-Commons -lcommons -lpthread
+
+echo "Generando data.bin"
+
+fallocate -l 50M /home/utnso/data.bin
 
 echo "Ejecutando DataNode"
 
