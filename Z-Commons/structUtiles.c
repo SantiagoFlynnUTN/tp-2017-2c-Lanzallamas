@@ -1,4 +1,5 @@
 #include "structUtiles.h"
+#include "protocoloComunicacion.h"
 
 void insertarNuevoStack(t_pcb* pcb){
 	t_entrada_stack* nuevo = crearPosicionStack();

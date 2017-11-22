@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <string.h>
+#include <structUtiles.h>
 #include <protocoloComunicacion.h>
 #include <sockets.h>
 
