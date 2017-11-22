@@ -35,7 +35,7 @@ gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -M
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionWorker.d" -MT"serializacionWorker.d" -o "serializacionWorker.o" serializacionWorker.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"servidor.d" -MT"servidor.d" -o "servidor.o" servidor.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"transformacionWorker.d" -MT"transformacionWorker.d" -o "transformacionWorker.o" transformacionWorker.c
-gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "Worker"  ./RGWorker.o ./apareo.o ./chat.o ./cliente.o ./enviarArchivo.o ./mainApareo.o ./mainWorker.o ./reduccionWorker.o ./serializacionWorker.o ./servidor.o ./transformacionWorker.o   -lZ-Commons -lcommons -lpthread
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons" -o "Worker"  ./RGWorker.o ./apareo.o ./chat.o ./cliente.o ./enviarArchivo.o ./mainApareo.o ./mainWorker.o ./reduccionWorker.o ./serializacionWorker.o ./servidor.o ./transformacionWorker.o   -lZ-Commons -lcommons -lpthread
 
 echo "Ejecutando Worker"
 

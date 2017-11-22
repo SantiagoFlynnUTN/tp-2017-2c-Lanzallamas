@@ -37,7 +37,7 @@ gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -M
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacionFileSystem.d" -MT"serializacionFileSystem.d" -o "serializacionFileSystem.o" serializacionFileSystem.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"servidor.d" -MT"servidor.d" -o "servidor.o" servidor.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"utilidadesFileSystem.d" -MT"utilidadesFileSystem.d" -o "utilidadesFileSystem.o" utilidadesFileSystem.c
-gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "FileSystem"  ./chat.o ./conexionesFileSystem.o ./configuracionFileSystem.o ./envioBloques.o ./estructurasFileSystem.o ./fileSystem.o ./funcionesConsolaFS.o ./inicializacionFileSystem.o ./mainFS.o ./recepcionBloques.o ./serializacionFileSystem.o ./servidor.o ./utilidadesFileSystem.o   -lZ-Commons -lreadline -lcommons -lpthread
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons" -o "FileSystem"  ./chat.o ./conexionesFileSystem.o ./configuracionFileSystem.o ./envioBloques.o ./estructurasFileSystem.o ./fileSystem.o ./funcionesConsolaFS.o ./inicializacionFileSystem.o ./mainFS.o ./recepcionBloques.o ./serializacionFileSystem.o ./servidor.o ./utilidadesFileSystem.o   -lZ-Commons -lreadline -lcommons -lpthread
 
 echo "Ejecutando FileSystem"
 

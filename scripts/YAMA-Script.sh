@@ -34,7 +34,7 @@ gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -M
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"serializacion.d" -MT"serializacion.d" -o "serializacion.o" serializacion.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"servidor.d" -MT"servidor.d" -o "servidor.o" servidor.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"yama.d" -MT"yama.d" -o "yama.o" yama.c
-gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "YAMA"  ./RGYAMA.o ./chat.o ./clienteFS.o ./conexiones.o ./mainYAMA.o ./planificacionYama.o ./respuestaTransformacion.o ./serializacion.o ./servidor.o ./yama.o   -lZ-Commons -lcommons -lpthread
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons" -o "YAMA"  ./RGYAMA.o ./chat.o ./clienteFS.o ./conexiones.o ./mainYAMA.o ./planificacionYama.o ./respuestaTransformacion.o ./serializacion.o ./servidor.o ./yama.o   -lZ-Commons -lcommons -lpthread
 
 
 echo "Ejecutando YAMA"

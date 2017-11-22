@@ -33,7 +33,7 @@ gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"master.d" -MT"master.d" -o "master.o" master.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"reduccionMaster.d" -MT"reduccionMaster.d" -o "reduccionMaster.o" reduccionMaster.c
 gcc -I"/tp-2017-2c-Lanzallamas/Z-Commons" -Icommons -Ipthread -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"transformacionMaster.d" -MT"transformacionMaster.d" -o "transformacionMaster.o" transformacionMaster.c
-gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons/Debug" -o "Master"  ./RGMaster.o ./chat.o ./cliente.o ./conexionesYAMA.o ./enviarArchivo.o ./mainMaster.o ./master.o ./reduccionMaster.o ./transformacionMaster.o   -lZ-Commons -lcommons -lpthread
+gcc -L"/tp-2017-2c-Lanzallamas/Z-Commons" -o "Master"  ./RGMaster.o ./chat.o ./cliente.o ./conexionesYAMA.o ./enviarArchivo.o ./mainMaster.o ./master.o ./reduccionMaster.o ./transformacionMaster.o   -lZ-Commons -lcommons -lpthread
 
 
 echo "Ejecutando Master"
