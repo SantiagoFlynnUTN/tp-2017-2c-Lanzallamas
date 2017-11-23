@@ -38,6 +38,7 @@ InfoNodo * buscarCopia(char numeroBloqueStr[5], t_list * listaNodos){
 
 
 void replanificar(int socket){
+	usleep(retardoPlanificacion * 1000);
 	InfoNodo* nodoCopia = NULL;
 	transfError transf;
 	zrecv(socket, &transf, sizeof(transf), 0);
@@ -75,6 +76,7 @@ void replanificar(int socket){
 }
 
 void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * listaNodos){
+	usleep(retardoPlanificacion * 1000);
 	int i;
 	int cantidadNodos = list_size(listaNodos);
 	for(i = 0; i < bloques; ++i){

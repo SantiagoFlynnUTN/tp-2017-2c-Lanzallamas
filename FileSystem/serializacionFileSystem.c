@@ -45,8 +45,13 @@ void manejarDatos(int buf, int socket){
 			break;
 		case CONEXIONYAMA:
 			if (!fileSystemEstable) {
+				int respuesta = -1;
+				zsend(socket, &respuesta, sizeof(respuesta), 0);
 				close(socket);
 				FD_CLR(socket, &master); // eliminar del conjunto maestro
+			} else{
+				int respuesta = 0;
+				zsend(socket, &respuesta, sizeof(respuesta), 0);
 			}
 			break;
 	}

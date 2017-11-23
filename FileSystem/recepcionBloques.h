@@ -3,5 +3,6 @@
 #define TP_2017_2C_LANZALLAMAS_RECEPCIONBLOQUES_H
 
 int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal);
+int punteroNodo;
 
 #endif //TP_2017_2C_LANZALLAMAS_RECEPCIONBLOQUES_H

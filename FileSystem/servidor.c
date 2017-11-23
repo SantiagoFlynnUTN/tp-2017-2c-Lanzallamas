@@ -45,11 +45,16 @@ void manejarCliente(int newfd){
 	ioctl(newfd, FIONREAD, &count);
 
 	if(count == 0){
+		if(recv(newfd, &buf, sizeof(int), MSG_PEEK) == 0){
+			log_debug(logger, "selectserver: socket %d hung up\n", newfd);
+			marcarNodoDesconectado(newfd);
+			close(newfd); // bye!
+			FD_CLR(newfd, &master); // eliminar del conjunto maestro
+		}
 		return;
 	}
 
 	numbytes = recv(newfd, &buf, sizeof(int), 0); //leo el primer byte. Me dirá el tipo de paquete. (es un int)
-
 
 	comprobarConexion(numbytes, newfd); //Me fijo si lo que recibí esta todo ok.
 

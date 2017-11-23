@@ -13,11 +13,29 @@
 #include "yama.h"
 #include <protocoloComunicacion.h>
 
+void doConnect(int *sockfd);
+
 int CONEXIONYAMA = 10;
 
-
 void iniciarConexionAFS(int *sockfd){
+	int respuesta = -1;
 
+	while(respuesta == -1){
+		doConnect(sockfd);
+
+		zrecv(*sockfd, &respuesta, sizeof(respuesta), 0);
+
+		if(respuesta == -1){
+			log_error(logger, "File System no aceptó la conexion\n");
+			sleep(3);
+			log_info(logger, "Reintentando conexion a File System");
+		}else{
+			log_info(logger, "Conexion exitosa a File System\n");
+		}
+	}
+}
+
+void doConnect(int *sockfd){
 	struct sockaddr_in their_addr; // información de la dirección de destino
 
 
@@ -32,7 +50,7 @@ void iniciarConexionAFS(int *sockfd){
 	memset(&(their_addr.sin_zero), 0, 8);  // poner a cero el resto de la estructura
 
 	if (connect(*sockfd, (struct sockaddr *)&their_addr,
-										  sizeof(struct sockaddr)) == -1) {
+				sizeof(struct sockaddr)) == -1) {
 		perror("connect");
 		exit(1);
 	}

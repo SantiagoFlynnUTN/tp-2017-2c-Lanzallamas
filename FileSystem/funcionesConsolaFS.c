@@ -33,6 +33,7 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo);
 void ls(char * dir);
 void info(char * archivo);
 void infoNodos();
+void infoNodosLog();
 
 void hiloConsola(){
 	printf("Consola disponible par uso\n");
@@ -41,10 +42,14 @@ void hiloConsola(){
 		char ** linea;
 		linea = string_split(readline(">"), " ");
 
+		if(linea == NULL || linea[0] == NULL){
+			continue;
+		}
+
 		/*
 		 *  Funcion Exit de consola
 		 */
-		if (!linea || strcmp("exit", linea[0]) == 0) {
+		if (strcmp("exit", linea[0]) == 0) {
 			printf("Guardando consola\n");
 			guardarFileSystem();
 			exit(0);
@@ -282,6 +287,8 @@ void formatFileSystem(){
 	}
 
 	dictionary_iterator(nodos, formatNodo);
+
+	infoNodosLog();
 }
 
 void rm(char ** linea){
@@ -345,6 +352,7 @@ void rmArchivo(char * path){
 	list_remove_by_condition(listaArchivosDirectorios[descriptorArchivo->directorioPadre], criterio);
 
 	destruirArchivo(descriptorArchivo);
+	infoNodosLog();
 }
 
 
@@ -546,6 +554,7 @@ int cpfrom(char * archivo, char * archivoFS){
 		return 1;
 	}
 
+	infoNodosLog();
 	return 0;
 }
 
@@ -617,6 +626,8 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
 
 		strcpy(bloque->copia1.nodo, nodo);
 	}
+
+	infoNodosLog();
 }
 
 void md5Consola(char * archivo){
@@ -691,6 +702,17 @@ void infoNodos(){
 		descriptorNodo->ip, descriptorNodo->puerto, descriptorNodo->socket);
 		log_info(logger, "%s\nBloques: %d\nBloques Libres: %d\nIP: %s\nPuerto: %d\nSocket: %d\n", nombre, descriptorNodo->bloques, descriptorNodo->bloquesLibres,
 			   descriptorNodo->ip, descriptorNodo->puerto, descriptorNodo->socket);
+	}
+
+	dictionary_iterator(nodos, infoNodo);
+}
+
+void infoNodosLog(){
+	void infoNodo(char * nombre, void * nodo){
+		DescriptorNodo * descriptorNodo = (DescriptorNodo *) nodo;
+
+		log_info(logger, "%s\nBloques: %d\nBloques Libres: %d\nIP: %s\nPuerto: %d\nSocket: %d\n", nombre, descriptorNodo->bloques, descriptorNodo->bloquesLibres,
+				 descriptorNodo->ip, descriptorNodo->puerto, descriptorNodo->socket);
 	}
 
 	dictionary_iterator(nodos, infoNodo);

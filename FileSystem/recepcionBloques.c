@@ -2,9 +2,10 @@
 #include "envioBloques.h"
 #include <sys/socket.h>
 #include "conexionesFileSystem.h"
+#include <string.h>
 
 int _guardarBloque(DescriptorNodo * nodo, int bloque, long bytes, FILE * archivo);
-
+int _seleccionarNodoLectura(Bloque * bloque, DescriptorNodo ** nodo);
 
 int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
     Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, rutaArchivoFS);
@@ -27,34 +28,23 @@ int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
     for(i = 0; i < bloques; ++i){
         Bloque * bloque = (Bloque *) list_get(descriptorArchivo->bloques, i);
 
-        DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
+        DescriptorNodo * descriptorNodo = NULL;
 
-        if(descriptorNodo->socket != -1){
-            int bloqueGuardado = _guardarBloque(descriptorNodo, bloque->copia0.numeroBloque, bloque->descriptor.bytes, archivoFinal);
+        int numBloque = _seleccionarNodoLectura(bloque, &descriptorNodo);
 
-            if(bloqueGuardado != 0){
-                fclose(archivoFinal);
-                remove(rutaArchivoFinal);
-                return -1;
-            }
+        if(numBloque == -1){
+            log_error(logger, "El bloque %d del archivo %s no tiene copias disponibles\n", i, rutaArchivoFS);
+            return -1;
+        }
 
-        } else{
-            descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
+        printf("LEYENDO DE %s\n", descriptorNodo->nombreNodo);
 
-            if(descriptorNodo->socket != -1){
-                int bloqueGuardado = _guardarBloque(descriptorNodo, bloque->copia1.numeroBloque, bloque->descriptor.bytes, archivoFinal);
+        int bloqueGuardado = _guardarBloque(descriptorNodo, numBloque, bloque->descriptor.bytes, archivoFinal);
 
-                if(bloqueGuardado != 0){
-                    fclose(archivoFinal);
-                    remove(rutaArchivoFinal);
-                    return -1;
-                }
-            } else{
-                fclose(archivoFinal);
-                remove(rutaArchivoFinal);
-                log_error(logger, "El bloque %d del archivo %s no tiene copias disponibles\n", i, rutaArchivoFS);
-                return -1;
-            }
+        if(bloqueGuardado != 0){
+            fclose(archivoFinal);
+            remove(rutaArchivoFinal);
+            return -1;
         }
     }
 
@@ -83,4 +73,37 @@ int _guardarBloque(DescriptorNodo * nodo, int bloque, long bytes, FILE * archivo
     }
 
     return 0;
+}
+
+int _seleccionarNodoLectura(Bloque * bloque, DescriptorNodo ** nodo){
+    int cantidadNodos = list_size(nombreNodos);
+    int copiasDesconectadas = 0;
+
+    while(copiasDesconectadas < 2){
+        DescriptorNodo * descriptorNodo = dictionary_get(nodos, list_get(nombreNodos, punteroNodo));
+
+        punteroNodo = (punteroNodo + 1) % cantidadNodos;
+
+        if(descriptorNodo == NULL){
+            continue;
+        }
+
+        if(strcmp(bloque->copia0.nodo, descriptorNodo->nombreNodo) == 0){
+            if(descriptorNodo->socket == -1){
+                copiasDesconectadas++;
+            }else{
+                *nodo = descriptorNodo;
+                return bloque->copia0.numeroBloque;
+            }
+        }else if(strcmp(bloque->copia1.nodo, descriptorNodo->nombreNodo) == 0){
+            if(descriptorNodo->socket == -1){
+                copiasDesconectadas++;
+            }else{
+                *nodo = descriptorNodo;
+                return bloque->copia1.numeroBloque;
+            }
+        }
+    }
+
+    return -1;
 }
