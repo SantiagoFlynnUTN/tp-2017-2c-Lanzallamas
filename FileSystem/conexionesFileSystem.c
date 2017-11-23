@@ -24,7 +24,7 @@ void _enviarInfoBloque(int socket, DescriptorNodo * nodo, int bloque);
 //a desarrollar
 void responderYAMA(int socketYAMA){
 	char rutaArchivo[255];
-	recv(socketYAMA, rutaArchivo, sizeof(char) * 255, 0);
+	recv(socketYAMA, rutaArchivo, sizeof(char) * 255, MSG_WAITALL);
 	Archivo* descriptorArchivo = (Archivo*) dictionary_get(archivos, rutaArchivo);
 	if(descriptorArchivo == NULL || !archivoDisponible(descriptorArchivo)){
 		int mensaje = -2;

@@ -689,6 +689,8 @@ void infoNodos(){
 
 		printf("%s\nBloques: %d\nBloques Libres: %d\nIP: %s\nPuerto: %d\nSocket: %d\n", nombre, descriptorNodo->bloques, descriptorNodo->bloquesLibres,
 		descriptorNodo->ip, descriptorNodo->puerto, descriptorNodo->socket);
+		log_info(logger, "%s\nBloques: %d\nBloques Libres: %d\nIP: %s\nPuerto: %d\nSocket: %d\n", nombre, descriptorNodo->bloques, descriptorNodo->bloquesLibres,
+			   descriptorNodo->ip, descriptorNodo->puerto, descriptorNodo->socket);
 	}
 
 	dictionary_iterator(nodos, infoNodo);

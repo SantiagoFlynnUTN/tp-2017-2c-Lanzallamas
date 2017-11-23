@@ -75,7 +75,7 @@ void reduccionGlobal(int socket_yama){
     enviarArchivo(socketNodo, reductor);
 
     int status;
-    if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
+    if(recv(socketNodo, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
         int mensajeError = FALLOREDGLOBAL;
         log_error(logger, "Fallo reduccion global en nodo %s\n", encargado.nombreNodo);
         zsend(socket_yama, &mensajeError, sizeof(int), 0);

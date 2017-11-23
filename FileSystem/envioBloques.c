@@ -152,7 +152,7 @@ int _obtenerData(int socket, int bloque,  char * contenidoBloque){
         return -1;
     }
 
-    if(recv(socket, contenidoBloque, sizeof(char) * MB, 0) <= 0){
+    if(recv(socket, contenidoBloque, sizeof(char) * MB, MSG_WAITALL) <= 0){
         return -1;
     }
 
@@ -210,6 +210,7 @@ void _calcularUbicacionBloque(Bloque * bloque){
         bloque->copia0.numeroBloque = 0;
         strcpy(bloque->copia1.nodo, nodoConectado->nombreNodo);
         bloque->copia1.numeroBloque = 0;
+        nodoConectado->bloquesLibres -= 2;
         return;
     }
 

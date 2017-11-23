@@ -53,7 +53,7 @@ void _almacenamiento(int socket){
 	int respuesta;
 
 	int status;
-	if(recv(socketFS, &status, sizeof(int), 0) == -1 || status != 0){
+	if(recv(socketFS, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
 		zsend(socket, &respuesta, sizeof(respuesta), 0);
 	}else{
 		int respuesta = 0;

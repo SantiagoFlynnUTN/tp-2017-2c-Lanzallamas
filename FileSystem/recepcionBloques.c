@@ -72,7 +72,7 @@ int _guardarBloque(DescriptorNodo * nodo, int bloque, long bytes, FILE * archivo
         return -1;
     }
 
-    if(recv(nodo->socket, contenidoBloque, sizeof(char) * MB, 0) <= 0){
+    if(recv(nodo->socket, contenidoBloque, sizeof(char) * MB, MSG_WAITALL) <= 0){
         log_error(logger, "Error recibiendo el bloque del nodo %s\n", nodo->nombreNodo);
         return -1;
     }

@@ -137,7 +137,7 @@ void _almacenamiento(int socket_yama, char * archivoFinal){
 	zsend(socketWorker, archivoFinal, sizeof(char) * 255, 0);
 
 	int status;
-	if(recv(socketWorker, &status, sizeof(int), 0) == -1 || status != 0){
+	if(recv(socketWorker, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
 		int mensajeError = ERRORALMACENAMIENTO;
 		log_error(logger, "Fallo el almacenamiento en nodo %s\n", op.nombreNodo);
 		zsend(socket_yama, &mensajeError, sizeof(int), 0);

@@ -116,7 +116,7 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 	enviarArchivo(socketWorker, transformador);
 
 	int status, bytes;
-	bytes = recv(socketWorker, &status, sizeof(int), 0);
+	bytes = recv(socketWorker, &status, sizeof(int), MSG_WAITALL);
 	if (bytes == -1 || status != 0) {
 		int tipomensaje = FALLOTRANSFORMACION;
 		transfError mensajeError;

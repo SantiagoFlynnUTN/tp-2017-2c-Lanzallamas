@@ -70,7 +70,7 @@ void * mandarSolicitudReduccion(OperacionReduccion* op) {
 	enviarArchivo(socketNodo, reductor);
 
 	int status;
-	if(recv(socketNodo, &status, sizeof(int), 0) == -1 || status != 0){
+	if(recv(socketNodo, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
 		int mensajeError = FALLOREDLOCAL;
 		log_error(logger, "Fallo reduccion en nodo %s\n", op->nombreNodo);
 		pthread_mutex_lock(&mutexReduccion);

@@ -43,10 +43,10 @@ void printNodo(DescriptorNodo * nodo){
 void asociarNodo(int socket){
     DescriptorNodo * newNodo = (DescriptorNodo *)malloc(sizeof(*newNodo));
     newNodo->socket = socket;
-    recv(socket, newNodo->nombreNodo, 100 * sizeof(char), 0);
-    recv(socket, newNodo->ip, 20 * sizeof(char), 0);
-    recv(socket, &newNodo->puerto, sizeof(newNodo->puerto), 0);
-    recv(socket, &newNodo->bloques, sizeof(newNodo->bloques), 0);
+    recv(socket, newNodo->nombreNodo, 100 * sizeof(char), MSG_WAITALL);
+    recv(socket, newNodo->ip, 20 * sizeof(char), MSG_WAITALL);
+    recv(socket, &newNodo->puerto, sizeof(newNodo->puerto), MSG_WAITALL);
+    recv(socket, &newNodo->bloques, sizeof(newNodo->bloques), MSG_WAITALL);
 
     newNodo->bloquesLibres = newNodo->bloques;
 
