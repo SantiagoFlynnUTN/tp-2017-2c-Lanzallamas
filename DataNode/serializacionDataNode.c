@@ -14,6 +14,9 @@ void _getBloque(int socket);
 void _setBloque(int socket);
 
 void manejarDatos(int buf, int socket){
+	/*if(buf != 0){
+		printf("%d\n", buf);
+	}*/
 	switch(buf){
 		case GETBLOQUE:
 			_getBloque(socket);
@@ -31,6 +34,8 @@ void _getBloque(int socket){
 
 	status = getBloque(bloque, data);
 
+	printf("enviando %d\n", strlen(data));
+
 	if(status == -1){
 		log_error(logger, "Hubo un error leyendo el bloque\n");
 	}
@@ -47,8 +52,9 @@ void _setBloque(int socket){
 	memset(data, 0, MB);
 
 	zrecv(socket, &bloque, sizeof(bloque), 0);
-	zrecv(socket, data, sizeof(char) * MB, 0);
+	zrecv(socket, data, sizeof(char) * MB, MSG_WAITALL);
 
+	printf("RECV: %d\n", strlen(data));
 
 	if(pruebaConexion == 0){
 		status = setBloque(bloque, data);
