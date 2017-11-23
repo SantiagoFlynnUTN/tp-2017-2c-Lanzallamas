@@ -215,7 +215,7 @@ int createClient(char *addr, char *port) {
  */
 void zrecv(int socket, void* buffer, int size, int flags){
 	int bytes;
-	bytes = recv(socket, buffer, size, flags);
+	bytes = recv(socket, buffer, size, MSG_WAITALL);
 	if(bytes == 0) printf("recv error: %d\n", bytes);
 	if(bytes == -1) printf("recv error: %d\n", bytes);
 }

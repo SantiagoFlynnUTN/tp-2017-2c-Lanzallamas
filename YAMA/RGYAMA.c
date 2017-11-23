@@ -38,6 +38,8 @@ void reduccionGlobal(int socket, int jobId){
 		}
 	}
 
+	list_iterate (tablaEstado, iterateFunction);
+
 	int maxIndex = calcularIndiceConValorMaximo(trabajosActuales, cantidad);
 
 	int tipoMensaje = SOLICITUDREDUCCIONGLOBAL;
