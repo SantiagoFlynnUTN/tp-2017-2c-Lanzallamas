@@ -21,7 +21,6 @@ void ordenarNodos(t_list * nodos) {
 	_sortNodos(nodos);
 }
 
-int clock_ = 0;
 
 InfoNodo * buscarCopia(char numeroBloqueStr[5], t_list * listaNodos){
 	int encontrado = 0, i = 0;
@@ -80,7 +79,16 @@ void replanificar(int socket){
 void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * listaNodos){
 	usleep(retardoPlanificacion * 1000);
 	int i;
+	int clock_ = 0;
 	int cantidadNodos = list_size(listaNodos);
+	printf("Disponibilidades inicial:\n");
+	void printDispI(void*nodo){
+		InfoNodo*n=(InfoNodo*) nodo;
+		printf("%s: %d\n", n->nombre, n->disponibilidad);
+	}
+	list_iterate(listaNodos, printDispI);
+	cabecera = 0;
+
 	for(i = 0; i < bloques; ++i){
 		int inicial = clock_;
 		int planificado = 0;
@@ -115,11 +123,11 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 		}
 	}
 	printf("Disponibilidades final:\n");
-	void printDisp(void*nodo){
+	void printDispF(void*nodo){
 		InfoNodo*n=(InfoNodo*) nodo;
 		printf("%s: %d\n", n->nombre, n->disponibilidad);
 	}
-	list_iterate(listaNodos, printDisp);
+	list_iterate(listaNodos, printDispF);
 	cabecera = 0;
 }
 

@@ -146,7 +146,7 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 	list_add(tablaEstado, en);
 
 	if (!cabecera) {
-			printf("\nMaster\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+			printf("\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
 			cabecera = 1;
 		}
 	printf("%d\t%d\t\t\t%s\t%s\t%s\t%s\t%s\n",
@@ -232,6 +232,7 @@ void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long byte
 			InfoNodo *nuevoNodo = (InfoNodo *) malloc(sizeof(*nuevoNodo));
 			strcpy(nuevoNodo->nombre, nodos[i].nombreNodo);
 			nuevoNodo->disponibilidad = disponibilidad_base;
+			nuevoNodo->trabajosActuales = 0;
 			nuevoNodo->bloques = dictionary_create();
 
 			TamanoBloque *bloque = (TamanoBloque *) malloc(sizeof(*bloque));
