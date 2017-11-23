@@ -22,6 +22,8 @@
 void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
 void _loguearNodos(t_list * listaNodos, int bloques);
 
+
+
 void enviarTablaTransformacion(int socket_master){
 	SolicitudFS solFs;
 	solFs.tipomensaje = SOLICITUDARCHIVO;
@@ -32,6 +34,7 @@ void enviarTablaTransformacion(int socket_master){
 	zsend(sock_fs, solFs.ruta, sizeof(solFs.ruta), 0);
 
 	int respuesta;
+	t_list * listaNodos = list_create();
 
 	zrecv(sock_fs, &respuesta, sizeof(respuesta), 0);
 	if (respuesta != 0){
@@ -46,7 +49,6 @@ void enviarTablaTransformacion(int socket_master){
 	}
 
 	int bloques, i;
-	t_list * listaNodos = list_create();
 
 	zrecv(sock_fs, &bloques, sizeof(bloques), 0);
 
@@ -147,7 +149,7 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 			printf("\nMaster\tJobId\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
 			cabecera = 1;
 		}
-	printf("%d\t%d\t%s\t%s\t%s\t%s\t%s\n",
+	printf("%d\t%d\t\t\t%s\t%s\t%s\t%s\t%s\n",
 			 en->masterId,
 			 en->jobId,
 			 "EN PROCESO",
@@ -166,8 +168,21 @@ void matarMaster(int socket){
 void almacenamientoError(int socket){
 	int job;
 	zrecv(socket, &job, sizeof(job), 0);
-	log_error(logger, "Error al almacenar el archivo en Job %d", job);
-	cabecera = 0;
+	bool criterioBusqueda(void * entrada) {
+		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) entrada;
+
+		return entradaTablaEstado->jobId == job
+				&& entradaTablaEstado->etapa == ALMACENAMIENTOOP;
+	}
+
+	EntradaTablaEstado * entradaFinalizada = list_find(tablaEstado,
+			criterioBusqueda);
+
+	if (entradaFinalizada != NULL) {
+		entradaFinalizada->estado = FINALIZADO;
+		log_error(logger, "Error al almacenar el archivo en Job %d", job);
+		cabecera = 0;
+	}
 }
 
 void manejarDatos(int buf, int socket){

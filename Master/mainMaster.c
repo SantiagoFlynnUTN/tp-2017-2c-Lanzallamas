@@ -89,6 +89,22 @@ int main(int argc, char *argv[]){
 	reductor = argv[2];
 	pathArchivoFS = argv[4];
 
+	FILE * t, *r;
+	t = fopen(transformador, "r");
+	r = fopen(reductor, "r");
+	if (t == NULL) {
+		log_error(logger, "No existe el script %s, intente nuevamente",
+				transformador);
+		exit(1);
+	}
+	if (r == NULL) {
+		log_error(logger, "No existe el script %s, intente nuevamente",
+				reductor);
+		exit(1);
+	}
+	fclose(t);
+	fclose(r);
+
 	inicializarMaster();
 	log_info(logger, "Conectando a YAMA...\n");
 	iniciarConexionAYAMA(&socket_yama);
