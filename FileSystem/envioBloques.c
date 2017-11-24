@@ -180,6 +180,8 @@ int _enviarBloque(char * bloque, Ubicacion ubicacion){
     int mensaje = SETBLOQUE;
     DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, ubicacion.nodo);
 
+    printf("Enviando un bloque a %s\n", nodo->nombreNodo);
+
     if (send(nodo->socket, &mensaje, sizeof(mensaje), 0) == -1 ||
         send(nodo->socket, &ubicacion.numeroBloque, sizeof(ubicacion.numeroBloque), 0) == -1 ||
         send(nodo->socket, bloque, sizeof(char) * MB, 0) ==-1){
