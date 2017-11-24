@@ -82,13 +82,13 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 	int clock_ = 0;
 	int cantidadNodos = list_size(listaNodos);
 
-	printf("Disponibilidades inicial:\n");
+	log_info(logger, "Disponibilidades inicial:");
 	void printDispI(void*nodo){
 		InfoNodo*n=(InfoNodo*) nodo;
-		printf("%s: %d\n", n->nombre, n->disponibilidad);
+		log_info(logger, "%s: %d", n->nombre, n->disponibilidad);
 	}
 	list_iterate(listaNodos, printDispI);
-	cabecera = 0;
+	cabecera = 0;//si borras el log de disponibilidades, borra esto tmb (es la cabecera de la tabla de estados)
 
 	for(i = 0; i < bloques; ++i){
 		int inicial = clock_;
@@ -124,13 +124,33 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 			clock_ = (clock_ + 1) % cantidadNodos;
 		}
 	}
-	log_info(logger, "Disponibilidades final:\n");
+	log_info(logger, "Disponibilidades final:");
 	void printDispF(void*nodo){
 		InfoNodo*n=(InfoNodo*) nodo;
-		log_info(logger, "%s: %d\n", n->nombre, n->disponibilidad);
+		log_info(logger, "%s: %d", n->nombre, n->disponibilidad);
 	}
 	list_iterate(listaNodos, printDispF);
-	cabecera = 0;
+
+	cabecera = 0; //si borras el log de disponibilidades, borra esto tmb (es la cabecera de la tabla de estados)
+}
+
+void logEntrada(int masterId, int jobId, int disp, int trabajo, char*estado,
+		char* nombreNodo, char*nombreCopia, int numBloque, char* etapa,
+		char* archTemp) {
+	if (!cabecera) {
+		log_info(logger,
+				"\tMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tCopia\tBloque\tEtapa\t\tTemporal");
+		cabecera = 1;
+	}
+	if (!strcmp("TRANSFORMACION", etapa)) {
+		log_info(logger, "\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s", masterId,
+				jobId, disp, trabajo, estado, nombreNodo, nombreCopia,
+				numBloque, etapa, archTemp);
+	} else {
+		log_info(logger, "\t%d\t%d\t\t\t%s\t%s\t%s\t\t%s\t%s", masterId,
+				jobId, estado, nombreNodo, nombreCopia,
+				etapa, archTemp);
+	}
 }
 
 void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, TamanoBloque * bloque, TipoOperacion operacion){
@@ -160,16 +180,12 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 	entradaTablaEstado->puerto = nodo->puerto;
 	entradaTablaEstado->nodoCopia = nodoCopia;
 
-
-	if (!cabecera) {
-		printf("\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tCopia\tBloque\tEtapa\t\tTemporal\n");
-		cabecera = 1;
-	}
-	log_info(logger, "%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s\n", entradaTablaEstado->masterId,
-			entradaTablaEstado->jobId, nodo->disponibilidad,
-			nodo->trabajosActuales, "EN PROCESO",
-			entradaTablaEstado->nombreNodo, entradaTablaEstado->nodoCopia->nombre, entradaTablaEstado->numeroBloque,
-			"TRANSFORMACION", entradaTablaEstado->archivoTemporal);
+	logEntrada(entradaTablaEstado->masterId, entradaTablaEstado->jobId,
+			nodo->disponibilidad, nodo->trabajosActuales, "EN PROCESO",
+			entradaTablaEstado->nombreNodo,
+			entradaTablaEstado->nodoCopia->nombre,
+			entradaTablaEstado->numeroBloque, "TRANSFORMACION",
+			entradaTablaEstado->archivoTemporal);
 
 	list_add(tablaEstado, entradaTablaEstado);
 }
@@ -201,7 +217,6 @@ void _sumarTrabajos(t_list * nodos){
 				return strcmp(en->nombreNodo, in->nombre) == 0;
 			}
 			InfoNodo * nodo = list_find(nodos,buscarEnListaNodos);
-			log_info(logger, "Sumo a: %s\n", nodo->nombre);
 			if(nodo != NULL){
 				nodo->trabajosActuales ++;
 			}

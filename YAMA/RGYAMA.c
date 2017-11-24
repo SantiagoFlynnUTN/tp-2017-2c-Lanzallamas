@@ -81,18 +81,8 @@ void reduccionGlobal(int socket, int jobId){
 
 	list_add(tablaEstado, en);
 
-	if (!cabecera) {
-		log_info(logger, "\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
-		cabecera = 1;
-	}
-	log_info(logger, "%d\t%d\t\t\t%s\t%s\t%s\t%s\t%s\n",
-			 en->masterId,
-			 en->jobId,
-			 "EN PROCESO",
-			 en->nombreNodo,
-			 "-",
-			 "REDUC. GLOBAL",
-			 en->archivoTemporal);
+	logEntrada(en->masterId, en->jobId, 0, 0,"EN PROCESO", en->nombreNodo, "-", "-",
+			"REDUC. GLOBAL", en->archivoTemporal);
 }
 
 int calcularIndiceConValorMaximo(int * array, int cantidad){

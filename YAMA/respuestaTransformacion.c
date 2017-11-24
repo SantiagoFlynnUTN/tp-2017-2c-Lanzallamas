@@ -1,4 +1,5 @@
 #include "respuestaTransformacion.h"
+#include "planificacionYama.h"
 #include <sockets.h>
 #include "yama.h"
 #include <string.h>
@@ -149,12 +150,9 @@ void _enviarOperacionAlmacenamiento(int socket, EntradaTablaEstado * reduccion){
     memset(en->archivoTemporal, 0, sizeof(char) * 255);
 
     list_add(tablaEstado, en);
-    if (!cabecera) {
-        log_info(logger, "\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
-    		cabecera = 1;
-    	}
-    log_info(logger, "%d\t%d\t\t\t%s\t%s\t%s\t%s\t%s\n", en->masterId, en->jobId,
-			"EN PROCESO", en->nombreNodo, "-", "ALMACENAMIENTO",
+
+	logEntrada(en->masterId, en->jobId, 0, 0,
+			"EN PROCESO", en->nombreNodo, "-", "-", "ALMACENAMIENTO",
 			en->archivoTemporal);
 
     int almacenamiento = SOLICITUDALMACENAMIENTO;
