@@ -218,8 +218,10 @@ void almacenamientoError(int socket){
 
 	if (entradaFinalizada != NULL) {
 		entradaFinalizada->estado = ERRORYAMA;
-		log_error(logger, "Error al almacenar el archivo en Job %d", job);
+		log_error(logger, "Error al almacenar el archivo en Job %d. Master finalizado.", job);
 		cabecera = 0;
+		int muerte = ERRORALMACENAMIENTO;
+		zsend(socket, &muerte, sizeof(int), 0);
 	}
 }
 

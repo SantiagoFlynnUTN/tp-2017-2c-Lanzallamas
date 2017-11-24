@@ -225,13 +225,6 @@ void mandarTransformacionNodo() {
 						"[ABORTADO] YAMA no puede replanificar una reduccion.\n");
 				exit(1);
 				break;
-			case FALLOREDGLOBAL:
-				log_error(logger,
-						  "[ABORTADO] YAMA no puede replanificar una reduccion global.\n");
-				exit(1);
-				break;
 		}
 	}
-
-	log_info(logger, "Terminaron las transformaciones\n");
 }

@@ -157,13 +157,19 @@ void _almacenamiento(int socket_yama, char * archivoFinal){
 		int mensajeError = ERRORALMACENAMIENTO;
 		log_error(logger, "Fallo el almacenamiento en nodo %s\n", op.nombreNodo);
 		zsend(socket_yama, &mensajeError, sizeof(int), 0);
+		zsend(socket_yama, &jobId, sizeof(jobId), 0);
+		int rtaYama;
+		zrecv(socket_yama, &rtaYama, sizeof(int), 0);
+		if(rtaYama == ERRORALMACENAMIENTO){
+			log_error(logger, "[ABORTADO] Yama no puede replanificar un almacenamiento.");
+			exit(1);
+		}
 	}else{
 		int mensajeOK = ALMACENAMIENTOOK;
 		log_info(logger, "worker %d finalizó el almacenamiento\n", socketWorker);
 		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
+		zsend(socket_yama, &jobId, sizeof(jobId), 0);
 	}
-
-	zsend(socket_yama, &jobId, sizeof(jobId), 0);
 }
 
 

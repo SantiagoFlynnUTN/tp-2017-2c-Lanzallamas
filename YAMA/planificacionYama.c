@@ -82,14 +82,14 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 	int clock_ = 0;
 	int cantidadNodos = list_size(listaNodos);
 
-	log_info(logger, "Disponibilidades inicial:");
+	/*log_info(logger, "Disponibilidades inicial:");
 	void printDispI(void*nodo){
 		InfoNodo*n=(InfoNodo*) nodo;
 		log_info(logger, "%s: %d", n->nombre, n->disponibilidad);
 	}
 	list_iterate(listaNodos, printDispI);
 	cabecera = 0;//si borras el log de disponibilidades, borra esto tmb (es la cabecera de la tabla de estados)
-
+	 */
 	for(i = 0; i < bloques; ++i){
 		int inicial = clock_;
 		int planificado = 0;
@@ -124,7 +124,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 			clock_ = (clock_ + 1) % cantidadNodos;
 		}
 	}
-	log_info(logger, "Disponibilidades final:");
+	/*log_info(logger, "Disponibilidades final:");
 	void printDispF(void*nodo){
 		InfoNodo*n=(InfoNodo*) nodo;
 		log_info(logger, "%s: %d", n->nombre, n->disponibilidad);
@@ -132,6 +132,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 	list_iterate(listaNodos, printDispF);
 
 	cabecera = 0; //si borras el log de disponibilidades, borra esto tmb (es la cabecera de la tabla de estados)
+	*/
 }
 
 void logEntrada(int masterId, int jobId, int disp, int trabajo, char*estado,

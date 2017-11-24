@@ -77,18 +77,24 @@ void reduccionGlobal(int socket_yama){
         int mensajeError = FALLOREDGLOBAL;
         log_error(logger, "Fallo reduccion global en nodo %s\n", encargado.nombreNodo);
         zsend(socket_yama, &mensajeError, sizeof(int), 0);
+        zsend(socket_yama, &jobId, sizeof(jobId), 0);
+        int rtaYama;
+        zrecv(socket_yama, &rtaYama, sizeof(int), 0);
+        if(rtaYama == FALLOREDGLOBAL){
+        	log_error(logger,"[ABORTADO] Yama no puede replanificar Reduccion Global.\n");
+        	exit(1);
+        }
     }else{
         int mensajeOK = REDGLOBALOK;
         log_info(logger, "worker %d finalizó reduccion global\n", socketNodo);
         zsend(socket_yama, &mensajeOK, sizeof(int), 0);
+        zsend(socket_yama, &jobId, sizeof(jobId), 0);
     }
 
-    zsend(socket_yama, &jobId, sizeof(jobId), 0);
 	gettimeofday(&tv2, NULL);
 
 	double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
 			+ (double) (tv2.tv_sec - tv1.tv_sec);
-    log_info(logger, "Tiempo de ejecución del Job = %f segundos\n", tiempoTotal);
 	tiempoTotalGlo += tiempoTotal;
 }
 

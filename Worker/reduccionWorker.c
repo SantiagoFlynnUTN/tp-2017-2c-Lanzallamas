@@ -17,6 +17,7 @@ void iniciarReduccion(int socket) {
 	for (i = 0; i < cantTemporales; ++i) {
 		zrecv(socket, nombreArchivo[i], sizeof(char) * 255, 0);
 	}
+
 	zrecv(socket, nombreArchivoReducido, sizeof(char) * 255, 0);
 
 	char ruta[255];
