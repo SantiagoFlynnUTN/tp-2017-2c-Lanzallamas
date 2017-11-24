@@ -203,7 +203,6 @@ Bloque * _crearBloque(int numeroBloque, long bytes){
 void _calcularUbicacionBloque(Bloque * bloque){
     int cantidadNodos = list_size(nombreNodos);
     int copiasUbicadas = 0;
-    int i = 0;
 
     if(nodoConectado != NULL){
         strcpy(bloque->copia0.nodo, nodoConectado->nombreNodo);
@@ -214,29 +213,8 @@ void _calcularUbicacionBloque(Bloque * bloque){
         return;
     }
 
-    DescriptorNodo * nodosDisponibles[cantidadNodos];
-
-    for(i = 0; i < cantidadNodos; ++i){
-        nodosDisponibles[i] = (DescriptorNodo *)dictionary_get(nodos, (char *)list_get(nombreNodos, i));
-    }
-
-    int ordenarPorEspacioLibre (const void * a, const void * b) {
-        DescriptorNodo * n1 = *(DescriptorNodo **) a;
-        DescriptorNodo * n2 = *(DescriptorNodo **) b;
-
-        if(n1->bloquesLibres >= n2->bloquesLibres){
-            return -1;
-        }else{
-            return 1;
-        }
-    }
-
-    qsort(nodosDisponibles, cantidadNodos, sizeof(DescriptorNodo * ), ordenarPorEspacioLibre);
-
-    i = 0;
-
     while(copiasUbicadas < 2){
-        DescriptorNodo * descriptorNodo = nodosDisponibles[i];
+        DescriptorNodo * descriptorNodo = nodosDisponibles[punteroNodo];
 
         if(descriptorNodo->bloquesLibres > 0 && descriptorNodo->socket > -1){
             if(copiasUbicadas == 0){
@@ -251,7 +229,7 @@ void _calcularUbicacionBloque(Bloque * bloque){
             copiasUbicadas++;
         }
 
-        i = (i + 1) % cantidadNodos;
+        punteroNodo = (punteroNodo + 1) % cantidadNodos;
     }
 }
 

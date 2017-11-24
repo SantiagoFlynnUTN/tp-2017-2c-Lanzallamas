@@ -6,4 +6,6 @@
 int enviarBloques(char * archivo, char * archivoYamaFS);
 int generarCopia(Bloque * bloque, DescriptorNodo * descriptorNodo);
 
+int punteroNodo;
+
 #endif //TP_2017_2C_LANZALLAMAS_ENVIOBLOQUES_H
