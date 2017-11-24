@@ -32,7 +32,13 @@ void reduccionGlobal(int socket, int jobId){
 				EntradaTablaEstado * nodo = (EntradaTablaEstado *) list_get(reducciones, i);
 
 				if(strcmp(nodo->nombreNodo, entradaTablaEstado->nombreNodo) == 0){
-					trabajosActuales[i]++;
+					if(entradaTablaEstado->etapa == REDUCGLOBAL){
+						trabajosActuales[i] = list_size(reducciones)/2;
+						trabajosActuales[i] += list_size(reducciones) % 2;
+					}
+					else{
+						trabajosActuales[i]++;
+					}
 				}
 			}
 		}
@@ -40,7 +46,7 @@ void reduccionGlobal(int socket, int jobId){
 
 	list_iterate (tablaEstado, iterateFunction);
 
-	int maxIndex = calcularIndiceConValorMaximo(trabajosActuales, cantidad);
+	int minIndex = calcularIndiceConValorMinimo(trabajosActuales, cantidad);
 
 	int tipoMensaje = SOLICITUDREDUCCIONGLOBAL;
 
@@ -55,7 +61,7 @@ void reduccionGlobal(int socket, int jobId){
 	for(i = 0; i < cantidad; ++i){
 		EntradaTablaEstado * entradaNodo = list_get(reducciones, i);
 
-		int esEncargado = i == maxIndex ? 1 : 0;
+		int esEncargado = i == minIndex ? 1 : 0;
 
 		zsend(socket, &esEncargado, sizeof(esEncargado), 0);
 		zsend(socket, entradaNodo->nombreNodo, sizeof(char) * 100, 0);
@@ -85,15 +91,15 @@ void reduccionGlobal(int socket, int jobId){
 			"REDUC. GLOBAL", en->archivoTemporal);
 }
 
-int calcularIndiceConValorMaximo(int * array, int cantidad){
+int calcularIndiceConValorMinimo(int * array, int cantidad){
 	int i;
-	int max = *array;
+	int min = *array;
 	int index = 0;
 
 	for(i = 1; i < cantidad; ++i){
-		if(array[i] > max){
+		if(array[i] < min){
 			index = i;
-			max = array[i];
+			min = array[i];
 		}
 	}
 
