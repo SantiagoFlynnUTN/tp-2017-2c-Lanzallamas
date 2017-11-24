@@ -214,7 +214,7 @@ void _calcularUbicacionBloque(Bloque * bloque){
     }
 
     while(copiasUbicadas < 2){
-        DescriptorNodo * descriptorNodo = nodosDisponibles[punteroNodo];
+        DescriptorNodo * descriptorNodo = dictionary_get(nodos, list_get(nombreNodos, punteroNodo));
 
         if(descriptorNodo->bloquesLibres > 0 && descriptorNodo->socket > -1){
             if(copiasUbicadas == 0){
