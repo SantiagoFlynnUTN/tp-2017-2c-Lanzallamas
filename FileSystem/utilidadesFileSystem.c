@@ -143,7 +143,6 @@ void destruirArchivo(Archivo * descriptorArchivo){
 
     for(i = 0; i < bloques; ++i){
         Bloque * descriptorBloque = (Bloque *)list_get(descriptorArchivo->bloques, i);
-        list_remove(descriptorArchivo->bloques, i);
 
         liberarBloque(descriptorBloque->copia0);
         liberarBloque(descriptorBloque->copia1);
@@ -151,12 +150,17 @@ void destruirArchivo(Archivo * descriptorArchivo){
         free(descriptorBloque);
     }
 
+    list_clean(descriptorArchivo->bloques);
     list_destroy(descriptorArchivo->bloques);
 
     free(descriptorArchivo);
 }
 
 void liberarBloque(Ubicacion bloque){
+    if(bloque.numeroBloque < 0){
+        return;
+    }
+
     DescriptorNodo * nodo = (DescriptorNodo *) dictionary_get(nodos, bloque.nodo);
     bitarray_clean_bit(nodo->bitmap, bloque.numeroBloque);
 

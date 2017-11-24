@@ -32,7 +32,10 @@ void cargarTablaNodos(t_config * tablaNodos){
 
         if(_cargarBitMap(newNodo) == 0){
             log_debug(logger, "%s\nBloques:%d\nBloques Libres:%d\n", *nombresNodos, newNodo->bloques, newNodo->bloquesLibres);
-            agregarNodoEnTabla(newNodo);
+            dictionary_remove_and_destroy(nodos, newNodo->nombreNodo, free); // evito duplicados
+            dictionary_put(nodos, newNodo->nombreNodo, newNodo);
+
+            list_add(nombreNodos, newNodo->nombreNodo);
         }else{
             log_info(logger, "%s fue descartado por no tener bitmap", *nombresNodos);
             free(newNodo);

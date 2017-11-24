@@ -22,6 +22,8 @@
 #include "estructurasFileSystem.h"
 #include <ctype.h>
 
+#define TEMPFILECOPY "TEMPFILECOPY"
+
 void formatFileSystem();
 void rm(char ** linea);
 void renameFs(char * nombreOriginal, char * nombreFinal);
@@ -30,10 +32,12 @@ void cat(char * nombre);
 void mkdirConsola(char * dir);
 void cpto(char * archivoFS, char * archivo);
 void cpblock(char * archivo, char * numeroBloque, char * nodo);
+void cpFile(char * archivoFS, char * nuevoArchivo);
 void ls(char * dir);
 void info(char * archivo);
 void infoNodos();
 void infoNodosLog();
+void bitmap(char * nodo);
 
 void hiloConsola(){
 	printf("Consola disponible par uso\n");
@@ -173,6 +177,24 @@ void hiloConsola(){
 		}
 
 		/*
+		 * Funcion CpFIle
+		 */
+
+		if (strcmp("cpfile", linea[0]) == 0){
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre de archivo en YAMA FS\n");
+			}else if(linea[2] == NULL) {
+				printf("Error: falta el nombre de archivo copia en YAMA FS\n");
+			}else{
+				pthread_mutex_lock(&semaforoConsola);
+				cpFile(linea[1], linea[2]);
+				pthread_mutex_unlock(&semaforoConsola);
+			}
+
+			continue;
+		}
+
+		/*
 		 * Funcion CpBlock
 		 */
 
@@ -235,6 +257,16 @@ void hiloConsola(){
 
 		if (strcmp("nodos", linea[0]) == 0){
 			infoNodos();
+			continue;
+		}
+
+		if (strcmp("bitmap", linea[0]) == 0){
+			if(linea[1] == NULL){
+				printf("Error: falta el nombre del nodo\n");
+			}else{
+				bitmap(linea[1]);
+			}
+
 			continue;
 		}
 
@@ -327,7 +359,57 @@ void rm(char ** linea){
 				return;
 			}
 
-			printf("BORRANDO BLOQUE\n");
+			Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, linea[2]);
+
+			if(descriptorArchivo == NULL){
+				printf("Error: No existe el archivo %s\n", linea[2]);
+				return;
+			}
+
+			int cantidadBloques = list_size(descriptorArchivo->bloques);
+			int numBloque = atoi(linea[3]);
+
+			if(numBloque >= cantidadBloques){
+				printf("Error: El archivo no tiene un bloque %d\n", numBloque);
+				return;
+			}
+
+			int numCopia = atoi(linea[4]);
+
+			if(numCopia > 1){
+				printf("Error: El bloque no tiene una copia %d\n", numCopia);
+				return;
+			}
+
+			Bloque * bloque = (Bloque *)list_get(descriptorArchivo->bloques, numBloque);
+
+			if(numCopia == 0){
+				if(bloque->copia0.numeroBloque == -1){
+					printf("Error: La copia ya fue borrada\n");
+				}
+
+				if(bloque->copia1.numeroBloque == -1){
+					printf("Error: No se puede eliminar el bloque; Es la última copia\n");
+					return;
+				}
+
+				liberarBloque(bloque->copia0);
+				bloque->copia0.numeroBloque = -1;
+				infoNodosLog();
+			}else{
+				if(bloque->copia1.numeroBloque == -1){
+					printf("Error: La copia ya fue borrada\n");
+				}
+
+				if(bloque->copia0.numeroBloque == -1){
+					printf("Error: No se puede eliminar el bloque; Es la última copia\n");
+					return;
+				}
+
+				liberarBloque(bloque->copia1);
+				bloque->copia1.numeroBloque = -1;
+				infoNodosLog();
+			}
 		}else{
 			printf("Error: opción desconocida");
 		}
@@ -340,7 +422,7 @@ void rmArchivo(char * path){
 	Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, path);
 
 	if(descriptorArchivo == NULL){
-		printf("Error: No existe el archivo %s", path);
+		printf("Error: No existe el archivo %s\n", path);
 		return;
 	}
 
@@ -564,6 +646,14 @@ void cpto(char * archivoFS, char * archivo){
 	}
 }
 
+void cpFile(char * archivoFS, char * nuevoArchivo){
+	if(obtenerArchivo(archivoFS, TEMPFILECOPY) != 0){
+		printf("No se pudo obtener el archivo de YAMA FS\n");
+	}
+
+	cpfrom(TEMPFILECOPY, nuevoArchivo);
+}
+
 void cpblock(char * archivo, char * numeroBloque, char * nodo){
 	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivo);
 
@@ -600,6 +690,7 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
 	}
 
 	DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
+	DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
 	int bloqueAsignado = generarCopia(bloque, descriptorNodo);
 
@@ -610,21 +701,37 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
 
 	descriptorNodo->bloquesLibres--;
 
-	if(descriptorNodoCopia0->socket == -1){
+	if(descriptorNodoCopia0->socket == -1 || bloque->copia0.numeroBloque == -1){
 		descriptorNodoCopia0->bloquesLibres++;
 		bitarray_clean_bit(descriptorNodoCopia0->bitmap, bloque->copia0.numeroBloque);
 
 		bloque->copia0.numeroBloque = bloqueAsignado;
 
 		strcpy(bloque->copia0.nodo, nodo);
-	}else{
-		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
+	}else if(descriptorNodoCopia1->socket == -1 || bloque->copia1.numeroBloque == -1){
 		descriptorNodoCopia1->bloquesLibres++;
 		bitarray_clean_bit(descriptorNodoCopia1->bitmap, bloque->copia1.numeroBloque);
 
 		bloque->copia1.numeroBloque = bloqueAsignado;
 
 		strcpy(bloque->copia1.nodo, nodo);
+	}else{
+		if(descriptorNodoCopia0->bloquesLibres >= descriptorNodoCopia1->bloquesLibres){
+			descriptorNodoCopia1->bloquesLibres++;
+			bitarray_clean_bit(descriptorNodoCopia1->bitmap, bloque->copia1.numeroBloque);
+
+			bloque->copia1.numeroBloque = bloqueAsignado;
+
+			strcpy(bloque->copia1.nodo, nodo);
+		}else{
+			descriptorNodoCopia0->bloquesLibres++;
+			bitarray_clean_bit(descriptorNodoCopia0->bitmap, bloque->copia0.numeroBloque);
+
+			bloque->copia0.numeroBloque = bloqueAsignado;
+
+			strcpy(bloque->copia0.nodo, nodo);
+		}
+
 	}
 
 	infoNodosLog();
@@ -716,4 +823,21 @@ void infoNodosLog(){
 	}
 
 	dictionary_iterator(nodos, infoNodo);
+}
+
+void bitmap(char * nodo){
+	DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, nodo);
+
+	if(descriptorNodo == NULL){
+		printf("El nodo %s no existe\n", nodo);
+		return;
+	}
+
+	int i;
+
+	for(i = 0; i < descriptorNodo->bloques; ++i){
+		printf("%d", bitarray_test_bit(descriptorNodo->bitmap, i));
+	}
+
+	printf("\n");
 }

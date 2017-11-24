@@ -87,14 +87,14 @@ int _seleccionarNodoLectura(Bloque * bloque, DescriptorNodo ** nodo){
         }
 
         if(strcmp(bloque->copia0.nodo, descriptorNodo->nombreNodo) == 0){
-            if(descriptorNodo->socket == -1){
+            if(descriptorNodo->socket == -1 || bloque->copia0.numeroBloque == -1){
                 copiasDesconectadas++;
             }else{
                 *nodo = descriptorNodo;
                 return bloque->copia0.numeroBloque;
             }
         }else if(strcmp(bloque->copia1.nodo, descriptorNodo->nombreNodo) == 0){
-            if(descriptorNodo->socket == -1){
+            if(descriptorNodo->socket == -1 || bloque->copia1.numeroBloque == -1){
                 copiasDesconectadas++;
             }else{
                 *nodo = descriptorNodo;

@@ -148,6 +148,7 @@ void _logConfig(){
 void _probarConexion(DescriptorNodo * nodo){
     nodoConectado = nodo;
     cpfrom("archivo.txt", "/prueba");
+    nodo->bloquesLibres += 2;
     md5Consola("/prueba");
     rmArchivo("/prueba");
     nodoConectado = NULL;
@@ -165,7 +166,7 @@ int _checkearArchivosDisponibles(){
             DescriptorNodo * copia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
             DescriptorNodo * copia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
-            return copia0->socket != -1 || copia1->socket != -1;
+            return (copia0->socket != -1 && bloque->copia0.numeroBloque != -1) || (copia1->socket != -1 && bloque->copia1.numeroBloque != -1);
         }
 
         if(!list_all_satisfy(archivo->bloques, hayCopia)){

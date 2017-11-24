@@ -207,9 +207,9 @@ void _calcularUbicacionBloque(Bloque * bloque){
 
     if(nodoConectado != NULL){
         strcpy(bloque->copia0.nodo, nodoConectado->nombreNodo);
-        bloque->copia0.numeroBloque = 0;
+        bloque->copia0.numeroBloque = -2;
         strcpy(bloque->copia1.nodo, nodoConectado->nombreNodo);
-        bloque->copia1.numeroBloque = 0;
+        bloque->copia1.numeroBloque = -2;
         nodoConectado->bloquesLibres -= 2;
         return;
     }

@@ -1,11 +1,3 @@
-/*
- * conexiones.c
- *
- *  Created on: 3/9/2017
- *      Author: utnso
- */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,11 +38,11 @@ void responderYAMA(int socketYAMA){
 		DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
 		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
-		if(descriptorNodoCopia0->socket == -1){
+		if(descriptorNodoCopia0->socket == -1 || bloque->copia0.numeroBloque == -1){
 			int cantidad = 1;
 			send(socketYAMA, &cantidad, sizeof(cantidad), 0);
 			_enviarInfoBloque(socketYAMA, descriptorNodoCopia1, bloque->copia1.numeroBloque);
-		}else if(descriptorNodoCopia1->socket == -1){
+		}else if(descriptorNodoCopia1->socket == -1 || bloque->copia1.numeroBloque == -1){
 			int cantidad = 1;
 			send(socketYAMA, &cantidad, sizeof(cantidad), 0);
 			_enviarInfoBloque(socketYAMA, descriptorNodoCopia0, bloque->copia0.numeroBloque);
