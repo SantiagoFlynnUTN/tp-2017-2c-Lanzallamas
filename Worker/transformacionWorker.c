@@ -15,13 +15,30 @@
 #include <sys/wait.h>
 #include "cliente.h"
 #include <sockets.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 
 void _guardarBloqueComoTemporal(char * tempFile, int numBloque, int bytes);
 
 void _guardarBloqueComoTemporal(char * tempFile, int numBloque, int bytes){
 	char bloque[bytes + 1];
 
-	strncpy(bloque, mapeoDataBin + MB * numBloque, bytes);
+	int fd = open(config_get_string_value(config, RUTA_DATABIN), O_RDONLY);
+
+	if(fd == -1){
+		log_error(logger, "No se encontró el data.bin en la ruta %s\n", infoNodo.rutaDataBin);
+		return;
+	}
+
+	mapeoDataBin = mmap(NULL, MB,
+						PROT_READ, MAP_PRIVATE, fd, MB * numBloque);
+
+	if(mapeoDataBin == MAP_FAILED){
+		log_error(logger, "No se pudo mapear el data.bin en la ruta\n");
+		return;
+	}
+
+	strncpy(bloque, mapeoDataBin, bytes);
 	memset(bloque + bytes, 0, sizeof(char));
 
 	FILE * tempFD = fopen(tempFile, "w");
@@ -29,6 +46,8 @@ void _guardarBloqueComoTemporal(char * tempFile, int numBloque, int bytes){
 	fwrite(bloque, sizeof(char) * bytes, 1, tempFD);
 
 	fclose(tempFD);
+	munmap(mapeoDataBin, MB); // libero el mapeo
+	close(fd);
 }
 
 void recibirArchivo(int socket, char * ruta){

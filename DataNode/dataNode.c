@@ -48,7 +48,7 @@ void _cargarConfiguracion(){
 	_copiarNombreNodo();
 	_copiarRutaDataBin();
 	_calcularCantidadDeBloques();
-	_mapearDataBin();
+	//_mapearDataBin();
 }
 
 void _calcularCantidadDeBloques(){
