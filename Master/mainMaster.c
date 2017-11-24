@@ -45,19 +45,19 @@ int maxR = 0;
 
 void printMetrics(){
 	log_info(logger,"\n\n\n----------->  METRICAS  <-----------");
-	printf("[Tiempo] Job: %f sec\n", tiempoTotalJob);
-	printf("[Tiempo Promedio] Transformacion: %f sec\n",
+	log_info(logger, "[Tiempo] Job: %f sec\n", tiempoTotalJob);
+	log_info(logger, "[Tiempo Promedio] Transformacion: %f sec\n",
 			tiempoTotalTransf / transformacionesOk);
-	printf("[Tiempo Promedio] Reducciones: %f sec\n",
+	log_info(logger, "[Tiempo Promedio] Reducciones: %f sec\n",
 			tiempoTotalRedu / reduccionesOk);
-	printf("[Tiempo Total] Global: %f sec\n", tiempoTotalGlo);
-	printf(
-			"[Cantidad] Operaciones en forma paralela:\n-> Total: %i\n-> Transformaciones: %i\n-> Reducciones: %i\n",
+	log_info(logger, "[Tiempo Total] Global: %f sec\n", tiempoTotalGlo);
+	log_info(logger,
+			 "[Cantidad] Operaciones en forma paralela:\n-> Total: %i\n-> Transformaciones: %i\n-> Reducciones: %i\n",
 			 cargaMaxima, maxT, maxR);
-	printf("[Cantidad] Transformaciones OK: %i\n", transformacionesOk);
-	printf("[Cantidad] Reducciones OK: %i\n", reduccionesOk);
-	printf("[Cantidad] Fallos en Transformacion: %i\n", fallosTransf);
-	printf("[Cantidad] Fallos en Reduccion: %i\n", fallosRedu);
+	log_info(logger, "[Cantidad] Transformaciones OK: %i\n", transformacionesOk);
+	log_info(logger, "[Cantidad] Reducciones OK: %i\n", reduccionesOk);
+	log_info(logger, "[Cantidad] Fallos en Transformacion: %i\n", fallosTransf);
+	log_info(logger, "[Cantidad] Fallos en Reduccion: %i\n", fallosRedu);
 }
 
 void calcularMaximos(){
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
 	gettimeofday(&tv2, NULL);
 	tiempoTotalJob = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
 	         (double) (tv2.tv_sec - tv1.tv_sec);
-	printf ("Tiempo de ejecución del Job = %f segundos\n",
+	log_info(logger, "Tiempo de ejecución del Job = %f segundos\n",
 	         tiempoTotalJob);
 
 	printMetrics();

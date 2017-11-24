@@ -21,8 +21,8 @@
 
 void _registrarBloquePlanificacion(t_list * listaNodos, int numBloque, long bytes, DescriptorNodo * nodos, int cantidadNodos);
 void _loguearNodos(t_list * listaNodos, int bloques);
-
-
+void matarMasterGlobal(int socket);
+void matarMaster(int socket);
 
 void enviarTablaTransformacion(int socket_master){
 	SolicitudFS solFs;
@@ -159,11 +159,59 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 			 en->archivoTemporal);
 }
 
-void matarMaster(int socket){
-	int muerte = FALLOREDLOCAL;
+void matarMasterGlobal(int socket){
+	int jobId;
+	char archivoReducido[255];
+	int muerte = FALLOREDGLOBAL;
+
+	zrecv(socket, &jobId, sizeof(jobId), 0);
+
+	bool criterioBusqueda(void * entrada) {
+		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) entrada;
+
+		return entradaTablaEstado->jobId == jobId &&
+			   entradaTablaEstado->etapa == REDUCGLOBAL;
+	}
+
+	EntradaTablaEstado * entradaFinalizada = list_find(tablaEstado,
+													   criterioBusqueda);
+
+	if (entradaFinalizada != NULL) {
+		entradaFinalizada->estado = ERRORYAMA;
+		log_error(logger, "Error en reduccion global en nodo %s, Job %d", entradaFinalizada->nombreNodo, jobId);
+		cabecera = 0;
+	}
+
 	zsend(socket, &muerte, sizeof(int), 0);
 }
 
+void matarMaster(int socket){
+    int jobId;
+    char archivoReducido[255];
+	int muerte = FALLOREDLOCAL;
+
+    zrecv(socket, &jobId, sizeof(jobId), 0);
+    zrecv(socket, archivoReducido, sizeof(char) * 255, 0);
+
+	bool criterioBusqueda(void * entrada) {
+		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) entrada;
+
+		return entradaTablaEstado->jobId == jobId &&
+			   entradaTablaEstado->etapa == REDUCCIONLOCAL &&
+			   strcmp(entradaTablaEstado->archivoTemporal, archivoReducido) == 0;
+	}
+
+	EntradaTablaEstado * entradaFinalizada = list_find(tablaEstado,
+													   criterioBusqueda);
+
+	if (entradaFinalizada != NULL) {
+		entradaFinalizada->estado = ERRORYAMA;
+		log_error(logger, "Error en reduccion local en nodo %s, Job %d", entradaFinalizada->nombreNodo, jobId);
+		cabecera = 0;
+	}
+
+	zsend(socket, &muerte, sizeof(int), 0);
+}
 
 void almacenamientoError(int socket){
 	int job;
@@ -179,7 +227,7 @@ void almacenamientoError(int socket){
 			criterioBusqueda);
 
 	if (entradaFinalizada != NULL) {
-		entradaFinalizada->estado = FINALIZADO;
+		entradaFinalizada->estado = ERRORYAMA;
 		log_error(logger, "Error al almacenar el archivo en Job %d", job);
 		cabecera = 0;
 	}
@@ -197,6 +245,7 @@ void manejarDatos(int buf, int socket){
 			matarMaster(socket);
 			break;
 		case FALLOREDGLOBAL:
+			matarMasterGlobal(socket);
 			break;
 		case TRANSFORMACIONOK:
 			transformacionOK(socket);

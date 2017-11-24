@@ -42,7 +42,7 @@ void iniciarGlobal(int mastersock){
 		zrecv(mastersock, &nodos[i].puerto, sizeof(nodos[i].puerto), 0);
 		zrecv(mastersock, nodos[i].archivoReducido, sizeof(char) * 255, 0);
 
-		printf("NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
+		log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
 	}
 
 	char ruta[255];

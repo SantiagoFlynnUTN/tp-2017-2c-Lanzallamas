@@ -130,7 +130,7 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 		cantTransfActual--;
 		fallosTransf++;
 		pthread_mutex_unlock(&mutexTransformacion);
-		printf("Fallo la transformacion envio un %d\n", tipomensaje);
+		log_error(logger, "Fallo la transformacion envio un %d\n", tipomensaje);
 		pthread_mutex_lock(&yamaMensajes);
 		zsend(socket_yama, &tipomensaje, sizeof(tipomensaje), 0);
 		zsend(socket_yama, &mensajeError, sizeof(mensajeError), 0);
@@ -209,20 +209,27 @@ void mandarTransformacionNodo() {
 	while (operacion != SOLICITUDREDUCCIONGLOBAL) {
 		zrecv(socket_yama, &operacion, sizeof(operacion), 0);
 		switch (operacion) {
-		case REPLANIFICACION:
-			mandarReplanificado();
-			break;
-		case SOLICITUDREDUCCIONLOCAL:
-			reduccionLocal(socket_yama);
-			break;
-		case FALLOTRANSFORMACION:
-			log_error(logger,
-					"[ABORTADO] YAMA no pudo replanificar transformacion.\n");
-			exit(1);
-		case FALLOREDLOCAL:
-			log_error(logger,
-					"[ABORTADO] YAMA no puede replanificar una reduccion.\n");
-			exit(1);
+			case REPLANIFICACION:
+				mandarReplanificado();
+				break;
+			case SOLICITUDREDUCCIONLOCAL:
+				reduccionLocal(socket_yama);
+				break;
+			case FALLOTRANSFORMACION:
+				log_error(logger,
+						"[ABORTADO] YAMA no pudo replanificar transformacion.\n");
+				exit(1);
+				break;
+			case FALLOREDLOCAL:
+				log_error(logger,
+						"[ABORTADO] YAMA no puede replanificar una reduccion.\n");
+				exit(1);
+				break;
+			case FALLOREDGLOBAL:
+				log_error(logger,
+						  "[ABORTADO] YAMA no puede replanificar una reduccion global.\n");
+				exit(1);
+				break;
 		}
 	}
 

@@ -53,8 +53,6 @@ void reduccionGlobal(int socket_yama){
 
 	zrecv(socket_yama, archivoFinal, sizeof(char) * 255, 0);
 
-	printf("ARCHIVO FINAL:%s", archivoFinal);
-
     int socketNodo;
     int tipoMensaje = SOLICITUDREDUCCIONGLOBAL;
 
@@ -90,7 +88,7 @@ void reduccionGlobal(int socket_yama){
 
 	double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
 			+ (double) (tv2.tv_sec - tv1.tv_sec);
-	printf("Tiempo de ejecución del Job = %f segundos\n", tiempoTotal);
+    log_info(logger, "Tiempo de ejecución del Job = %f segundos\n", tiempoTotal);
 	tiempoTotalGlo += tiempoTotal;
 }
 

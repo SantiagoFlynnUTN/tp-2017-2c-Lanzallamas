@@ -1,7 +1,3 @@
-/*
-    ** client.c -- Ejemplo de cliente de sockets de flujo
-    */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -39,7 +35,7 @@ void enviarStructFileSystem(int socket){
 			tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
 			char addressBuffer[INET_ADDRSTRLEN];
 			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-			printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
+			log_info(logger, "%s IP Address %s\n", ifa->ifa_name, addressBuffer);
 			strcpy(handshake.ip, addressBuffer);
 		}
 	}

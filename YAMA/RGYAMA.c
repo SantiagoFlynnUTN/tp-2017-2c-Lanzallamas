@@ -82,10 +82,10 @@ void reduccionGlobal(int socket, int jobId){
 	list_add(tablaEstado, en);
 
 	if (!cabecera) {
-		printf("\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+		log_info(logger, "\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
 		cabecera = 1;
 	}
-	printf("%d\t%d\t\t\t%s\t%s\t%s\t%s\t%s\n",
+	log_info(logger, "%d\t%d\t\t\t%s\t%s\t%s\t%s\t%s\n",
 			 en->masterId,
 			 en->jobId,
 			 "EN PROCESO",

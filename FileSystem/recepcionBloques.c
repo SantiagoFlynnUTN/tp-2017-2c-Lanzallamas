@@ -37,8 +37,6 @@ int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
             return -1;
         }
 
-        printf("LEYENDO DE %s\n", descriptorNodo->nombreNodo);
-
         int bloqueGuardado = _guardarBloque(descriptorNodo, numBloque, bloque->descriptor.bytes, archivoFinal);
 
         if(bloqueGuardado != 0){
