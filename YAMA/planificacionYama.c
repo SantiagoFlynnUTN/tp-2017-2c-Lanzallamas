@@ -81,6 +81,7 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 	int i;
 	int clock_ = 0;
 	int cantidadNodos = list_size(listaNodos);
+
 	printf("Disponibilidades inicial:\n");
 	void printDispI(void*nodo){
 		InfoNodo*n=(InfoNodo*) nodo;
@@ -101,24 +102,25 @@ void planificarBloquesYEnviarAMaster(int socket_master, int bloques, t_list * li
 			intToString(i, numeroBloqueStr);
 
 			TamanoBloque * bloque = (TamanoBloque *) dictionary_get(nodo->bloques,numeroBloqueStr);
-			nodoCopia = buscarCopia(numeroBloqueStr, listaNodos);
+
+			//printf("Clock: %d, Inicial: %d, fallo: %d, %s Disp: %d\n", clock_, inicial, fallos, nodo->nombre, nodo->disponibilidad);
 
 			if (bloque != NULL) {
 				if (nodo->disponibilidad == 0) {
 					nodo->disponibilidad += disponibilidad_base;
-					fallos++;
+					fallos = 1;
 				} else {
 					if (clock_ == inicial && fallos) {
 						_sumarDisponiblidadBase(listaNodos);
 					}
+					dictionary_remove(nodo->bloques,numeroBloqueStr);
+					nodoCopia = buscarCopia(numeroBloqueStr, listaNodos);
 					_enviarAMaster(socket_master, nodo, nodoCopia, bloque,
 							TRANSFORMACION);
 					nodo->disponibilidad--;
 					planificado = 1;
-					dictionary_remove(nodo->bloques, numeroBloqueStr);
 				}
 			}
-
 			clock_ = (clock_ + 1) % cantidadNodos;
 		}
 	}
@@ -160,13 +162,13 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 
 
 	if (!cabecera) {
-		printf("\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tBloque\tEtapa\t\tTemporal\n");
+		printf("\nMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tCopia\tBloque\tEtapa\t\tTemporal\n");
 		cabecera = 1;
 	}
-	printf("%d\t%d\t%d\t%d\t%s\t%s\t%d\t%s\t%s\n", entradaTablaEstado->masterId,
+	printf("%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s\n", entradaTablaEstado->masterId,
 			entradaTablaEstado->jobId, nodo->disponibilidad,
 			nodo->trabajosActuales, "EN PROCESO",
-			entradaTablaEstado->nombreNodo, entradaTablaEstado->numeroBloque,
+			entradaTablaEstado->nombreNodo, entradaTablaEstado->nodoCopia->nombre, entradaTablaEstado->numeroBloque,
 			"TRANSFORMACION", entradaTablaEstado->archivoTemporal);
 
 	list_add(tablaEstado, entradaTablaEstado);
