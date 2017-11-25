@@ -3,14 +3,6 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
-O_SRCS += \
-../archivos.o \
-../cosas.o \
-../protocoloComunicacion.o \
-../prueba.o \
-../sockets.o \
-../structUtiles.o 
-
 C_SRCS += \
 ../archivos.c \
 ../cosas.c \
