@@ -14,11 +14,12 @@ make
 
 cd ..
 cd ..
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/Z-Commons/Debug
+
 echo "Compilando Master"
 
-
 cd Master/Debug
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/Z-Commons/Debug
 
 make clean
 make
