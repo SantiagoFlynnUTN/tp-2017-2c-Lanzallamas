@@ -10,7 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="317ff8a4-2641-43d2-ad26-81aafe72e3d2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Worker/transformacionWorker.c" afterPath="$PROJECT_DIR$/Worker/transformacionWorker.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DataNode/chat.c" afterPath="$PROJECT_DIR$/DataNode/chat.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DataNode/chat.h" afterPath="$PROJECT_DIR$/DataNode/chat.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DataNode/mainDN.c" afterPath="$PROJECT_DIR$/DataNode/mainDN.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FileSystem/mainFS.c" afterPath="$PROJECT_DIR$/FileSystem/mainFS.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FileSystem/servidor.c" afterPath="$PROJECT_DIR$/FileSystem/servidor.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/YAMA/mainYAMA.c" afterPath="$PROJECT_DIR$/YAMA/mainYAMA.c" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,71 +28,43 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="funcionesConsolaFS.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c">
+      <file leaf-file-name="mainDN.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DataNode/mainDN.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="573" column="0" lean-forward="true" selection-start-line="573" selection-start-column="0" selection-end-line="573" selection-end-column="0" />
+            <state relative-caret-position="15">
+              <caret line="1" column="19" lean-forward="true" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serializacionFileSystem.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FileSystem/serializacionFileSystem.c">
+      <file leaf-file-name="mainFS.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FileSystem/mainFS.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="74" column="22" lean-forward="true" selection-start-line="74" selection-start-column="22" selection-end-line="74" selection-end-column="22" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#302#323#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="servidor.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FileSystem/servidor.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="transformador.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Master/transformador.py">
+      <file leaf-file-name="mainYAMA.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/YAMA/mainYAMA.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="22" lean-forward="true" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="transformacionWorker.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Worker/transformacionWorker.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="145">
-              <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fileSystem.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FileSystem/fileSystem.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="64" column="32" lean-forward="false" selection-start-line="64" selection-start-column="8" selection-end-line="64" selection-end-column="32" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RGYAMA.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/YAMA/RGYAMA.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="25" column="41" lean-forward="false" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="41" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="utilidadesFileSystem.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FileSystem/utilidadesFileSystem.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="8" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -96,7 +74,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>agregarNodo</find>
       <find>!= NULL</find>
       <find>rmarchivo</find>
       <find>liberarbloques</find>
@@ -126,6 +103,7 @@
       <find>list_iterate</find>
       <find>listaarchivos</find>
       <find>mv</find>
+      <find>peek</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/FileSystem</dir>
@@ -141,7 +119,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Worker/reduccionWorker.c" />
         <option value="$PROJECT_DIR$/DataNode/operacionesDataNode.h" />
         <option value="$PROJECT_DIR$/Worker/cliente.h" />
         <option value="$PROJECT_DIR$/Worker/cliente.c" />
@@ -152,19 +129,14 @@
         <option value="$PROJECT_DIR$/Master/master.h" />
         <option value="$PROJECT_DIR$/FileSystem/conexionesFileSystem.h" />
         <option value="$PROJECT_DIR$/FileSystem/estructurasFileSystem.c" />
-        <option value="$PROJECT_DIR$/FileSystem/mainFS.c" />
-        <option value="$PROJECT_DIR$/DataNode/chat.c" />
         <option value="$PROJECT_DIR$/FileSystem/fileSystem.h" />
         <option value="$PROJECT_DIR$/FileSystem/recepcionBloques.h" />
-        <option value="$PROJECT_DIR$/FileSystem/servidor.c" />
         <option value="$PROJECT_DIR$/YAMA/clienteFS.c" />
-        <option value="$PROJECT_DIR$/DataNode/mainDN.c" />
         <option value="$PROJECT_DIR$/Master/mainMaster.c" />
         <option value="$PROJECT_DIR$/Master/reduccionMaster.c" />
         <option value="$PROJECT_DIR$/Master/RGMaster.c" />
         <option value="$PROJECT_DIR$/Worker/RGWorker.c" />
         <option value="$PROJECT_DIR$/Worker/serializacionWorker.c" />
-        <option value="$PROJECT_DIR$/YAMA/mainYAMA.c" />
         <option value="$PROJECT_DIR$/YAMA/yama.c" />
         <option value="$PROJECT_DIR$/YAMA/RGYAMA.c" />
         <option value="$PROJECT_DIR$/YAMA/respuestaTransformacion.c" />
@@ -192,6 +164,12 @@
         <option value="$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c" />
         <option value="$PROJECT_DIR$/Worker/transformacionWorker.c" />
         <option value="$PROJECT_DIR$/Master/transformador.py" />
+        <option value="$PROJECT_DIR$/DataNode/chat.h" />
+        <option value="$PROJECT_DIR$/DataNode/chat.c" />
+        <option value="$PROJECT_DIR$/DataNode/mainDN.c" />
+        <option value="$PROJECT_DIR$/FileSystem/mainFS.c" />
+        <option value="$PROJECT_DIR$/FileSystem/servidor.c" />
+        <option value="$PROJECT_DIR$/YAMA/mainYAMA.c" />
       </list>
     </option>
   </component>
@@ -363,7 +341,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="164562000" />
+    <option name="totallyTimeSpent" value="164787000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -376,6 +354,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33037156" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -385,7 +364,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -437,32 +416,17 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="7" />
+      <breakpoints>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/FileSystem/servidor.c</url>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="8" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/YAMA/yama.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="35" lean-forward="false" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Z-Commons/structUtiles.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FileSystem/fileSystem.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Master/chat.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
@@ -474,13 +438,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="22" column="5" lean-forward="false" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DataNode/mainDN.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -509,13 +466,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
           <caret line="44" column="21" lean-forward="false" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/YAMA/mainYAMA.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="27" column="21" lean-forward="false" selection-start-line="27" selection-start-column="21" selection-end-line="27" selection-end-column="21" />
         </state>
       </provider>
     </entry>
@@ -594,13 +544,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="150" column="29" lean-forward="false" selection-start-line="150" selection-start-column="29" selection-end-line="150" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FileSystem/servidor.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="56" column="81" lean-forward="false" selection-start-line="56" selection-start-column="81" selection-end-line="56" selection-end-column="81" />
         </state>
       </provider>
     </entry>
@@ -750,7 +693,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -758,7 +700,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
           <caret line="25" column="41" lean-forward="false" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -798,6 +739,55 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="14" column="22" lean-forward="true" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DataNode/chat.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DataNode/chat.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DataNode/mainDN.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="19" lean-forward="true" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FileSystem/mainFS.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#302#323#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FileSystem/servidor.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/YAMA/mainYAMA.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>

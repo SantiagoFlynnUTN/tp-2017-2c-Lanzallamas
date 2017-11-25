@@ -29,7 +29,7 @@ fd_set read_fds; // conjunto temporal de descriptores de fichero para select()
 
 
 void comprobarConexion(int numbytes, int socket){
-	 if (numbytes <= 0) {
+	if (numbytes <= 0) {
 		// error o conexión cerrada por el cliente
 		if (numbytes == 0) {
 			// conexión cerrada
@@ -40,7 +40,7 @@ void comprobarConexion(int numbytes, int socket){
 		}
 		close(socket); // bye!
 		FD_CLR(socket, &master); // eliminar del conjunto maestro
-	 }
+	}
 }
 
 void manejarCliente(int newfd){
@@ -66,7 +66,7 @@ void gestionarNuevaConexion(){
 	addrlen = sizeof(remoteaddr);
 
 	if ((newfd = accept(listener, (struct sockaddr *)&remoteaddr,
-											 &addrlen)) == -1) {
+						&addrlen)) == -1) {
 		perror("accept");
 	}
 
@@ -119,31 +119,31 @@ void doSelect(){
 void setListener(){
 	// obtener socket a la escucha
 	if ((listener = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-			perror("socket");
-			exit(1);
-		}
-		// obviar el mensaje "address already in use" (la dirección ya se está usando)
-		int yes=1;        // para setsockopt() SO_REUSEADDR, más abajo
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes,
-															sizeof(int)) == -1) {
-			perror("setsockopt");
-			exit(1);
-		}
-		// enlazar
-		struct sockaddr_in myaddr;     // dirección del servidor
-		myaddr.sin_family = AF_INET;
-		myaddr.sin_addr.s_addr = INADDR_ANY;
-		myaddr.sin_port = htons(PORTYAMA);
-		memset(&(myaddr.sin_zero), '\0', 8);
-		if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
-			perror("bind");
-			exit(1);
-		}
-		// escuchar
-		if (listen(listener, 10) == -1) {
-			perror("listen");
-			exit(1);
-		}
+		perror("socket");
+		exit(1);
+	}
+	// obviar el mensaje "address already in use" (la dirección ya se está usando)
+	int yes=1;        // para setsockopt() SO_REUSEADDR, más abajo
+	if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes,
+				   sizeof(int)) == -1) {
+		perror("setsockopt");
+		exit(1);
+	}
+	// enlazar
+	struct sockaddr_in myaddr;     // dirección del servidor
+	myaddr.sin_family = AF_INET;
+	myaddr.sin_addr.s_addr = INADDR_ANY;
+	myaddr.sin_port = htons(PORTYAMA);
+	memset(&(myaddr.sin_zero), '\0', 8);
+	if (bind(listener, (struct sockaddr *)&myaddr, sizeof(myaddr)) == -1) {
+		perror("bind");
+		exit(1);
+	}
+	// escuchar
+	if (listen(listener, 10) == -1) {
+		perror("listen");
+		exit(1);
+	}
 }
 
 void iniciarServer(){
@@ -157,12 +157,9 @@ void iniciarServer(){
 	// seguir la pista del descriptor de fichero mayor
 	fdmax = listener; 			// por ahora es éste
 
-    doSelect();// bucle principal
+	doSelect();// bucle principal
 }
 
 void inicializarServer(){
-	int rc;
-	pthread_t tid;
-	rc = pthread_create(&tid, NULL, iniciarServer, NULL);
-		if(rc) printf("no pudo crear el hilo");
+	iniciarServer();
 }

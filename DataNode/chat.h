@@ -1,4 +1,4 @@
-/*
+﻿/*
  * chat.h
  *
  *  Created on: 3/9/2017
@@ -13,7 +13,7 @@ typedef struct {
 	int tipoMensaje;
 	char mensaje[100];
 } __attribute__((packed))
-mensajeCorto;
+		mensajeCorto;
 
 void escuchar_chat(int socket);
 void escribir_chat(int socket);

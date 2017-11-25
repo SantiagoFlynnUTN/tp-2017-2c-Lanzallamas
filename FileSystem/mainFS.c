@@ -40,8 +40,6 @@ int main(int argc, char *argv[]){
 	}
 
 	inicializarFileSystem();
-	inicializarServer();
 	crear_hilo_consola();
-
-	for(;;);
+	inicializarServer();
 }

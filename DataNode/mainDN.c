@@ -20,7 +20,7 @@ void enviarStructFileSystem(int socket){
 	handshake.tipomensaje = 2;
 	strcpy(handshake.nombreNodo, infoNodo.nombreNodo);
 
-	  struct ifaddrs * ifAddrStruct=NULL;
+	struct ifaddrs * ifAddrStruct=NULL;
 	struct ifaddrs * ifa=NULL;
 	void * tmpAddrPtr=NULL;
 
@@ -54,8 +54,6 @@ int main(int argc, char *argv[]){
 	enviarStructFileSystem(sockfd);
 
 	escuchar_chat(sockfd);
-
-	for(;;);
 
 	close(sockfd);
 	return 0;

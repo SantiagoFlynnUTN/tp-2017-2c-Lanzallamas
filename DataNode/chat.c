@@ -1,4 +1,4 @@
-/*
+﻿/*
  * chat.c
  *
  *  Created on: 3/9/2017
@@ -68,10 +68,7 @@ void escuchar(int* socket){
 }
 
 void escuchar_chat(int socket){
-	int rc;
-	pthread_t tid;
-	rc = pthread_create(&tid, NULL, escuchar, &socket);
-		if(rc) log_error(logger, "no pudo crear el hilo");
+	escuchar(&socket);
 }
 
 /*

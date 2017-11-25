@@ -45,7 +45,7 @@ void conectarAFileSystem() {
 	memset(&(their_addr.sin_zero), 0, 8); // poner a cero el resto de la estructura
 
 	if (connect(sock_fs, (struct sockaddr *) &their_addr,
-			sizeof(struct sockaddr)) == -1) {
+				sizeof(struct sockaddr)) == -1) {
 		perror("connect");
 		exit(1);
 	}
@@ -54,10 +54,9 @@ void conectarAFileSystem() {
 int main(){
 	signal(SIGUSR1, signal_handler);
 	inicializarYAMA();
+	iniciarConexionAFS(&sock_fs);
 	log_info(logger, "Para recargar la configuracion utilice el comando kill -USR1 %d", getpid());
 	inicializarServer();
-	iniciarConexionAFS(&sock_fs);
 
-	for(;;);
 	return 0;
 }
