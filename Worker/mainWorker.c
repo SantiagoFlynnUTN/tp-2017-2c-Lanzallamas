@@ -66,7 +66,7 @@ void _cargarConfiguracion(){
 		exit(-2);
 	}
 
-	//_mapearDataBin();
+	_mapearDataBin();
 }
 
 void _mapearDataBin(){
