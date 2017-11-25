@@ -60,9 +60,9 @@ void recibirArchivo(int socket, char * ruta){
 	while(longitud > MB){
 		char buffer[MB];
 		memset(buffer, 0, MB);
-		zrecv(socket, &buffer, MB * sizeof(char), 0);
+		zrecv(socket, buffer, MB * sizeof(char), 0);
 
-		if(write(archivo, buffer, sizeof(char) * longitud) < 0){
+		if(write(archivo, buffer, sizeof(char) * MB) < 0){
 			printf("Error guardando el archivo\n");
 			return;
 		}
@@ -73,9 +73,9 @@ void recibirArchivo(int socket, char * ruta){
 	if(longitud > 0){
 		char buffer[longitud];
 		memset(buffer, 0, longitud);
-		zrecv(socket, &buffer, longitud * sizeof(char), 0);
+		zrecv(socket, buffer, longitud * sizeof(char), 0);
 
-		if(write(archivo, buffer, sizeof(char) * MB) < 0){
+		if(write(archivo, buffer, sizeof(char) * longitud) < 0){
 			printf("Error guardando el archivo\n");
 			return;
 		}
