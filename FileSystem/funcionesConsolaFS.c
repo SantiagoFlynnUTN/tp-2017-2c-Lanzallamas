@@ -437,7 +437,6 @@ void rmArchivo(char * path){
 	infoNodosLog();
 }
 
-
 void renameFs(char * nombreOriginal, char * nombreFinal){
 	int directorioPadre = calcularDirectorioPadre(nombreOriginal);
 
@@ -445,6 +444,40 @@ void renameFs(char * nombreOriginal, char * nombreFinal){
 		printf("No existe la ruta %s\n", nombreOriginal);
 		return;
 	}
+
+	char rutaFinal[255];
+	Archivo * archOriginal = (Archivo *) dictionary_get(archivos, nombreOriginal);
+
+	if(archOriginal != NULL){
+		calcularRuta(*archOriginal, nombreFinal, rutaFinal);
+
+		Archivo * archN = (Archivo *) dictionary_get(archivos, nombreFinal);
+
+		if(archN != NULL){
+			printf("Ya existe un archivo o directorio en la ruta %s\n", nombreFinal);
+			return;
+		}
+	}
+	t_list * hijos =  obtenerNombresDirectoriosHijos(directorioPadre);
+
+	bool filterFunction(void * n){
+		char * nombre = (char *) n;
+
+		return strcmp(nombre, nombreFinal) == 0;
+	}
+
+	bool function(void * a){
+		Archivo * archivo = (Archivo *) a;
+
+		return strcmp(nombreFinal, obtenerNombreArchivo(archivo->ruta)) == 0;
+	}
+
+	if(list_any_satisfy(hijos, filterFunction) || list_any_satisfy(listaArchivosDirectorios[directorioPadre], function)){
+		printf("Ya existe un archivo o directorio en la ruta %s\n", nombreFinal);
+		list_destroy(hijos);
+		return;
+	}
+	list_destroy(hijos);
 
 	Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, nombreOriginal);
 
@@ -456,7 +489,9 @@ void renameFs(char * nombreOriginal, char * nombreFinal){
 
 		list_remove_by_condition(listaArchivosDirectorios[directorioPadre], criterio);
 
-		strcpy(descriptorArchivo->ruta, nombreFinal);
+		calcularRuta(*descriptorArchivo, nombreFinal, descriptorArchivo->ruta);
+
+		printf("La ruta es %s\n", descriptorArchivo->ruta);
 
 		list_add(listaArchivosDirectorios[directorioPadre], descriptorArchivo);
 		dictionary_put(archivos, descriptorArchivo->ruta, descriptorArchivo);
@@ -469,75 +504,6 @@ void renameFs(char * nombreOriginal, char * nombreFinal){
 		}
 
 		strcpy(tabla_Directorios[directorio].nombre, obtenerNombreArchivo(nombreFinal));
-
-		if(list_size(listaArchivosDirectorios[directorio]) > 0){
-			void actualizarRuta(void * elemento){
-				Archivo * descriptor = (Archivo *) elemento;
-
-				dictionary_remove(archivos, descriptor->ruta);
-
-				obtenerNuevaRutaArchivo(descriptor->ruta, nombreFinal);
-
-				dictionary_put(archivos, descriptor->ruta, descriptor);
-			}
-
-			list_iterate(listaArchivosDirectorios[directorio], actualizarRuta);
-		}
-
-		int i;
-
-		for(i = 0; i < 100; ++i){
-			if(tabla_Directorios[i].padre == directorio && strlen(tabla_Directorios[i].nombre) > 0){
-				char dirHijo[255];
-				strcpy(dirHijo, tabla_Directorios[i].nombre);
-				obtenerNuevaRutaArchivo(dirHijo, nombreFinal);
-				printf("El directorio de %s será %s\n", tabla_Directorios[i].nombre, dirHijo);
-
-				mv(dirHijo, dirHijo);
-			}
-		}
-	}
-}
-
-void mv(char * nombreOriginal, char * nombreFinal){
-	int directorioPadreViejo = calcularDirectorioPadre(nombreOriginal);
-	int directorioPadreNuevo = calcularDirectorioPadre(nombreFinal);
-
-	if(directorioPadreViejo == -1){
-		printf("No existe la ruta %s\n", nombreOriginal);
-		return;
-	}
-
-	if(directorioPadreNuevo == -1){
-		printf("No existe la ruta %s\n", nombreFinal);
-	}
-
-	Archivo * descriptorArchivo = (Archivo *) dictionary_remove(archivos, nombreOriginal);
-
-	if(descriptorArchivo != NULL){
-		bool criterio(void * elemento){
-			Archivo * descriptor = (Archivo *) elemento;
-			return strcmp(descriptor->ruta, descriptorArchivo->ruta) == 0;
-		}
-
-		list_remove_by_condition(listaArchivosDirectorios[directorioPadreViejo], criterio);
-
-		strcpy(descriptorArchivo->ruta, nombreFinal);
-		descriptorArchivo->directorioPadre = directorioPadreNuevo;
-
-		list_add(listaArchivosDirectorios[directorioPadreNuevo], descriptorArchivo);
-		dictionary_put(archivos, descriptorArchivo->ruta, descriptorArchivo);
-	}else{
-		int directorio = calcularEntradaDirectorio(nombreOriginal);
-
-		if(directorio == -1){
-			printf("No existe el archivo o directorio %s\n", nombreOriginal);
-			return;
-		}
-
-		strcpy(tabla_Directorios[directorio].nombre, obtenerNombreArchivo(nombreFinal));
-		tabla_Directorios[directorio].padre = directorioPadreNuevo;
-
 
 		if(list_size(listaArchivosDirectorios[directorio]) > 0){
 			void actualizarRuta(void * elemento){
@@ -585,9 +551,7 @@ void cat(char * nombre){
 			char contenido[MB];
 			memset(contenido, 0, sizeof(char) * MB);
 
-			if(fread(contenido, MB * sizeof(char), 1, fd) != 1){
-				printf("Error leyendo el archivo\n");
-			}
+			fread(contenido, MB * sizeof(char), 1, fd);
 
 			printf("%s", contenido);
 		}
@@ -597,6 +561,13 @@ void cat(char * nombre){
 }
 
 void mkdirConsola(char * dir){
+	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, dir);
+
+	if(descriptorArchivo != NULL){
+		printf("Existe un archivo en la ruta %s\n", dir);
+		return;
+	}
+
 	int entrada = calcularEntradaDirectorio(dir);
 
 	if(entrada != -1){
@@ -628,6 +599,13 @@ int cpfrom(char * archivo, char * archivoFS){
 
 	if(descriptorArchivo != NULL){
 		printf("EL archivo %s ya existe\n", archivoFS);
+		return 1;
+	}
+
+	int entrada = calcularEntradaDirectorio(archivoFS);
+
+	if(entrada != -1){
+		printf("Existe un directorio en la ruta %s\n", archivoFS);
 		return 1;
 	}
 

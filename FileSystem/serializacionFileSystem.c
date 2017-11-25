@@ -17,6 +17,7 @@
 #include "serializacionFileSystem.h"
 #include <sockets.h>
 #include "funcionesConsolaFS.h"
+#include "envioBloques.h"
 
 void recibirArchivo(int socket, char * ruta);
 
@@ -37,7 +38,7 @@ void manejarDatos(int buf, int socket){
 			responderYAMA(socket);
 			break;
 		case RECEPCIONBLOQUE:
-			recibirArchivo(socket, "prueba1234.txt");
+			recibirArchivo(socket, "tempfileAlmacenamiento");
 			break;
 		case RECEPCIONARCHIVOWORKER:
 			break;
@@ -64,13 +65,33 @@ void recibirArchivo(int socket, char * ruta){
 	zrecv(socket, archivoFS, sizeof(char) * 255, 0);
 	zrecv(socket, &longitud, sizeof(longitud), 0);
 
-	char buffer[longitud];
-	memset(buffer, 0, longitud);
+	FILE * file = fopen(ruta, "w");
 
-	zrecv(socket, &buffer, longitud * sizeof(char), 0);
+	while(longitud > MB){
+		char buffer[MB];
+		memset(buffer, 0, MB);
+		zrecv(socket, buffer, MB * sizeof(char), 0);
 
-	guardarArchivo(ruta, buffer, longitud);
-	int respuesta = cpfrom("prueba1234.txt", archivoFS);
+		if(fwrite(buffer, sizeof(char) * MB, 1, file) != 1){
+			printf("Error guardando el archivo\n");
+		}
+
+		longitud -= MB;
+	}
+
+	if(longitud > 0){
+		char buffer[longitud];
+		memset(buffer, 0, longitud);
+		zrecv(socket, buffer, longitud * sizeof(char), 0);
+
+		if(fwrite(buffer, sizeof(char) * longitud, 1, file) != 1){
+			printf("Error guardando el archivo\n");
+		}
+	}
+
+	fclose(file);
+
+	int respuesta = cpfrom(ruta, archivoFS);
 
 	zsend(socket, &respuesta, sizeof(respuesta), 0);
 }

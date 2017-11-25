@@ -1,4 +1,5 @@
-﻿#include "transformacionWorker.h"
+﻿
+#include "transformacionWorker.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -54,12 +55,34 @@ void recibirArchivo(int socket, char * ruta){
 	int longitud;
 	zrecv(socket, &longitud, sizeof(longitud), 0);
 
-	char buffer[longitud];
-	memset(buffer, 0, longitud);
+	int archivo = creat(ruta, S_IRWXU | S_IRWXG | S_IRWXO);
 
-	zrecv(socket, &buffer, longitud * sizeof(char), 0);
+	while(longitud > MB){
+		char buffer[MB];
+		memset(buffer, 0, MB);
+		zrecv(socket, &buffer, MB * sizeof(char), 0);
 
-	guardarArchivo(ruta, buffer, longitud);
+		if(write(archivo, buffer, sizeof(char) * longitud) < 0){
+			printf("Error guardando el archivo\n");
+			return;
+		}
+
+		longitud -= MB;
+	}
+
+	if(longitud > 0){
+		char buffer[longitud];
+		memset(buffer, 0, longitud);
+		zrecv(socket, &buffer, longitud * sizeof(char), 0);
+
+		if(write(archivo, buffer, sizeof(char) * MB) < 0){
+			printf("Error guardando el archivo\n");
+			return;
+		}
+	}
+
+	fsync(archivo);
+	close(archivo);
 }
 
 void iniciarTransformacion(int socket){

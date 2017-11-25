@@ -31,6 +31,7 @@ fallocate -l 50M /home/utnso/data.bin
 echo "Ejecutando DataNode"
 cd ..
 
+export LC_ALL=C
 #./Debug/DataNode
 
 exit 0

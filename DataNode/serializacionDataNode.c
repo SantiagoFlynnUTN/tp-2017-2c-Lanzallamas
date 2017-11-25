@@ -31,7 +31,7 @@ void _getBloque(int socket){
 
 	status = getBloque(bloque, data);
 
-	log_info(logger, "Enviando bloque %d\n", bloque);
+	printf("Enviando bloque %d\n", bloque);
 
 	if(status == -1){
 		log_error(logger, "Hubo un error leyendo el bloque\n");
@@ -51,7 +51,7 @@ void _setBloque(int socket){
 	zrecv(socket, &bloque, sizeof(bloque), 0);
 	zrecv(socket, data, sizeof(char) * MB, MSG_WAITALL);
 
-	log_info(logger, "Guardando bloque %d\n", bloque);
+	printf("Guardando bloque %d\n", bloque);
 
 	if(pruebaConexion == 0){
 		status = setBloque(bloque, data);

@@ -27,6 +27,7 @@ make
 echo "Ejecutando Worker"
 cd ..
 
+export LC_ALL=C
 #./Debug/Worker
 
 exit 0

@@ -27,6 +27,7 @@ make
 echo "Ejecutando Master"
 cd ..
 
+export LC_ALL=C
 #./Debug/Master
 
 exit 0
