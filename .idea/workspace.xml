@@ -9,7 +9,13 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="317ff8a4-2641-43d2-ad26-81aafe72e3d2" name="Default" comment="" />
+    <list default="true" id="317ff8a4-2641-43d2-ad26-81aafe72e3d2" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DataNode/serializacionDataNode.c" afterPath="$PROJECT_DIR$/DataNode/serializacionDataNode.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c" afterPath="$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FileSystem/serializacionFileSystem.c" afterPath="$PROJECT_DIR$/FileSystem/serializacionFileSystem.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Worker/transformacionWorker.c" afterPath="$PROJECT_DIR$/Worker/transformacionWorker.c" />
+    </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,21 +26,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="transformacionWorker.c" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Worker/transformacionWorker.c">
+      <file leaf-file-name="funcionesConsolaFS.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="406">
+              <caret line="587" column="55" lean-forward="false" selection-start-line="587" selection-start-column="55" selection-end-line="587" selection-end-column="55" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serializacionDataNode.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DataNode/serializacionDataNode.h">
+      <file leaf-file-name="serializacionFileSystem.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FileSystem/serializacionFileSystem.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="14" lean-forward="false" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+            <state relative-caret-position="249">
+              <caret line="72" column="22" lean-forward="true" selection-start-line="72" selection-start-column="22" selection-end-line="72" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -44,7 +50,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>bitmap</find>
       <find>cargarib</find>
       <find>_cargarBitMap</find>
       <find>crearBitMap</find>
@@ -65,7 +70,6 @@
       <find>mapeoDataBin</find>
       <find>unmap</find>
       <find>MB</find>
-      <find>MB</find>
       <find>cpfrom</find>
       <find>DATANODEER</find>
       <find>conectando a</find>
@@ -74,6 +78,8 @@
       <find>fallo</find>
       <find>Error</find>
       <find>enviarBloques</find>
+      <find>mkdirconsola</find>
+      <find>error leyen</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/FileSystem</dir>
@@ -112,7 +118,6 @@
         <option value="$PROJECT_DIR$/FileSystem/fileSystem.h" />
         <option value="$PROJECT_DIR$/FileSystem/recepcionBloques.h" />
         <option value="$PROJECT_DIR$/FileSystem/servidor.c" />
-        <option value="$PROJECT_DIR$/FileSystem/serializacionFileSystem.c" />
         <option value="$PROJECT_DIR$/YAMA/clienteFS.c" />
         <option value="$PROJECT_DIR$/DataNode/mainDN.c" />
         <option value="$PROJECT_DIR$/Master/mainMaster.c" />
@@ -131,15 +136,16 @@
         <option value="$PROJECT_DIR$/FileSystem/inicializacionFileSystem.c" />
         <option value="$PROJECT_DIR$/FileSystem/utilidadesFileSystem.c" />
         <option value="$PROJECT_DIR$/FileSystem/fileSystem.c" />
-        <option value="$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c" />
         <option value="$PROJECT_DIR$/FileSystem/envioBloques.h" />
         <option value="$PROJECT_DIR$/DataNode/dataNode.c" />
         <option value="$PROJECT_DIR$/Worker/mainWorker.c" />
         <option value="$PROJECT_DIR$/DataNode/operacionesDataNode.c" />
         <option value="$PROJECT_DIR$/FileSystem/envioBloques.c" />
         <option value="$PROJECT_DIR$/FileSystem/recepcionBloques.c" />
-        <option value="$PROJECT_DIR$/DataNode/serializacionDataNode.c" />
         <option value="$PROJECT_DIR$/Worker/transformacionWorker.c" />
+        <option value="$PROJECT_DIR$/DataNode/serializacionDataNode.c" />
+        <option value="$PROJECT_DIR$/FileSystem/serializacionFileSystem.c" />
+        <option value="$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c" />
       </list>
     </option>
   </component>
@@ -151,9 +157,8 @@
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="y" value="22" />
     <option name="width" value="1280" />
-    <option name="height" value="726" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -300,7 +305,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="161214000" />
+    <option name="totallyTimeSpent" value="161890000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -315,15 +320,15 @@
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552505" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33037156" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30536452" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3047473" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24621733" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3287483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32737276" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -438,9 +443,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -532,13 +534,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/YAMA/serializacion.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="228" column="36" lean-forward="true" selection-start-line="228" selection-start-column="36" selection-end-line="228" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Z-Commons/sockets.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
@@ -562,18 +557,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FileSystem/serializacionFileSystem.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="36" column="23" lean-forward="true" selection-start-line="36" selection-start-column="23" selection-end-line="36" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FileSystem/estructurasFileSystem.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -589,7 +576,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
           <caret line="37" column="45" lean-forward="true" selection-start-line="37" selection-start-column="45" selection-end-line="37" selection-end-column="45" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -627,7 +613,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -635,7 +620,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -643,7 +627,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="16" lean-forward="false" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -727,14 +710,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DataNode/serializacionDataNode.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FileSystem/envioBloques.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="313">
@@ -743,18 +718,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c">
+    <entry file="file://$PROJECT_DIR$/YAMA/serializacion.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="633" column="13" lean-forward="false" selection-start-line="633" selection-start-column="13" selection-end-line="633" selection-end-column="13" />
+        <state relative-caret-position="431">
+          <caret line="242" column="20" lean-forward="false" selection-start-line="242" selection-start-column="20" selection-end-line="242" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DataNode/serializacionDataNode.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="71" column="1" lean-forward="false" selection-start-line="71" selection-start-column="1" selection-end-line="71" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Worker/transformacionWorker.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="609">
+          <caret line="111" column="1" lean-forward="false" selection-start-line="111" selection-start-column="1" selection-end-line="111" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FileSystem/serializacionFileSystem.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="72" column="22" lean-forward="true" selection-start-line="72" selection-start-column="22" selection-end-line="72" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FileSystem/funcionesConsolaFS.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="587" column="55" lean-forward="false" selection-start-line="587" selection-start-column="55" selection-end-line="587" selection-end-column="55" />
           <folding />
         </state>
       </provider>

@@ -585,9 +585,7 @@ void cat(char * nombre){
 			char contenido[MB];
 			memset(contenido, 0, sizeof(char) * MB);
 
-			if(fread(contenido, MB * sizeof(char), 1, fd) != 1){
-				printf("Error leyendo el archivo\n");
-			}
+			fread(contenido, MB * sizeof(char), 1, fd);
 
 			printf("%s", contenido);
 		}
@@ -597,6 +595,13 @@ void cat(char * nombre){
 }
 
 void mkdirConsola(char * dir){
+	Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, dir);
+
+	if(descriptorArchivo != NULL){
+		printf("Existe un archivo en la ruta %s\n", dir);
+		return;
+	}
+
 	int entrada = calcularEntradaDirectorio(dir);
 
 	if(entrada != -1){
@@ -628,6 +633,13 @@ int cpfrom(char * archivo, char * archivoFS){
 
 	if(descriptorArchivo != NULL){
 		printf("EL archivo %s ya existe\n", archivoFS);
+		return 1;
+	}
+
+	int entrada = calcularEntradaDirectorio(archivoFS);
+
+	if(entrada != -1){
+		printf("Existe un directorio en la ruta %s\n", archivoFS);
 		return 1;
 	}
 
