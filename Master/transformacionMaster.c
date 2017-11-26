@@ -36,7 +36,7 @@ int respuestaSolicitud() {
 
 	if(cantidadWorkers == 0){
 		log_error(logger,
-				 "[ABORTADO] El archivo %s no está disponible.\n", pathArchivoFS);
+				 "[ABORTADO] El archivo %s no está disponible en el FS.\n", pathArchivoFS);
 		exit(1);
 	}
 

@@ -39,7 +39,7 @@ void enviarTablaTransformacion(int socket_master){
 	zrecv(sock_fs, &respuesta, sizeof(respuesta), 0);
 	if (respuesta != 0){
 		//zsend(socket_master, )  -- Mandar a master que aborte la trafo
-		log_error(logger, "El archivo %s no pudo no se encuentra disponible", solFs.ruta);
+		log_error(logger, "El archivo %s no se encuentra disponible en el FS", solFs.ruta);
 		int respuesta = 0;
 		cantidadJobs++;
 		zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
