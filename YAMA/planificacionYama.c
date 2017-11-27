@@ -58,7 +58,7 @@ void replanificar(int socket){
 
 	list_iterate(tablaEstado, buscarNodoCopia);
 
-	static int i = 0;
+
 	if(nodoCopia!=NULL){
 		int tipoOperacion = REPLANIFICACION;
 		TamanoBloque * bloque = (TamanoBloque *) malloc(sizeof(*bloque));
@@ -69,7 +69,6 @@ void replanificar(int socket){
 		log_info(logger, "\tReplanificando...");
 
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
-		i++;
 	}else {
 		int muerte = FALLOTRANSFORMACION;
 
