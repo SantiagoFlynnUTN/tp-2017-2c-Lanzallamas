@@ -1,4 +1,5 @@
 #include "planificacionYama.h"
+#include "yama.h"
 #include <string.h>
 #include <sys/time.h>
 #include <sockets.h>
@@ -57,6 +58,7 @@ void replanificar(int socket){
 
 	list_iterate(tablaEstado, buscarNodoCopia);
 
+	static int i = 0;
 	if(nodoCopia!=NULL){
 		int tipoOperacion = REPLANIFICACION;
 		TamanoBloque * bloque = (TamanoBloque *) malloc(sizeof(*bloque));
@@ -67,6 +69,7 @@ void replanificar(int socket){
 		log_info(logger, "\tReplanificando...");
 
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
+		i++;
 	}else {
 		int muerte = FALLOTRANSFORMACION;
 
@@ -144,11 +147,11 @@ void logEntrada(int masterId, int jobId, int disp, int trabajo, char*estado,
 		cabecera = 1;
 	}
 	if (!strcmp("TRANSFORMACION", etapa)) {
-		log_info(logger, "%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s", masterId,
+		log_info(logger, " %  d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s", masterId,
 				jobId, disp, trabajo, estado, nombreNodo, nombreCopia,
 				numBloque, etapa, archTemp);
 	} else {
-		log_info(logger, "%d\t%d\t\t\t%s\t%s\t%s\t\t%s\t%s", masterId,
+		log_info(logger, "  %d\t%d\t\t\t%s\t%s\t%s\t\t%s\t%s", masterId,
 				jobId, estado, nombreNodo, nombreCopia,
 				etapa, archTemp);
 	}
@@ -195,7 +198,7 @@ void generarArchivoTemporal(char * nombre, char * file){
 	struct timeval tv;
 	gettimeofday(&tv,NULL);
 
-	sprintf(file, "temp/%s-%ld.%06ld", nombre, tv.tv_sec, tv.tv_usec);
+	sprintf(file, "temp/%s-%ld.%06ld-%d", nombre, tv.tv_sec, tv.tv_usec, list_size(tablaEstado));
 }
 
 void _setAvailability(t_list * nodos){
