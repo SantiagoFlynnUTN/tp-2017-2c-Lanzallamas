@@ -84,8 +84,8 @@ void setServer(){
 				perror("accept");
 				continue;
 			}
-			printf("server: got connection from %s\n",
-											   inet_ntoa(remoteaddr.sin_addr));
+			/*printf("server: got connection from %s\n",
+											   inet_ntoa(remoteaddr.sin_addr));*/
 			if (!fork()) { // Este es el proceso hijo
 				close(listener); // El hijo no necesita este descriptor
 

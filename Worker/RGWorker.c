@@ -30,7 +30,7 @@ void iniciarGlobal(int mastersock){
 	zrecv(mastersock, archivoReducido, sizeof(char) * 255, 0);
 	zrecv(mastersock, archivoFinal, sizeof(char) * 255, 0);
 
-	log_info(logger, "Archivo de reduccion global %s", archivoFinal);
+	log_info(logger, "[REDUCCION GLOBAL] Archivo de reduccion global %s", archivoFinal);
 
 	zrecv(mastersock, &cantidad, sizeof(cantidad), 0);
 
@@ -42,7 +42,7 @@ void iniciarGlobal(int mastersock){
 		zrecv(mastersock, &nodos[i].puerto, sizeof(nodos[i].puerto), 0);
 		zrecv(mastersock, nodos[i].archivoReducido, sizeof(char) * 255, 0);
 
-		log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
+		log_info(logger, "NODO:%s\tIP:%s\nPUERTO:%d\tARCHIVO:%s\tENCARGADO:NO", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
 	}
 
 	char ruta[255];
@@ -57,14 +57,21 @@ void iniciarGlobal(int mastersock){
 
 	strcpy(rutasTemporales[0], archivoReducido);
 
+	log_info(logger, "[REDUCCION GLOBAL] Solicitando archivos reducidos.");
+
 	for(i = 0; i < cantidad; ++i){
+
 		sprintf(rutasTemporales[i + 1], "reducciones/reduccion-%s-%d", nodos->nombre, pid);
+
+		log_info(logger, "[REDUCCION GLOBAL] Conectando a %s", nodos[i].nombre);
 
 		conectarANodo(&socket_nodos[i], nodos[i].ip, nodos[i].puerto);
 		zsend(socket_nodos[i], &pedArchivo, sizeof(int), 0);
 		zsend(socket_nodos[i], nodos[i].archivoReducido, sizeof(char) * 255, 0);
 
 		recibirArchivo(socket_nodos[i], rutasTemporales[i + 1]);
+
+		log_info(logger, "[REDUCCION GLOBAL] Recibido %s", nodos[i]);
 
 		close(socket_nodos[i]);
 	}
@@ -78,7 +85,7 @@ void iniciarGlobal(int mastersock){
 		apareo(rutasTemporales[i], rutasTemporales[i + 1], tempFile);
 		strcpy(rutasTemporales[i + 1], tempFile);
 	}
-	log_info(logger, "nombre del archivo apareado global: %s\n", tempFile);
+	log_info(logger, "[REDUCCION GLOBAL] Archivo reducido global: %s\n", tempFile);
 
 	int ok = _ejecutarReduccionGlobal(ruta, tempFile, archivoFinal);
 	zsend(mastersock, &ok, sizeof(ok), 0);

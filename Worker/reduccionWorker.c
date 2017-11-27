@@ -25,6 +25,8 @@ void iniciarReduccion(int socket) {
 
 	recibirArchivo(socket, ruta);
 
+	log_info(logger, "[REDUCCION LOCAL] Apareando %d archivos.", cantTemporales);
+
 	char tempFile[255];
 
 	for (i = 0; i < (cantTemporales - 1); ++i) {
@@ -33,9 +35,8 @@ void iniciarReduccion(int socket) {
 		apareo(nombreArchivo[i], nombreArchivo[i + 1], tempFile);
 		strcpy(nombreArchivo[i + 1], tempFile);
 	}
-	log_info(logger, "nombre del archivo apareado: %s\n", tempFile);
+	log_info(logger, "[REDUCCION LOCAL] Nombre del archivo apareado: %s", tempFile);
 
-	//rutinaTransformacion
 	char command[512];
 	sprintf(command, "cat %s | %s >> %s \n", tempFile, ruta, nombreArchivoReducido);
 
@@ -44,5 +45,13 @@ void iniciarReduccion(int socket) {
 	num = system(command);
 
 	zsend(socket, &num, sizeof(int), 0);
+
+	if (num != 0)
+		log_error(logger,
+				"[REDUCCION LOCAL] Se produjo un error al reducir el archivo %s.",
+				tempFile);
+	log_info(logger, "[REDUCCION LOCAL] Archivo reducido.");
+	log_info(logger, "[REDUCCION LOCAL] Resultado: %s",
+				nombreArchivoReducido);
 	exit(1);
 }

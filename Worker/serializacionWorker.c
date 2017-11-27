@@ -42,7 +42,8 @@ void _almacenamiento(int socket){
 	zrecv(socket, archivo, sizeof(char) * 255, 0);
 	zrecv(socket, archivoFS, sizeof(char) * 255, 0);
 
-	log_info(logger, "ARCHIVO GLOBAL: %s\nARCHIVO FS: %s\n", archivo, archivoFS);
+	log_info(logger, "[ALMACENAMIENTO] Archivo a enviar al FS: %s", archivo);
+
 	int mensaje = 4;
 	zsend(socketFS, &mensaje, sizeof(mensaje), 0);
 
@@ -55,8 +56,11 @@ void _almacenamiento(int socket){
 	int status;
 	if(recv(socketFS, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
 		zsend(socket, &respuesta, sizeof(respuesta), 0);
+		log_error(logger, "[ALMACENAMIENTO] Fallo almacenamiento de %s en el FS", archivoFS);
 	}else{
 		int respuesta = 0;
 		zsend(socket, &respuesta, sizeof(respuesta), 0);
+		log_info(logger, "[ALMACENAMIENTO] %s fue almacenado correctamente.", archivoFS);
 	}
+	exit(1);
 }

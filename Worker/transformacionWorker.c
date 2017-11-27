@@ -85,7 +85,7 @@ void recibirArchivo(int socket, char * ruta){
 	close(archivo);
 }
 
-void iniciarTransformacion(int socket){
+void iniciarTransformacion(int socket) {
 	mensajeTransf t;
 	zrecv(socket, &t.cantidadBytes, sizeof(t.cantidadBytes), 0);
 	zrecv(socket, &t.bloque, sizeof(t.bloque), 0);
@@ -95,18 +95,30 @@ void iniciarTransformacion(int socket){
 
 	recibirArchivo(socket, ruta);
 
+	log_info(logger, "[TRANSFORMACION] Leyendo bloque %d desde data.bin",
+			t.bloque);
+
 	char tempFile[255];
 	sprintf(tempFile, "temp/transformacion%d.sh", getpid());
 
 	_guardarBloqueComoTemporal(tempFile, t.bloque, t.cantidadBytes);
 
-	char command[512];
-	sprintf(command, "cat %s | %s | sort >> %s \n", tempFile, ruta, t.nombreTemp);
+	log_info(logger, "[TRANSFORMACION] Bloque %d guardado como %s", t.bloque,
+			tempFile);
 
-	int num = 0;
+	char command[512];
+	sprintf(command, "cat %s | %s | sort >> %s", tempFile, ruta, t.nombreTemp);
+
+	int num = 1;
 
 	num = system(command);
 
 	zsend(socket, &num, sizeof(int), 0);
+	if (num != 0)
+		log_error(logger,
+				"[TRANSFORMACION] Se produjo un error al trasnformar el bloque %d.",
+				t.bloque);
+	log_info(logger, "[TRANSFORMACION] Bloque %d transformado. Resultado: %s",
+			t.bloque, t.nombreTemp);
 	exit(1);
 }
