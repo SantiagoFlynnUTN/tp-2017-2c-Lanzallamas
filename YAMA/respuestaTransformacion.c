@@ -24,6 +24,14 @@ void almacenamientoOK(int socket){
 
     if(entradaFinalizada != NULL) {
         entradaFinalizada->estado = FINALIZADO;
+
+        logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
+        				entradaFinalizada->disponibilidad,
+        				trabajoActual(entradaFinalizada->nombreNodo), "FINALIZADO",
+        				entradaFinalizada->nombreNodo, "-",
+        				0, "ALMACENAMIENTO",
+        				entradaFinalizada->archivoTemporal);
+
         log_info(logger, "El job %d ha sido finalizado", jobId);
         cabecera = 0;
     }
@@ -46,8 +54,15 @@ void transformacionOK(int socket){
     if(entradaFinalizada != NULL){
         entradaFinalizada->estado = FINALIZADO;
 
-        bool criterioFilter(void * entrada){
-            EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)entrada;
+		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
+				entradaFinalizada->disponibilidad,
+				trabajoActual(entradaFinalizada->nombreNodo), "FINALIZADO",
+				entradaFinalizada->nombreNodo, entradaFinalizada->nodoCopia->nombre,
+				entradaFinalizada->numeroBloque, "TRANSFORMACION",
+				entradaFinalizada->archivoTemporal);
+
+		bool criterioFilter(void * entrada) {
+			EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)entrada;
 
             return entradaTablaEstado->jobId == jobId &&
                    entradaTablaEstado->etapa == TRANSFORMACION &&
@@ -87,6 +102,13 @@ void reduccionLocalOK(int socket){
 
     if(entradaFinalizada != NULL){
         entradaFinalizada->estado = FINALIZADO;
+
+        logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
+        				entradaFinalizada->disponibilidad,
+        				trabajoActual(entradaFinalizada->nombreNodo), "FINALIZADO",
+        				entradaFinalizada->nombreNodo, "-",
+        				entradaFinalizada->numeroBloque, "REDUCCION LOCAL",
+        				entradaFinalizada->archivoTemporal);
 
         bool criterioFilter(void * entrada){
             EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)entrada;
@@ -128,6 +150,13 @@ void reduccionGlobalOk(int socket){
     if(reduccionGlobal != NULL){
         reduccionGlobal->estado = FINALIZADO;
 
+		logEntrada(reduccionGlobal->masterId, reduccionGlobal->jobId,
+				reduccionGlobal->disponibilidad,
+				trabajoActual(reduccionGlobal->nombreNodo), "FINALIZADO",
+				reduccionGlobal->nombreNodo, "-",
+				reduccionGlobal->numeroBloque, "REDUC. GLOBAL",
+				reduccionGlobal->archivoTemporal);
+
         _enviarOperacionAlmacenamiento(socket, reduccionGlobal);
     }else{
         log_error(logger, "NO ENCONTRO LA Reduccion Global\njob: %d\n", jobId);
@@ -146,12 +175,13 @@ void _enviarOperacionAlmacenamiento(int socket, EntradaTablaEstado * reduccion){
     en->masterId = reduccion->masterId;
     strcpy(en->nombreNodo, reduccion->nombreNodo);
     strcpy(en->ip, reduccion->ip);
+    en->disponibilidad = reduccion->disponibilidad;
 
     memset(en->archivoTemporal, 0, sizeof(char) * 255);
 
     list_add(tablaEstado, en);
 
-	logEntrada(en->masterId, en->jobId, 0, 0,
+	logEntrada(en->masterId, en->jobId, en->disponibilidad,(int) trabajoActual(reduccion->nombreNodo),
 			"EN PROCESO", en->nombreNodo, "-", "-", "ALMACENAMIENTO",
 			en->archivoTemporal);
 

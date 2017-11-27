@@ -13,7 +13,6 @@ void _sumarTrabajos(t_list * nodos);
 void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, TamanoBloque * bloque, TipoOperacion operacion);
 void _sumarDisponiblidadBase(t_list * listaNodos);
 void _sortNodos(t_list * nodos);
-void _iniciarTrabajos(t_list * nodos);
 
 
 void ordenarNodos(t_list * nodos) {
@@ -38,6 +37,35 @@ InfoNodo * buscarCopia(char numeroBloqueStr[5], t_list * listaNodos){
 	return NULL;
 }
 
+int trabajoActual(char* nombreNodo){
+	int trabajo = 0;
+
+	void iterator(void* ent) {
+		EntradaTablaEstado* en = (EntradaTablaEstado*) ent;
+		if (!strcmp(en->nombreNodo, nombreNodo) && en->estado == ENPROCESO)
+
+			if (en->etapa == REDUCGLOBAL) {
+
+				bool criterioFilter(void * entrada) {
+					EntradaTablaEstado * entradaTablaEstado =
+							(EntradaTablaEstado *) entrada;
+
+					return entradaTablaEstado->jobId == en->jobId
+							&& entradaTablaEstado->etapa == REDUCCIONLOCAL;
+				}
+
+				t_list * reducciones = list_filter(tablaEstado, criterioFilter);
+
+				trabajo = list_size(reducciones) / 2;
+				trabajo += list_size(reducciones) % 2;
+
+			} else
+				trabajo++;
+	}
+	list_iterate(tablaEstado, iterator);
+	return trabajo;
+}
+
 
 void replanificar(int socket){
 	usleep(retardoPlanificacion * 1000);
@@ -53,11 +81,14 @@ void replanificar(int socket){
 			strcmp(en->archivoTemporal, transf.nombreTemp) == 0){
 			en->estado = ERRORYAMA;
 			nodoCopia = en->nodoCopia;
+			logEntrada(en->masterId, en->jobId, en->disponibilidad,
+					trabajoActual(transf.nombreNodo), "REPLANIFICANDO",
+					en->nombreNodo, en->nodoCopia, transf.numBloque,
+					"TRANSFORMACION", transf.nombreTemp);
 		}
 	}
 
 	list_iterate(tablaEstado, buscarNodoCopia);
-
 
 	if(nodoCopia!=NULL){
 		int tipoOperacion = REPLANIFICACION;
@@ -65,8 +96,6 @@ void replanificar(int socket){
 		bloque->bloque = transf.numBloque;
 		bloque->bytes = transf.bytes;
 		zsend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
-
-		log_info(logger, "\tReplanificando...");
 
 		_enviarAMaster(socket, nodoCopia, NULL, bloque, TRANSFORMACION);
 	}else {
@@ -150,8 +179,8 @@ void logEntrada(int masterId, int jobId, int disp, int trabajo, char*estado,
 				jobId, disp, trabajo, estado, nombreNodo, nombreCopia,
 				numBloque, etapa, archTemp);
 	} else {
-		log_info(logger, "  %d\t%d\t\t\t%s\t%s\t%s\t\t%s\t%s", masterId,
-				jobId, estado, nombreNodo, nombreCopia,
+		log_info(logger, "  %d\t%d\t%d\t%d\t%s\t%s\t%s\t\t%s\t%s", masterId,
+				jobId, disp, trabajo, estado, nombreNodo, nombreCopia,
 				etapa, archTemp);
 	}
 }
@@ -182,15 +211,18 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 	strcpy(entradaTablaEstado->ip, nodo->ip);
 	entradaTablaEstado->puerto = nodo->puerto;
 	entradaTablaEstado->nodoCopia = nodoCopia;
+	int disp = nodo->disponibilidad;
+	entradaTablaEstado->disponibilidad = disp;
+	entradaTablaEstado->historicas = _getTareasHistoricas(nodo);
+
+	list_add(tablaEstado, entradaTablaEstado);
 
 	logEntrada(entradaTablaEstado->masterId, entradaTablaEstado->jobId,
-			nodo->disponibilidad, nodo->trabajosActuales, "EN PROCESO",
+			nodo->disponibilidad, trabajoActual(nodo->nombre), "EN PROCESO",
 			entradaTablaEstado->nombreNodo,
 			entradaTablaEstado->nodoCopia->nombre,
 			entradaTablaEstado->numeroBloque, "TRANSFORMACION",
 			entradaTablaEstado->archivoTemporal);
-
-	list_add(tablaEstado, entradaTablaEstado);
 }
 
 void generarArchivoTemporal(char * nombre, char * file){

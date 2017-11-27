@@ -71,7 +71,7 @@ void iniciarGlobal(int mastersock){
 
 		recibirArchivo(socket_nodos[i], rutasTemporales[i + 1]);
 
-		log_info(logger, "[REDUCCION GLOBAL] Recibido %s", nodos[i]);
+		log_info(logger, "[REDUCCION GLOBAL] Recibido %s", nodos[i].archivoReducido);
 
 		close(socket_nodos[i]);
 	}

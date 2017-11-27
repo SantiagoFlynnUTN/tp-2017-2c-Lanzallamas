@@ -134,6 +134,9 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 				en->numeroBloque = 0;
 				en->jobId = trafo->jobId;
 				en->masterId = trafo->masterId;
+				en->disponibilidad = trafo->disponibilidad;
+				logEntrada(en->masterId, en->jobId, trafo->disponibilidad,(int) trabajoActual(en->nombreNodo), "EN PROCESO", en->nombreNodo, "-", 0,
+						"REDUCCION LOCAL", en->archivoTemporal);
 			}
 
 			zsend(socket, trafo->archivoTemporal, sizeof(char) * 255, 0);
@@ -144,13 +147,11 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 
 	list_add(tablaEstado, en);
 
-	logEntrada(en->masterId, en->jobId, 0, 0, "EN PROCESO", en->nombreNodo, "-", "-",
-			"REDUCCION LOCAL", en->archivoTemporal);
+
 }
 
 void matarMasterGlobal(int socket){
 	int jobId;
-	char archivoReducido[255];
 	int muerte = FALLOREDGLOBAL;
 
 	zrecv(socket, &jobId, sizeof(jobId), 0);
@@ -167,6 +168,11 @@ void matarMasterGlobal(int socket){
 
 	if (entradaFinalizada != NULL) {
 		entradaFinalizada->estado = ERRORYAMA;
+		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
+						entradaFinalizada->disponibilidad,
+						(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR",
+						entradaFinalizada->nombreNodo, "-", 0, "REDUC. GLOBAL",
+						entradaFinalizada->archivoTemporal);
 		log_error(logger, "Error en reduccion global en nodo %s, Job %d", entradaFinalizada->nombreNodo, jobId);
 		cabecera = 0;
 	}
@@ -195,6 +201,12 @@ void matarMaster(int socket){
 
 	if (entradaFinalizada != NULL) {
 		entradaFinalizada->estado = ERRORYAMA;
+
+		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
+						entradaFinalizada->disponibilidad,
+						(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR",
+						entradaFinalizada->nombreNodo, "-", 0, "REDUCCION LOCAL",
+						entradaFinalizada->archivoTemporal);
 		log_error(logger, "Error en reduccion local en nodo %s, Job %d", entradaFinalizada->nombreNodo, jobId);
 		cabecera = 0;
 	}
@@ -217,6 +229,11 @@ void almacenamientoError(int socket){
 
 	if (entradaFinalizada != NULL) {
 		entradaFinalizada->estado = ERRORYAMA;
+		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
+				entradaFinalizada->disponibilidad,
+				(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR",
+				entradaFinalizada->nombreNodo, "-", 0, "ALMACENAMIENTO",
+				entradaFinalizada->archivoTemporal);
 		log_error(logger, "Error al almacenar el archivo en Job %d. Master finalizado.", job);
 		cabecera = 0;
 		int muerte = ERRORALMACENAMIENTO;

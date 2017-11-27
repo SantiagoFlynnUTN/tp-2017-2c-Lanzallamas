@@ -6,7 +6,7 @@
 #include <protocoloComunicacion.h>
 #include "planificacionYama.h"
 
-int calcularIndiceConValorMaximo(int * array, int cantidad);
+int calcularIndiceConValorMinimo(int * array, int cantidad);
 
 void reduccionGlobal(int socket, int jobId){
 
@@ -79,6 +79,7 @@ void reduccionGlobal(int socket, int jobId){
 			en->masterId = entradaNodo->masterId;
 			strcpy(en->nombreNodo, entradaNodo->nombreNodo);
 			strcpy(en->ip, entradaNodo->ip);
+			en->disponibilidad = entradaNodo->disponibilidad;
 			generarArchivoTemporal(en->nombreNodo, en->archivoTemporal);
 		}
 	}
@@ -87,7 +88,7 @@ void reduccionGlobal(int socket, int jobId){
 
 	list_add(tablaEstado, en);
 
-	logEntrada(en->masterId, en->jobId, 0, 0,"EN PROCESO", en->nombreNodo, "-", "-",
+	logEntrada(en->masterId, en->jobId, en->disponibilidad, (int) trabajoActual(en->nombreNodo), "EN PROCESO", en->nombreNodo, "-", "-",
 			"REDUC. GLOBAL", en->archivoTemporal);
 }
 

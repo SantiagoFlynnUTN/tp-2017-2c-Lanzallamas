@@ -34,13 +34,16 @@ typedef struct t_TablaEstado{
 	int masterId;
 	char nombreNodo[100];
 	char ip[20];
+	int disponibilidad;
+	int trabajoActual;
+	int historicas;
 	uint16_t puerto;
 	int numeroBloque;
 	TipoOperacion etapa;
 	char archivoTemporal[255];
 	Estado estado;
 	InfoNodo * nodoCopia;
-} EntradaTablaEstado;
+} __attribute__((packed)) EntradaTablaEstado;
 
 typedef struct{
 	char ruta[255];

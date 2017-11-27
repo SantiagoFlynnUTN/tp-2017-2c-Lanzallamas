@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
 
 	transformador = argv[1];
 	reductor = argv[2];
-	pathArchivoFS = argv[4];
+	pathArchivoFS = argv[3];
 
 	FILE * t, *r;
 	t = fopen(transformador, "r");
