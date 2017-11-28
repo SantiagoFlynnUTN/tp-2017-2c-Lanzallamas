@@ -190,3 +190,41 @@ int _buscarDirectorio(char * nombre){
 
     return -1;
 }
+
+bool nombreValido(int dir, char * nuevoNombre){
+    void * _descriptorArchivoANombre(void * archivo){
+        Archivo * descriptorArchivo = (Archivo *)archivo;
+        return obtenerNombreArchivo(descriptorArchivo->ruta);
+    }
+
+    t_list * nombres = list_map(listaArchivosDirectorios[dir], _descriptorArchivoANombre);
+
+    bool _checkearNombreRepetido(void* nombre) {
+        char * nombreOriginal = (void *) nombre;
+
+        return strcmp(nombreOriginal, nuevoNombre) == 0;
+    }
+
+    list_add_all(nombres, obtenerNombresDirectoriosHijos(dir));
+
+
+    bool repetido = list_any_satisfy(nombres, _checkearNombreRepetido);
+
+    list_destroy(nombres);
+
+    return !repetido;
+}
+
+void calcularRutaDirectorio(int dir, char * ruta){
+    memset(ruta, 0, sizeof(char) * 255);
+
+    if(dir <= 0){
+        return;
+    }
+
+    while(dir != 0){
+        _agregarAlPrincipio(ruta, tabla_Directorios[dir].nombre);
+        _agregarAlPrincipio(ruta, "/");
+        dir= tabla_Directorios[dir].padre;
+    }
+}
