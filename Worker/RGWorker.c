@@ -61,7 +61,7 @@ void iniciarGlobal(int mastersock){
 
 	for(i = 0; i < cantidad; ++i){
 
-		sprintf(rutasTemporales[i + 1], "reducciones/reduccion-%s-%d", nodos->nombre, pid);
+		sprintf(rutasTemporales[i + 1], "reducciones/reduccion-%s-%d", nodos[i].nombre, pid);
 
 		log_info(logger, "[REDUCCION GLOBAL] Conectando a %s", nodos[i].nombre);
 
