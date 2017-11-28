@@ -6,7 +6,6 @@
 #include <protocoloComunicacion.h>
 
 int _buscarMax(t_list * nodos);
-int _getTareasHistoricas(InfoNodo * nodo);
 int _pWl(InfoNodo * nodo, int max);
 void _setAvailability(t_list * nodos);
 void _sumarTrabajos(t_list * nodos);
@@ -213,7 +212,7 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 	entradaTablaEstado->nodoCopia = nodoCopia;
 	int disp = nodo->disponibilidad;
 	entradaTablaEstado->disponibilidad = disp;
-	entradaTablaEstado->historicas = _getTareasHistoricas(nodo);
+	entradaTablaEstado->historicas = getTareasHistoricas(nodo->nombre);
 
 	list_add(tablaEstado, entradaTablaEstado);
 
@@ -291,7 +290,7 @@ void _sortNodos(t_list * nodos){
 				* nodo2 = (InfoNodo *) n2;
 
 		if(nodo1->disponibilidad == nodo2->disponibilidad){
-			return _getTareasHistoricas(nodo1) <  _getTareasHistoricas(nodo2);
+			return getTareasHistoricas(nodo1->nombre) <  getTareasHistoricas(nodo2->nombre);
 		}
 
 		return nodo1->disponibilidad > nodo2->disponibilidad;
@@ -300,12 +299,12 @@ void _sortNodos(t_list * nodos){
 	list_sort(nodos, _ordenarPorDisponibilidad);
 }
 
-int _getTareasHistoricas(InfoNodo * nodo){
+int getTareasHistoricas(char * nombreNodo){
 	int tareas = 0;
 	void sumarTrabajoHistoricos(void * entrada){
 		EntradaTablaEstado * en = (EntradaTablaEstado *) entrada;
 
-		if(en->estado != ENPROCESO && strcmp(en->nombreNodo, nodo->nombre) == 0){
+		if(en->estado != ENPROCESO && strcmp(en->nombreNodo, nombreNodo) == 0){
 			tareas++;
 		}
 	}

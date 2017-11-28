@@ -12,6 +12,7 @@ typedef struct{
 }__attribute__((packed))
 transfError;
 
+int getTareasHistoricas(char * nombreNodo);
 int trabajoActual(char* nombreNodo);
 void ordenarNodos(t_list * nodos);
 int estaEnNodo(DescriptorBloque bloque, InfoNodo *pClock);

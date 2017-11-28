@@ -161,5 +161,8 @@ void iniciarServer(){
 }
 
 void inicializarServer(){
-	iniciarServer();
+	//iniciarServer();
+
+	pthread_t tid;
+	pthread_create(&tid, NULL, iniciarServer, NULL);
 }

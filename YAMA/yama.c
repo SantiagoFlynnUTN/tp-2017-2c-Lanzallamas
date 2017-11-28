@@ -23,6 +23,8 @@ void recargarConfiguracion(){
 	// destruyo la config original ya que el config_create hace un malloc
 	config_destroy(config);
 	_cargarConfiguracion();
+	log_info(logger, "Recarga de configurcion OK\n");
+	cabecera = 0;
 }
 
 void intToString(int numero, char * string){
