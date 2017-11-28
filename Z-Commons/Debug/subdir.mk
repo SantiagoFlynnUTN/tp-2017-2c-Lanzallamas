@@ -8,24 +8,21 @@ C_SRCS += \
 ../cosas.c \
 ../protocoloComunicacion.c \
 ../prueba.c \
-../sockets.c \
-../structUtiles.c 
+../sockets.c 
 
 OBJS += \
 ./archivos.o \
 ./cosas.o \
 ./protocoloComunicacion.o \
 ./prueba.o \
-./sockets.o \
-./structUtiles.o 
+./sockets.o 
 
 C_DEPS += \
 ./archivos.d \
 ./cosas.d \
 ./protocoloComunicacion.d \
 ./prueba.d \
-./sockets.d \
-./structUtiles.d 
+./sockets.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -25,7 +25,7 @@ endif
 all: YAMA
 
 dependents:
-	-cd /home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug && $(MAKE) clean all
 
 # Tool invocations
 YAMA: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug/libZ-Commons.so
