@@ -15,4 +15,7 @@ int obtenerIdDirectorio();
 int cantidadDirectoriosHijos(int dir);
 void destruirArchivo(Archivo * archivo);
 void liberarBloque(Ubicacion bloque);
+bool nombreValido(int dir, char * nuevoNombre);
+void calcularRutaDirectorio(int dir, char * ruta);
+void _agregarAlPrincipio(char* stringOriginal, char* stringAAgregarAlPrincipio);
 #endif //TP_2017_2C_LANZALLAMAS_UTILIDADESFILESYSTEM_H

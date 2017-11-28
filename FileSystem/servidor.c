@@ -51,9 +51,8 @@ void manejarCliente(int newfd){
 			close(newfd); // bye!
 			FD_CLR(newfd, &master); // eliminar del conjunto maestro
 		}
-	return;
-}
-
+    	return;
+    }
 
     numbytes = recv(newfd, &buf, sizeof(int), 0); //leo el primer byte. Me dirá el tipo de paquete. (es un int)
 

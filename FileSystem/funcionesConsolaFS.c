@@ -38,6 +38,7 @@ void info(char * archivo);
 void infoNodos();
 void infoNodosLog();
 void bitmap(char * nodo);
+void doMv(char * nombreOriginal, char * nombreFinal);
 
 void hiloConsola(){
     printf("Consola disponible par uso\n");
@@ -437,12 +438,21 @@ void rmArchivo(char * path){
     infoNodosLog();
 }
 
-
 void renameFs(char * nombreOriginal, char * nombreFinal){
+    if(nombreFinal[0] == '/'){
+        printf("Error: el comando rename únicamente modifica nombres, para cambiar la ruta utilice el comando mv\n");
+        return;
+    }
+
     int directorioPadre = calcularDirectorioPadre(nombreOriginal);
 
     if(directorioPadre == -1){
         printf("No existe la ruta %s\n", nombreOriginal);
+        return;
+    }
+
+    if(!nombreValido(directorioPadre, nombreFinal)){
+        printf("Ya existe un archivo o directorio con nombre %s\n", nombreFinal);
         return;
     }
 
@@ -456,7 +466,9 @@ void renameFs(char * nombreOriginal, char * nombreFinal){
 
         list_remove_by_condition(listaArchivosDirectorios[directorioPadre], criterio);
 
-        strcpy(descriptorArchivo->ruta, nombreFinal);
+        calcularRuta(*descriptorArchivo, nombreFinal, descriptorArchivo->ruta);
+
+        printf("Nombre final %s\n", nombreFinal);
 
         list_add(listaArchivosDirectorios[directorioPadre], descriptorArchivo);
         dictionary_put(archivos, descriptorArchivo->ruta, descriptorArchivo);
@@ -491,15 +503,32 @@ void renameFs(char * nombreOriginal, char * nombreFinal){
                 char dirHijo[255];
                 strcpy(dirHijo, tabla_Directorios[i].nombre);
                 obtenerNuevaRutaArchivo(dirHijo, nombreFinal);
+                _agregarAlPrincipio(dirHijo, "/");
+
                 printf("El directorio de %s será %s\n", tabla_Directorios[i].nombre, dirHijo);
 
-                mv(dirHijo, dirHijo);
+                doMv(dirHijo, dirHijo);
             }
         }
     }
 }
 
 void mv(char * nombreOriginal, char * nombreFinal){
+    if(nombreFinal[0] != '/'){
+        printf("Error: el comando mv funciona con rutas absolutas, para cambiar sólo el nombre utilice el comando rename\n");
+        return;
+    }
+
+    int directorioPadreNuevo = calcularDirectorioPadre(nombreFinal);
+    if(!nombreValido(directorioPadreNuevo, obtenerNombreArchivo(nombreFinal))){
+        printf("Ya existe un archivo o directorio con nombre %s\n", nombreFinal);
+        return;
+    }
+
+    doMv(nombreOriginal, nombreFinal);
+}
+
+void doMv(char * nombreOriginal, char * nombreFinal){
     int directorioPadreViejo = calcularDirectorioPadre(nombreOriginal);
     int directorioPadreNuevo = calcularDirectorioPadre(nombreFinal);
 
@@ -562,7 +591,7 @@ void mv(char * nombreOriginal, char * nombreFinal){
                 obtenerNuevaRutaArchivo(dirHijo, nombreFinal);
                 printf("El directorio de %s será %s\n", tabla_Directorios[i].nombre, dirHijo);
 
-                mv(dirHijo, dirHijo);
+                doMv(dirHijo, dirHijo);
             }
         }
     }
