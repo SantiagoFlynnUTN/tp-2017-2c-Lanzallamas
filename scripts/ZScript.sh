@@ -26,11 +26,14 @@ make
 
 echo "Generando data.bin"
 
-fallocate -l 50M /home/utnso/data.bin
+fallocate -l 50M data.bin
+
+cd ..
+fallocate -l 50M data.bin
+
+cd ..
 
 echo "Listo DataNode"
-cd ..
-cd ..
 
 sudo apt-get install libreadline6 libreadline6-dev
 
@@ -68,6 +71,10 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/utnso/workspace/tp-2017-2c-Lanzall
 
 make clean
 make
+
+mkdir reducciones
+mkdir temp
+mkdir scripts
 
 echo "Listo Worker"
 cd ..
