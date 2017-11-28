@@ -135,7 +135,7 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 				en->jobId = trafo->jobId;
 				en->masterId = trafo->masterId;
 				en->disponibilidad = trafo->disponibilidad;
-				logEntrada(en->masterId, en->jobId, trafo->disponibilidad,(int) trabajoActual(en->nombreNodo), "EN PROCESO", en->nombreNodo, "-", 0,
+				logEntrada(en->masterId, en->jobId, trafo->disponibilidad,(int) trabajoActual(en->nombreNodo) +1, "EN PROCESO", en->nombreNodo, "-", 0,
 						"REDUCCION LOCAL", en->archivoTemporal);
 			}
 
@@ -170,7 +170,7 @@ void matarMasterGlobal(int socket){
 		entradaFinalizada->estado = ERRORYAMA;
 		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
 						entradaFinalizada->disponibilidad,
-						(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR",
+						(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR    ",
 						entradaFinalizada->nombreNodo, "-", 0, "REDUC. GLOBAL",
 						entradaFinalizada->archivoTemporal);
 		log_error(logger, "Error en reduccion global en nodo %s, Job %d", entradaFinalizada->nombreNodo, jobId);
@@ -204,7 +204,7 @@ void matarMaster(int socket){
 
 		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
 						entradaFinalizada->disponibilidad,
-						(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR",
+						(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR    ",
 						entradaFinalizada->nombreNodo, "-", 0, "REDUCCION LOCAL",
 						entradaFinalizada->archivoTemporal);
 		log_error(logger, "Error en reduccion local en nodo %s, Job %d", entradaFinalizada->nombreNodo, jobId);
@@ -231,7 +231,7 @@ void almacenamientoError(int socket){
 		entradaFinalizada->estado = ERRORYAMA;
 		logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
 				entradaFinalizada->disponibilidad,
-				(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR",
+				(int) trabajoActual(entradaFinalizada->nombreNodo), "ERROR    ",
 				entradaFinalizada->nombreNodo, "-", 0, "ALMACENAMIENTO",
 				entradaFinalizada->archivoTemporal);
 		log_error(logger, "Error al almacenar el archivo en Job %d. Master finalizado.", job);
