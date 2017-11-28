@@ -19,7 +19,7 @@ echo "Compilando DataNode"
 
 cd DataNode/Debug
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/Z-Commons/Debug
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/utnso/workspace/Z-Commons/Debug
 
 make clean
 make

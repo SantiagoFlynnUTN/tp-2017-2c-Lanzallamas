@@ -25,7 +25,7 @@ endif
 all: FileSystem
 
 dependents:
-	-cd /home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug && $(MAKE) clean all
 
 # Tool invocations
 FileSystem: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug/libZ-Commons.so
