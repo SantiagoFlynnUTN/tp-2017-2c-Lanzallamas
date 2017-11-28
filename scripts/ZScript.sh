@@ -1,4 +1,31 @@
 #!/bin/sh
+
+#  mkdir workspace
+#  cd workspace
+#  git clone https://github.com/sisoputnfrba/tp-2017-2c-Lanzallamas.git
+#  cd workspace/tp-2017-2c-Lanzallamas/scripts
+#  ./ZScript.sh
+#  cd workspace/tp-2017-2c-Lanzallamas/DataNode
+#  fallocate -l 50M data.bin     <-  cambiar 50 por lo q nos pidan
+#  vim dataNode.conf
+#  para la pc con 2 nodos{
+#                   cd Debug
+#                   fallocate -l 50M data.bin     <-  cambiar 50 por lo q nos pidan
+#                   vim dataNode.conf
+#                   cd ..
+#                 }
+#  cd ../Worker
+#  vim worker.conf
+#  para la pc con 2 nodos{
+#                   cd Debug
+#                   fallocate -l 50M data.bin     <-  cambiar 50 por lo q nos pidan
+#                   vim worker.conf
+#                   cd ..
+#                 }
+#  Con esto quedarian seteados los nodos de todas las pcs. 
+#  Queda editar la config de cada proceso en particular
+#
+
 echo "Instalando/Compilando bibliotecas"
 
 git clone "https://github.com/sisoputnfrba/so-commons-library"
