@@ -5,6 +5,7 @@
 #  git clone https://github.com/sisoputnfrba/tp-2017-2c-Lanzallamas.git
 #  cd workspace/tp-2017-2c-Lanzallamas/scripts
 #  ./ZScript.sh
+#  exit    <-   tenemos que levantar de nuevo la consola para q cargue las variables de entorno.
 #  cd workspace/tp-2017-2c-Lanzallamas/DataNode
 #  fallocate -l 50M data.bin     <-  cambiar 50 por lo q nos pidan
 #  vim dataNode.conf
