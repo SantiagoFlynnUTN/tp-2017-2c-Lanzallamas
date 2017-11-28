@@ -84,9 +84,10 @@ make
 
 echo "Listo YAMA"
 cd
-vim .bashrc
+sed -i '$ a export LD_LIBRARY_PATH=$LIBRARY_PATH:/home/utnso/workspace/tp-2017-2c-Lanzallamas/Z-Commons/Debug' .bashrc
+sed -i '$ a export LC_ALL=C' .bashrc
 
-export LC_ALL=C
+
 #./Debug/DataNode
 
 exit 0
