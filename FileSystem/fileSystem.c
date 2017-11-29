@@ -43,6 +43,7 @@ void printNodo(DescriptorNodo * nodo){
 
 void asociarNodo(int socket){
     DescriptorNodo * newNodo = (DescriptorNodo *)malloc(sizeof(*newNodo));
+    pthread_mutex_init ( &newNodo->semaforo, NULL);
     newNodo->socket = socket;
     recv(socket, newNodo->nombreNodo, 100 * sizeof(char), MSG_WAITALL);
     recv(socket, newNodo->ip, 20 * sizeof(char), MSG_WAITALL);

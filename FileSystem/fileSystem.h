@@ -28,6 +28,7 @@ typedef struct t_DescriptorNodo{
     t_bitarray * bitmap;
     int socket;
     int bloquesLibres;
+    pthread_mutex_t semaforo;
 } DescriptorNodo;
 
 // Falta el bitmap, no se cuál es la mejor

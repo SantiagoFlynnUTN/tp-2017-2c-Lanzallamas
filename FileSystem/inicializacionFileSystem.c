@@ -17,6 +17,7 @@ void cargarTablaNodos(t_config * tablaNodos){
     while(*nombresNodos){
         DescriptorNodo * newNodo = (DescriptorNodo *)malloc(sizeof(*newNodo));
         newNodo->socket = -1; // indica que no está conectado
+        pthread_mutex_init ( &newNodo->semaforo, NULL);
         strcpy(newNodo->nombreNodo, *nombresNodos);
         // FALTA IP Y PUERTO y bitmap
         char totalNodoKey[105];
