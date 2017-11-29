@@ -125,4 +125,6 @@ sed -i '$ a export LC_ALL=C' .bashrc
 
 #./Debug/DataNode
 
+. /home/utnso/.bashrc
+
 exit 0
