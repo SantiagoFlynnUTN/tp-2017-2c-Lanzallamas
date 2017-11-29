@@ -52,10 +52,6 @@ void agregarNodoEnTabla(DescriptorNodo * newNodo){
 
         dictionary_remove(nodos, descriptorNodo->nombreNodo);
         dictionary_put(nodos, descriptorNodo->nombreNodo, descriptorNodo);
-
-        if(!_contieneNombreNodo(descriptorNodo->nombreNodo)){
-            list_add(nombreNodos, newNodo->nombreNodo);
-        }
     }
 }
 
