@@ -57,8 +57,6 @@ int obtenerArchivo(char * rutaArchivoFS, char * rutaArchivoFinal){
         int * retval;
         pthread_join(tid[index], &retval);
 
-        printf("TENGO %d\n", strlen(infoRecepcion->datos));
-
 
         if(*retval != 0){
             errores = 1;
@@ -105,9 +103,6 @@ int _guardarBloque(InfoRecepcion ** info){
         log_error(logger, "Error recibiendo el bloque del nodo %s\n", nodo->nombreNodo);
         return -1;
     }
-
-    printf("LEO %d\n", strlen(infoRecepcion->datos));
-
 
     pthread_mutex_unlock(&nodo->semaforo);
     return 0;

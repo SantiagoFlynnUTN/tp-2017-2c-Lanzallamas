@@ -11,6 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="317ff8a4-2641-43d2-ad26-81aafe72e3d2" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ZScript.sh" afterPath="$PROJECT_DIR$/scripts/ZScript.sh" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,11 +23,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="fileSystem.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="fileSystem.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FileSystem/fileSystem.c">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1770">
               <caret line="154" column="25" lean-forward="true" selection-start-line="154" selection-start-column="25" selection-end-line="154" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ZScript.sh" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/scripts/ZScript.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="333">
+              <caret line="127" column="21" lean-forward="false" selection-start-line="127" selection-start-column="21" selection-end-line="127" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -81,7 +92,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Worker/cliente.c" />
         <option value="$PROJECT_DIR$/YAMA/chat.c" />
         <option value="$PROJECT_DIR$/YAMA/servidor.c" />
         <option value="$PROJECT_DIR$/FileSystem/chat.c" />
@@ -132,6 +142,7 @@
         <option value="$PROJECT_DIR$/DataNode/mainDN.c" />
         <option value="$PROJECT_DIR$/DataNode/chat.c" />
         <option value="$PROJECT_DIR$/FileSystem/servidor.c" />
+        <option value="$PROJECT_DIR$/scripts/ZScript.sh" />
       </list>
     </option>
   </component>
@@ -296,12 +307,12 @@
       <workItem from="1511859730287" duration="4389000" />
       <workItem from="1511915221491" duration="744000" />
       <workItem from="1511929322925" duration="245000" />
-      <workItem from="1511988364594" duration="2993000" />
+      <workItem from="1511988364594" duration="3108000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="178017000" />
+    <option name="totallyTimeSpent" value="178132000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -374,13 +385,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/FileSystem/configuracionFileSystem.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="5" lean-forward="false" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Master/mainMaster.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="163">
@@ -737,6 +741,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1770">
           <caret line="154" column="25" lean-forward="true" selection-start-line="154" selection-start-column="25" selection-end-line="154" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/ZScript.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="333">
+          <caret line="127" column="21" lean-forward="false" selection-start-line="127" selection-start-column="21" selection-end-line="127" selection-end-column="21" />
           <folding />
         </state>
       </provider>
