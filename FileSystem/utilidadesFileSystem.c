@@ -75,7 +75,20 @@ int archivoDisponible(Archivo * archivo){
 		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
 		if(descriptorNodoCopia0->socket == -1 && descriptorNodoCopia1->socket == -1){
-			return 0;
+            if(bloque->otrasCopias == NULL){
+                return 0;
+            }
+
+            bool buscarCopia(void * ubicacion){
+                Ubicacion * copia = (Ubicacion *)ubicacion;
+                DescriptorNodo * descriptorNodo = (DescriptorNodo *) dictionary_get(nodos, copia->nodo);
+
+                return descriptorNodo->socket != -1;;
+            }
+
+            if(list_find(bloque->otrasCopias, buscarCopia) == NULL){
+                return 0;
+            }
 		}
 	}
 

@@ -19,6 +19,7 @@ void responderYAMA(int socketYAMA){
 	recv(socketYAMA, rutaArchivo, sizeof(char) * 255, MSG_WAITALL);
 	Archivo* descriptorArchivo = (Archivo*) dictionary_get(archivos, rutaArchivo);
 	if(descriptorArchivo == NULL || !archivoDisponible(descriptorArchivo)){
+		log_error(logger, "El archivo no se enontró o no está disponible\n");
 		int mensaje = -2;
 		send(socketYAMA, &mensaje, sizeof(mensaje), 0);
 		return;
@@ -38,14 +39,41 @@ void responderYAMA(int socketYAMA){
 		DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
 		DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
 
+		Ubicacion * ubicacion = NULL;
+		DescriptorNodo * nodoCopia = NULL;
+
+		if((descriptorNodoCopia0->socket == -1 || descriptorNodoCopia1->socket == -1) && bloque->otrasCopias != NULL){
+			bool buscarCopia(void * ubicacion){
+				Ubicacion * copia = (Ubicacion *)ubicacion;
+
+				if(strcmp(copia->nodo, bloque->copia0.nodo) != 0 && strcmp(copia->nodo, bloque->copia1.nodo) != 0){
+					nodoCopia = (DescriptorNodo *) dictionary_get(nodos, copia->nodo);
+					return nodoCopia->socket != -1;
+				}
+
+				return false;
+			}
+
+			ubicacion = list_find(bloque->otrasCopias, buscarCopia);
+		}
+
 		if(descriptorNodoCopia0->socket == -1 || bloque->copia0.numeroBloque == -1){
-			int cantidad = 1;
+			int cantidad = ubicacion == NULL ? 1 : 2;
+
 			send(socketYAMA, &cantidad, sizeof(cantidad), 0);
 			_enviarInfoBloque(socketYAMA, descriptorNodoCopia1, bloque->copia1.numeroBloque);
+
+			if(ubicacion != NULL){
+				_enviarInfoBloque(socketYAMA, nodoCopia, ubicacion->numeroBloque);
+			}
 		}else if(descriptorNodoCopia1->socket == -1 || bloque->copia1.numeroBloque == -1){
-			int cantidad = 1;
+			int cantidad = ubicacion == NULL ? 1 : 2;
 			send(socketYAMA, &cantidad, sizeof(cantidad), 0);
 			_enviarInfoBloque(socketYAMA, descriptorNodoCopia0, bloque->copia0.numeroBloque);
+
+			if(ubicacion != NULL){
+				_enviarInfoBloque(socketYAMA, nodoCopia, ubicacion->numeroBloque);
+			}
 		}else{
 			int cantidad = 2;
 			send(socketYAMA, &cantidad, sizeof(cantidad), 0);

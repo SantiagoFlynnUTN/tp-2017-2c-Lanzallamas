@@ -206,7 +206,8 @@ void _procesarBloques(t_config * archivo, Archivo * descriptorArchivo){
     int i = 0;
     char bytesBloque[14],
          bloqueCopia0[15],
-         bloqueCopia1[15];
+         bloqueCopia1[15],
+         bloqueCopian[15];
 
     descriptorArchivo->bloques = list_create();
 
@@ -229,6 +230,26 @@ void _procesarBloques(t_config * archivo, Archivo * descriptorArchivo){
 
         bloque->copia1.numeroBloque = atoi(copia1[1]);
         strcpy(bloque->copia1.nodo, copia1[0]);
+
+        int numCopia = 2;
+        sprintf(bloqueCopian, BLOQUE_I_COPIA_N, i, numCopia);
+        while(config_has_property(archivo, bloqueCopian)){
+            char ** copiaN = config_get_array_value(archivo, bloqueCopian);
+
+            if(bloque->otrasCopias == NULL){
+                bloque->otrasCopias = list_create();
+            }
+
+            Ubicacion * ubicacion = (Ubicacion *)malloc(sizeof(*ubicacion));
+
+            strcpy(ubicacion->nodo, copiaN[0]);
+            ubicacion->numeroBloque= atoi(copiaN[1]);
+
+            list_add(bloque->otrasCopias, ubicacion);
+
+            numCopia++;
+            sprintf(bloqueCopian, BLOQUE_I_COPIA_N, i, numCopia);
+        }
 
         i++;
         sprintf(bytesBloque, BLOQUE_I_BYTES, i);

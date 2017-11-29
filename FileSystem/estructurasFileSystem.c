@@ -255,6 +255,22 @@ void _persistirBloque(void * puntero){
     config_set_value(archivoConfig, bloqueCopia0, strCopia0);
     config_set_value(archivoConfig, bloqueCopia1, strCopia1);
     config_set_value(archivoConfig, bytesBloque, strBytes);
+
+    if(bloque->otrasCopias != NULL){
+        int i = 2;
+        void iterator(void * ubicacion){
+            Ubicacion * copia = (Ubicacion *) ubicacion;
+            char bloqueCopian[15],
+            strCopian[110];
+
+            sprintf(bloqueCopian, BLOQUE_I_COPIA_N, bloque->descriptor.numeroBloque, i++);
+            sprintf(strCopian, "[%s, %d]", copia->nodo, copia->numeroBloque);
+
+            config_set_value(archivoConfig, bloqueCopian, strCopian);
+        }
+
+        list_iterate(bloque->otrasCopias, iterator);
+    }
 }
 
 int _contieneNombreNodo(char * nombreNodo){

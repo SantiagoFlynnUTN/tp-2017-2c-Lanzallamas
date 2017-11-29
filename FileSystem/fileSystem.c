@@ -8,6 +8,7 @@
 #include "inicializacionFileSystem.h"
 #include "funcionesConsolaFS.h"
 #include "envioBloques.h"
+#include "utilidadesFileSystem.h"
 
 void _cargarConfiguracion();
 void _crearLogger();
@@ -160,16 +161,7 @@ int _checkearArchivosDisponibles(){
     void recorrerArchivos (char* nombre, void* arch){
         Archivo * archivo = (Archivo *) arch;
 
-        bool hayCopia(void * b){
-            Bloque * bloque = (Bloque *) b;
-
-            DescriptorNodo * copia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
-            DescriptorNodo * copia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
-
-            return (copia0->socket != -1 && bloque->copia0.numeroBloque != -1) || (copia1->socket != -1 && bloque->copia1.numeroBloque != -1);
-        }
-
-        if(!list_all_satisfy(archivo->bloques, hayCopia)){
+        if(!archivoDisponible(archivo)){
             estable = 0;
         }
     }
