@@ -45,7 +45,8 @@ void manejarCliente(int newfd){
     ioctl(newfd, FIONREAD, &count);
 
 	if (count == 0) {
-		if (recv(newfd, &buf, sizeof(int), MSG_PEEK) == 0) {
+        int flag = 1123;
+		if (send(newfd, &flag, sizeof(int), MSG_NOSIGNAL) < 0) {
 			log_debug(logger, "selectserver: socket %d hung up\n", newfd);
 			marcarNodoDesconectado(newfd);
 			close(newfd); // bye!

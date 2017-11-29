@@ -865,11 +865,12 @@ void info(char * archivo){
     int bloques = list_size(descriptorArchivo->bloques);
     int i;
 
-    printf("%s:\nTip:%s\nTamaño:%ld\nBloques:%d\n", archivo, descriptorArchivo->tipo == BINARIO ? "BINARIO" : "TEXTO", descriptorArchivo->tamanio, bloques);
+    printf("%s:\nTipo:%s\nTamaño:%ld\nBloques:%d\n", archivo, descriptorArchivo->tipo == BINARIO ? "BINARIO" : "TEXTO", descriptorArchivo->tamanio, bloques);
 
     for(i = 0; i < bloques; ++i){
         Bloque * bloque = (Bloque *) list_get(descriptorArchivo->bloques, i);
 
+        printf("Bytes Ocupados: %ld\n", bloque->descriptor.bytes);
         printf("Bloque %d:\t\tNodo\t\tNumero Bloque\nCopia 0:\t\t%s\t\t%d\nCopia 1:\t\t%s\t\t%d\n",
                i, bloque->copia0.nodo, bloque->copia0.numeroBloque, bloque->copia1.nodo, bloque->copia1.numeroBloque);
 
