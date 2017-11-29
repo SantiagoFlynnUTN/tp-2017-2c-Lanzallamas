@@ -3,7 +3,7 @@
 
 #define MB 1048576
 
-int enviarBloques(char * archivo, char * archivoYamaFS);
+int enviarBloques(char * archivo, char * archivoYamaFS, int binario);
 int generarCopia(Bloque * bloque, DescriptorNodo * descriptorNodo);
 
 int punteroNodo;

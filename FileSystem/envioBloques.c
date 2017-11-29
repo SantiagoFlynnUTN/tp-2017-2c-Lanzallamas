@@ -18,10 +18,12 @@ void _calcularUbicacionBloque(Bloque * bloque);
 int _obtenerNumeroBloqueLibre(t_bitarray * bitmap);
 int _manejarEnvioBloque(char * bloque, Bloque * descriptorBloque);
 int _obtenerData(int socket, int bloque,  char * contenidoBloque);
+int _enviarArchivoTexto(FILE * file, Archivo * descriptorArchivo);
+int _enviarArchivoBinario(FILE * file, Archivo * descriptorArchivo, int cantidadBloques);
 
 int bloquesLibres = 0;
 
-int enviarBloques(char * archivo, char * archivoYamaFS){
+int enviarBloques(char * archivo, char * archivoYamaFS, int binario){
     FILE * file = fopen(archivo, "r");
 
     if(file == NULL){ // no se encontró el archivo
@@ -50,6 +52,55 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
         return -1;
     }
 
+    Archivo * descriptorArchivo = (Archivo *)malloc(sizeof(*descriptorArchivo));
+    strcpy(descriptorArchivo->ruta, archivoYamaFS);
+    descriptorArchivo->tipo = binario ? BINARIO : TEXTO;
+    descriptorArchivo->tamanio = fileStats.st_size;
+    descriptorArchivo->directorioPadre = directorioPadre;
+    descriptorArchivo->bloques = list_create();
+
+    int status;
+    if(binario){
+        status = _enviarArchivoBinario(file, descriptorArchivo, cantidadBloques);
+    }else{
+        status = _enviarArchivoTexto(file, descriptorArchivo);
+    }
+
+    fclose(file);
+
+    if(status != 0){
+        return status;
+    }
+
+    registrarArchivo(descriptorArchivo);
+
+    return 0;
+}
+
+int _enviarArchivoBinario(FILE * file, Archivo * descriptorArchivo, int cantidadBloques){
+    char bloque[MB];
+    int i;
+
+    for(i = 0; i < cantidadBloques; ++i){
+        memset(bloque, 0, MB); // limpio el bloque
+
+        fread(bloque, sizeof(char) * MB, 1, file);
+
+        Bloque * descriptorBloque = _crearBloque(i, strlen(bloque));
+
+        if(_manejarEnvioBloque(bloque, descriptorBloque) == -1){
+            destruirArchivo(descriptorArchivo);
+            log_error(logger, "Error guardando los bloques en los datanode\n");
+            return -1;
+        }
+
+        list_add(descriptorArchivo->bloques, descriptorBloque);
+    }
+
+    return 0;
+}
+
+int _enviarArchivoTexto(FILE * file, Archivo * descriptorArchivo){
     char bloque[MB];
 
     memset(bloque, 0, MB); // limpio el bloque
@@ -60,13 +111,6 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
     size_t len;
     int numeroBloque = 0;
 
-    Archivo * descriptorArchivo = (Archivo *)malloc(sizeof(*descriptorArchivo));
-    strcpy(descriptorArchivo->ruta, archivoYamaFS);
-    descriptorArchivo->tipo = TEXTO;
-    descriptorArchivo->tamanio = fileStats.st_size;
-    descriptorArchivo->directorioPadre = directorioPadre;
-    descriptorArchivo->bloques = list_create();
-
     while((bytesLeidos = getline(&linea, &len, file)) > -1) { // hasta llegar al final del archivo
         if (ocupados + bytesLeidos > MB) { // no alcanza el bloque para guardar el renglón
             Bloque * descriptorBloque = _crearBloque(numeroBloque, ocupados);
@@ -75,7 +119,7 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
 
             if(_manejarEnvioBloque(bloque, descriptorBloque) == -1){
                 destruirArchivo(descriptorArchivo);
-                log_error(logger, "Error guardando los bloques en los datanode\n", archivo);
+                log_error(logger, "Error guardando los bloques en los datanode\n");
                 return -1;
             }
 
@@ -93,19 +137,16 @@ int enviarBloques(char * archivo, char * archivoYamaFS){
 
         if(_manejarEnvioBloque(bloque, descriptorBloque) == -1){
             destruirArchivo(descriptorArchivo);
-            log_error(logger, "Error guardando los bloques en los datanode\n", archivo);
+            log_error(logger, "Error guardando los bloques en los datanode\n");
             return -1;
         }
 
         list_add(descriptorArchivo->bloques, descriptorBloque);
     }
 
-    fclose(file);
-
-    registrarArchivo(descriptorArchivo);
-
     return 0;
 }
+
 
 int generarCopia(Bloque * bloque, DescriptorNodo * descriptorNodo){
     if(descriptorNodo->bloquesLibres == 0){

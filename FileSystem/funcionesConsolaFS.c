@@ -31,6 +31,7 @@ void mv(char * nombreOriginal, char * nombreFinal);
 void cat(char * nombre);
 void mkdirConsola(char * dir);
 void cpto(char * archivoFS, char * archivo);
+void cpfromBinary(char * archivo, char * archivoFS);
 void cpblock(char * archivo, char * numeroBloque, char * nodo);
 void cpFile(char * archivoFS, char * nuevoArchivo);
 void ls(char * dir);
@@ -138,6 +139,24 @@ void hiloConsola(){
             }else{
                 mkdirConsola(linea[1]);
             }
+            continue;
+        }
+
+        /*
+         * Funcion CpFromBinary
+         */
+
+        if (strcmp("cpfrombinary", linea[0]) == 0){
+            if(linea[1] == NULL){
+                printf("Error: falta el nombre de archivo\n");
+            }else if(linea[2] == NULL) {
+                printf("Error: falta el nombre de archivo en YAMA FS\n");
+            }else{
+                pthread_mutex_lock(&semaforoConsola);
+                cpfromBinary(linea[1], linea[2]);
+                pthread_mutex_unlock(&semaforoConsola);
+            }
+
             continue;
         }
 
@@ -660,13 +679,30 @@ int cpfrom(char * archivo, char * archivoFS){
         return 1;
     }
 
-    if(enviarBloques(archivo, archivoFS) != 0){
+    if(enviarBloques(archivo, archivoFS, 0) != 0){
         printf("No se pudo guardar el archivo en el file system\n");
         return 1;
     }
 
     infoNodosLog();
     return 0;
+}
+
+void cpfromBinary(char * archivo, char * archivoFS){
+    Archivo * descriptorArchivo = (Archivo *) dictionary_get(archivos, archivoFS);
+
+    if(descriptorArchivo != NULL){
+        printf("EL archivo %s ya existe\n", archivoFS);
+        return;
+    }
+
+    if(enviarBloques(archivo, archivoFS, 1) != 0){
+        printf("No se pudo guardar el archivo en el file system\n");
+        return;
+    }
+
+    infoNodosLog();
+    return;
 }
 
 void cpto(char * archivoFS, char * archivo){
@@ -820,7 +856,7 @@ void info(char * archivo){
     int bloques = list_size(descriptorArchivo->bloques);
     int i;
 
-    printf("%s:\nTamaño:%ld\nBloques:%d\n", archivo, descriptorArchivo->tamanio, bloques);
+    printf("%s:\nTip:%s\nTamaño:%ld\nBloques:%d\n", archivo, descriptorArchivo->tipo == BINARIO ? "BINARIO" : "TEXTO", descriptorArchivo->tamanio, bloques);
 
     for(i = 0; i < bloques; ++i){
         Bloque * bloque = (Bloque *) list_get(descriptorArchivo->bloques, i);
