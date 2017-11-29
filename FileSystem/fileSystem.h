@@ -51,6 +51,7 @@ typedef struct t_Bloque{
     DescriptorBloque descriptor;
     Ubicacion copia0;
     Ubicacion copia1;
+    t_list * otrasCopias;
 } Bloque;
 
 typedef struct t_Archivo{

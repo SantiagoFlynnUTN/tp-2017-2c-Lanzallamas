@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <commons/string.h>
+#include "fileSystem.h"
 
 void _agregarAlPrincipio(char* s, char* t);
 int _buscarDirectorio(char * nombre);
@@ -146,6 +147,19 @@ void destruirArchivo(Archivo * descriptorArchivo){
 
         liberarBloque(descriptorBloque->copia0);
         liberarBloque(descriptorBloque->copia1);
+
+        if(descriptorBloque->otrasCopias != NULL){
+            int copias = list_size(descriptorBloque->otrasCopias);
+            int index;
+
+            for(index = 0; index < copias; ++index){
+                Ubicacion * ubicacion = (Ubicacion *) list_get(descriptorBloque->otrasCopias, index);
+
+                liberarBloque(*ubicacion);
+            }
+
+            list_destroy_and_destroy_elements(descriptorBloque->otrasCopias, free);
+        }
 
         free(descriptorBloque);
     }

@@ -78,8 +78,13 @@ int _guardarBloque(DescriptorNodo * nodo, int bloque, long bytes, FILE * archivo
 int _seleccionarNodoLectura(Bloque * bloque, DescriptorNodo ** nodo){
     int cantidadNodos = list_size(nombreNodos);
     int copiasDesconectadas = 0;
+    int cantidadCopias = 2;
 
-    while(copiasDesconectadas < 2){
+    if(bloque->otrasCopias != NULL){
+        cantidadCopias += list_size(bloque->otrasCopias);
+    }
+
+    while(copiasDesconectadas < cantidadCopias){
         DescriptorNodo * descriptorNodo = dictionary_get(nodos, list_get(nombreNodos, punteroNodo));
 
         punteroNodo = (punteroNodo + 1) % cantidadNodos;
@@ -101,6 +106,23 @@ int _seleccionarNodoLectura(Bloque * bloque, DescriptorNodo ** nodo){
             }else{
                 *nodo = descriptorNodo;
                 return bloque->copia1.numeroBloque;
+            }
+        }else if(bloque->otrasCopias != NULL){
+            bool buscarCopia(void * ubicacion){
+                Ubicacion * copia = (Ubicacion *)ubicacion;
+
+                return strcmp(copia->nodo, descriptorNodo->nombreNodo) == 0;
+            }
+
+            Ubicacion * ubicacion = (Ubicacion *)list_find(bloque->otrasCopias, buscarCopia);
+
+            if(ubicacion != NULL){
+                if(descriptorNodo->socket == -1){
+                    copiasDesconectadas++;
+                }else{
+                    *nodo = descriptorNodo;
+                    return ubicacion->numeroBloque;
+                }
             }
         }
     }

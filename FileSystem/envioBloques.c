@@ -240,6 +240,7 @@ Bloque * _crearBloque(int numeroBloque, long bytes){
 
     _calcularUbicacionBloque(bloque);
 
+    bloque->otrasCopias = NULL;
     return bloque;
 }
 

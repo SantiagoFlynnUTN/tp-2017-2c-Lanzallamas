@@ -396,11 +396,6 @@ void rm(char ** linea){
 
             int numCopia = atoi(linea[4]);
 
-            if(numCopia > 1){
-                printf("Error: El bloque no tiene una copia %d\n", numCopia);
-                return;
-            }
-
             Bloque * bloque = (Bloque *)list_get(descriptorArchivo->bloques, numBloque);
 
             if(numCopia == 0){
@@ -415,8 +410,17 @@ void rm(char ** linea){
 
                 liberarBloque(bloque->copia0);
                 bloque->copia0.numeroBloque = -1;
+
+                if(bloque->otrasCopias != NULL && list_size(bloque->otrasCopias) > 0){
+                    Ubicacion * ubicacion = list_remove(bloque->otrasCopias, 0);
+
+                    bloque->copia0.numeroBloque = ubicacion->numeroBloque;
+                    strcpy(bloque->copia0.nodo, ubicacion->nodo);
+                    free(ubicacion);
+                }
+
                 infoNodosLog();
-            }else{
+            }else if(numCopia == 1){
                 if(bloque->copia1.numeroBloque == -1){
                     printf("Error: La copia ya fue borrada\n");
                 }
@@ -428,6 +432,31 @@ void rm(char ** linea){
 
                 liberarBloque(bloque->copia1);
                 bloque->copia1.numeroBloque = -1;
+
+                if(bloque->otrasCopias != NULL && list_size(bloque->otrasCopias) > 0){
+                    Ubicacion * ubicacion = list_remove(bloque->otrasCopias, 0);
+
+                    bloque->copia1.numeroBloque = ubicacion->numeroBloque;
+                    strcpy(bloque->copia1.nodo, ubicacion->nodo);
+                    free(ubicacion);
+                }
+
+                infoNodosLog();
+            }else if(bloque->otrasCopias == NULL) {
+                printf("Error: El bloque no tiene una copia %d\n", numCopia);
+                return;
+            }else{
+                numCopia = numCopia - 2;
+                int otrasCopias = list_size(bloque->otrasCopias);
+
+                if(numCopia > otrasCopias){
+                    printf("Error: El bloque no tiene una copia %d\n", numCopia);
+                    return;
+                }
+
+                Ubicacion * ubicacion = list_remove(bloque->otrasCopias, numCopia);
+                liberarBloque(*ubicacion);
+                free(ubicacion);
                 infoNodosLog();
             }
         }else{
@@ -754,9 +783,6 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
         return;
     }
 
-    DescriptorNodo * descriptorNodoCopia0 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia0.nodo);
-    DescriptorNodo * descriptorNodoCopia1 = (DescriptorNodo *) dictionary_get(nodos, bloque->copia1.nodo);
-
     int bloqueAsignado = generarCopia(bloque, descriptorNodo);
 
     if(bloqueAsignado == -1){
@@ -766,37 +792,20 @@ void cpblock(char * archivo, char * numeroBloque, char * nodo){
 
     descriptorNodo->bloquesLibres--;
 
-    if(descriptorNodoCopia0->socket == -1 || bloque->copia0.numeroBloque == -1){
-        descriptorNodoCopia0->bloquesLibres++;
-        bitarray_clean_bit(descriptorNodoCopia0->bitmap, bloque->copia0.numeroBloque);
-
+    if(bloque->copia0.numeroBloque == -1){
         bloque->copia0.numeroBloque = bloqueAsignado;
-
         strcpy(bloque->copia0.nodo, nodo);
-    }else if(descriptorNodoCopia1->socket == -1 || bloque->copia1.numeroBloque == -1){
-        descriptorNodoCopia1->bloquesLibres++;
-        bitarray_clean_bit(descriptorNodoCopia1->bitmap, bloque->copia1.numeroBloque);
-
+    }else if(bloque->copia1.numeroBloque == -1){
         bloque->copia1.numeroBloque = bloqueAsignado;
-
         strcpy(bloque->copia1.nodo, nodo);
     }else{
-        if(descriptorNodoCopia0->bloquesLibres >= descriptorNodoCopia1->bloquesLibres){
-            descriptorNodoCopia1->bloquesLibres++;
-            bitarray_clean_bit(descriptorNodoCopia1->bitmap, bloque->copia1.numeroBloque);
-
-            bloque->copia1.numeroBloque = bloqueAsignado;
-
-            strcpy(bloque->copia1.nodo, nodo);
-        }else{
-            descriptorNodoCopia0->bloquesLibres++;
-            bitarray_clean_bit(descriptorNodoCopia0->bitmap, bloque->copia0.numeroBloque);
-
-            bloque->copia0.numeroBloque = bloqueAsignado;
-
-            strcpy(bloque->copia0.nodo, nodo);
+        if(bloque->otrasCopias == NULL){
+            bloque->otrasCopias = list_create();
         }
-
+        Ubicacion * ubicacion = (Ubicacion *) malloc(sizeof(*ubicacion));
+        strcpy(ubicacion->nodo, descriptorNodo->nombreNodo);
+        ubicacion->numeroBloque = bloqueAsignado;
+        list_add(bloque->otrasCopias, ubicacion);
     }
 
     infoNodosLog();
@@ -863,6 +872,16 @@ void info(char * archivo){
 
         printf("Bloque %d:\t\tNodo\t\tNumero Bloque\nCopia 0:\t\t%s\t\t%d\nCopia 1:\t\t%s\t\t%d\n",
                i, bloque->copia0.nodo, bloque->copia0.numeroBloque, bloque->copia1.nodo, bloque->copia1.numeroBloque);
+
+        int index = 2;
+        if(bloque->otrasCopias != NULL){
+            void printCopia(void * copia){
+                Ubicacion * ubicacion = (Ubicacion *)copia;
+                printf("Copia %d:\t\t%s\t\t%d\n", index++, ubicacion->nodo, ubicacion->numeroBloque);
+            }
+
+            list_iterate(bloque->otrasCopias, printCopia);
+        }
     }
 }
 
