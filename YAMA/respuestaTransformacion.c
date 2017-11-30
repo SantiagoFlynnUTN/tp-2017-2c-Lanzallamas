@@ -182,7 +182,7 @@ void _enviarOperacionAlmacenamiento(int socket, EntradaTablaEstado * reduccion){
     list_add(tablaEstado, en);
 
 	logEntrada(en->masterId, en->jobId, en->disponibilidad,(int) trabajoActual(reduccion->nombreNodo),
-			"EN PROCESO", en->nombreNodo, "-", "-", "ALMACENAMIENTO",
+			"EN PROCESO", en->nombreNodo, "-", 0, "ALMACENAMIENTO",
 			en->archivoTemporal);
 
     int almacenamiento = SOLICITUDALMACENAMIENTO;

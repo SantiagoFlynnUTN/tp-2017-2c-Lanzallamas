@@ -106,9 +106,9 @@ int main(int argc, char *argv[]){
 	fclose(r);
 
 	inicializarMaster();
-	log_info(logger, "Conectando a YAMA...\n");
+	log_info(logger, "Conectando a YAMA...");
 	iniciarConexionAYAMA(&socket_yama);
-	log_info(logger, "Enviando solicitud de Job\n");
+	log_info(logger, "Enviando solicitud de Job...");
 	solicitudJob(socket_yama, argv[3]);
 
 	mandarTransformacionNodo();
@@ -151,7 +151,7 @@ void _almacenamiento(int socket_yama, char * archivoFinal){
 	zsend(socketWorker, archivoFinal, sizeof(char) * 255, 0);
 
 	int status;
-	if(recv(socketWorker, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
+	if(recv(socketWorker, &status, sizeof(int), MSG_WAITALL) <= 0 || status != 0){
 		int mensajeError = ERRORALMACENAMIENTO;
 		log_error(logger, "Fallo el almacenamiento en nodo %s\n", op.nombreNodo);
 		zsend(socket_yama, &mensajeError, sizeof(int), 0);
@@ -164,7 +164,7 @@ void _almacenamiento(int socket_yama, char * archivoFinal){
 		}
 	}else{
 		int mensajeOK = ALMACENAMIENTOOK;
-		log_info(logger, "worker %d finalizó el almacenamiento\n", socketWorker);
+		log_info(logger, "Worker %d finalizó el almacenamiento", socketWorker);
 		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
 		zsend(socket_yama, &jobId, sizeof(jobId), 0);
 	}

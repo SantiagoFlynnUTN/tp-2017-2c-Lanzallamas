@@ -28,42 +28,42 @@ void enviarTablaTransformacion(int socket_master){
 	SolicitudFS solFs;
 	solFs.tipomensaje = SOLICITUDARCHIVO;
 	memset(solFs.ruta, 0, sizeof(char)*255);
-	zrecv(socket_master, solFs.ruta, sizeof(char)* 255, 0);
+	yrecv(socket_master, solFs.ruta, sizeof(char)* 255, 0);
 
-	zsend(sock_fs, &solFs.tipomensaje, sizeof(solFs.tipomensaje), 0);
-	zsend(sock_fs, solFs.ruta, sizeof(solFs.ruta), 0);
+	ysend(sock_fs, &solFs.tipomensaje, sizeof(solFs.tipomensaje), 0);
+	ysend(sock_fs, solFs.ruta, sizeof(solFs.ruta), 0);
 
 	int respuesta;
 	t_list * listaNodos = list_create();
 
-	zrecv(sock_fs, &respuesta, sizeof(respuesta), 0);
+	yrecv(sock_fs, &respuesta, sizeof(respuesta), 0);
 	if (respuesta != 0){
 		log_error(logger, "El archivo %s no se encuentra disponible en el FS", solFs.ruta);
 		int respuesta = 0;
 		cantidadJobs++;
-		zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
-		zsend(socket_master, &respuesta, sizeof(respuesta), 0);
+		ysend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
+		ysend(socket_master, &respuesta, sizeof(respuesta), 0);
 		cabecera = 0;
 		return;
 	}
 
 	int bloques, i;
 
-	zrecv(sock_fs, &bloques, sizeof(bloques), 0);
+	yrecv(sock_fs, &bloques, sizeof(bloques), 0);
 
 	for(i = 0; i < bloques; ++i){
 		int copias, j;
 		long bytes;
 
-		zrecv(sock_fs, &bytes, sizeof(bytes), 0);
-		zrecv(sock_fs, &copias, sizeof(copias), 0);
+		yrecv(sock_fs, &bytes, sizeof(bytes), 0);
+		yrecv(sock_fs, &copias, sizeof(copias), 0);
 		DescriptorNodo nodos[copias];
 
 		for (j = 0; j < copias; ++j){
-			zrecv(sock_fs, nodos[j].nombreNodo, sizeof(char)*100, 0);
-			zrecv(sock_fs, nodos[j].ip, sizeof(char)*20, 0);
-			zrecv(sock_fs, &nodos[j].puerto, sizeof(nodos[j].puerto), 0);
-			zrecv(sock_fs, &nodos[j].bloque, sizeof(nodos[j].bloque), 0);
+			yrecv(sock_fs, nodos[j].nombreNodo, sizeof(char)*100, 0);
+			yrecv(sock_fs, nodos[j].ip, sizeof(char)*20, 0);
+			yrecv(sock_fs, &nodos[j].puerto, sizeof(nodos[j].puerto), 0);
+			yrecv(sock_fs, &nodos[j].bloque, sizeof(nodos[j].bloque), 0);
 		}
 
 		_registrarBloquePlanificacion(listaNodos, i, bytes, nodos, copias);
@@ -74,9 +74,13 @@ void enviarTablaTransformacion(int socket_master){
 	_loguearNodos(listaNodos, bloques);
 
 	cantidadJobs++;
-	zsend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
+	ysend(socket_master, &cantidadJobs, sizeof(cantidadJobs), 0);
+	ysend(socket_master, &bloques, sizeof(bloques), 0);
 
-	zsend(socket_master, &bloques, sizeof(bloques), 0);
+	SocketJob* newJob = (SocketJob*) malloc(sizeof(SocketJob));
+	newJob->jobId = cantidadJobs;
+	newJob->socket = socket_master;
+	list_add(socketJobs, newJob);
 
 	planificarBloquesYEnviarAMaster(socket_master, bloques, listaNodos);
 
@@ -105,6 +109,7 @@ void _loguearNodos(t_list * listaNodos, int bloques) {
 		i++;
 	}
 	list_iterate(listaNodos, printNodo);
+	cabecera = 0;
 }
 
 void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
@@ -112,7 +117,7 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 	int i;
 	int tipoMensaje = SOLICITUDREDUCCIONLOCAL;
 
-	zsend(socket, &tipoMensaje, sizeof(tipoMensaje), 0);
+	ysend(socket, &tipoMensaje, sizeof(tipoMensaje), 0);
 
 	EntradaTablaEstado * en = (EntradaTablaEstado *) malloc(sizeof(*en));
 
@@ -121,10 +126,10 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 
 		if(trafo != NULL){
 			if(i == 0){
-				zsend(socket, trafo->nombreNodo, sizeof(char) * 100, 0);
-				zsend(socket, trafo->ip, sizeof(char) * 20, 0);
-				zsend(socket, &trafo->puerto, sizeof(trafo->puerto), 0);
-				zsend(socket, &entradas, sizeof(entradas), 0);
+				ysend(socket, trafo->nombreNodo, sizeof(char) * 100, 0);
+				ysend(socket, trafo->ip, sizeof(char) * 20, 0);
+				ysend(socket, &trafo->puerto, sizeof(trafo->puerto), 0);
+				ysend(socket, &entradas, sizeof(entradas), 0);
 				generarArchivoTemporal(trafo->nombreNodo, en->archivoTemporal);
 				strcpy(en->nombreNodo, trafo->nombreNodo);
 				strcpy(en->ip, trafo->ip);
@@ -139,11 +144,11 @@ void enviarSolicitudReduccion(int socket, t_list * transformacionesRealizadas){
 						"REDUCCION LOCAL", en->archivoTemporal);
 			}
 
-			zsend(socket, trafo->archivoTemporal, sizeof(char) * 255, 0);
+			ysend(socket, trafo->archivoTemporal, sizeof(char) * 255, 0);
 		}
 	}
 
-	zsend(socket, en->archivoTemporal, sizeof(char) *  255, 0);
+	ysend(socket, en->archivoTemporal, sizeof(char) *  255, 0);
 
 	list_add(tablaEstado, en);
 
@@ -154,7 +159,7 @@ void matarMasterGlobal(int socket){
 	int jobId;
 	int muerte = FALLOREDGLOBAL;
 
-	zrecv(socket, &jobId, sizeof(jobId), 0);
+	yrecv(socket, &jobId, sizeof(jobId), 0);
 
 	bool criterioBusqueda(void * entrada) {
 		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) entrada;
@@ -177,7 +182,7 @@ void matarMasterGlobal(int socket){
 		cabecera = 0;
 	}
 
-	zsend(socket, &muerte, sizeof(int), 0);
+	ysend(socket, &muerte, sizeof(int), 0);
 }
 
 void matarMaster(int socket){
@@ -185,8 +190,8 @@ void matarMaster(int socket){
     char archivoReducido[255];
 	int muerte = FALLOREDLOCAL;
 
-    zrecv(socket, &jobId, sizeof(jobId), 0);
-    zrecv(socket, archivoReducido, sizeof(char) * 255, 0);
+    yrecv(socket, &jobId, sizeof(jobId), 0);
+    yrecv(socket, archivoReducido, sizeof(char) * 255, 0);
 
 	bool criterioBusqueda(void * entrada) {
 		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) entrada;
@@ -211,12 +216,12 @@ void matarMaster(int socket){
 		cabecera = 0;
 	}
 
-	zsend(socket, &muerte, sizeof(int), 0);
+	ysend(socket, &muerte, sizeof(int), 0);
 }
 
 void almacenamientoError(int socket){
 	int job;
-	zrecv(socket, &job, sizeof(job), 0);
+	yrecv(socket, &job, sizeof(job), 0);
 	bool criterioBusqueda(void * entrada) {
 		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *) entrada;
 
@@ -237,8 +242,49 @@ void almacenamientoError(int socket){
 		log_error(logger, "Error al almacenar el archivo en Job %d. Master finalizado.", job);
 		cabecera = 0;
 		int muerte = ERRORALMACENAMIENTO;
-		zsend(socket, &muerte, sizeof(int), 0);
+		ysend(socket, &muerte, sizeof(int), 0);
 	}
+}
+
+void finalizarEntradasError(int socket){
+	bool closure(void* sockJob){
+		SocketJob* sj = (SocketJob*) sockJob;
+		return sj->socket == socket;
+	}
+	SocketJob* sockJ = (SocketJob*) list_find(socketJobs, closure);
+
+	void marcarFalladas(void* entrada){
+		EntradaTablaEstado* en = (EntradaTablaEstado*) entrada;
+		if(sockJ->jobId == en->jobId){
+			en->estado = ERRORYAMA;
+		}
+	}
+	list_iterate(tablaEstado, marcarFalladas);
+}
+
+int desasociarSocketJob(int socket){
+	SocketJob* job;
+	bool closure(void* sockJob){
+		SocketJob* sj = (SocketJob*) sockJob;
+		return sj->socket == socket;
+	}
+	job = (SocketJob*) list_remove_by_condition(socketJobs, closure);
+
+	if(job !=NULL){
+		void ajustarCarga(void* entrada) {
+			EntradaTablaEstado* en = (EntradaTablaEstado*) entrada;
+			if (job->jobId == en->jobId && en->estado != ERRORYAMA) {
+				en->estado = FINALIZADO;
+			}
+		}
+		list_iterate(tablaEstado, ajustarCarga);
+		log_info(logger, "El Job %d fue finalizado. Socket %d cerrado.",
+				job->jobId, socket);
+		cabecera = 0;
+		return 1;
+	}
+
+	return 0;
 }
 
 void manejarDatos(int buf, int socket){
@@ -250,10 +296,13 @@ void manejarDatos(int buf, int socket){
 			replanificar(socket);
 			break;
 		case FALLOREDLOCAL:
+			finalizarEntradasError(socket);
 			matarMaster(socket);
+			desasociarSocketJob(socket);
 			break;
 		case FALLOREDGLOBAL:
 			matarMasterGlobal(socket);
+			desasociarSocketJob(socket);
 			break;
 		case TRANSFORMACIONOK:
 			transformacionOK(socket);
@@ -266,9 +315,11 @@ void manejarDatos(int buf, int socket){
 			break;
 		case ALMACENAMIENTOOK:
 			almacenamientoOK(socket);
+			desasociarSocketJob(socket);
 			break;
 		case ERRORALMACENAMIENTO:
 			almacenamientoError(socket);
+			desasociarSocketJob(socket);
 			break;
 	}
 }

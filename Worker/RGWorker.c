@@ -35,6 +35,7 @@ void iniciarGlobal(int mastersock){
 	zrecv(mastersock, &cantidad, sizeof(cantidad), 0);
 
 	NodoGlobal nodos[cantidad];
+	log_info(logger, "[REDUCCION GLOBAL] Solicitudes a homonimos %d", cantidad);
 
 	for(i = 0; i < cantidad; ++i){
 		zrecv(mastersock, nodos[i].nombre, sizeof(char) * 100, 0);
@@ -42,7 +43,7 @@ void iniciarGlobal(int mastersock){
 		zrecv(mastersock, &nodos[i].puerto, sizeof(nodos[i].puerto), 0);
 		zrecv(mastersock, nodos[i].archivoReducido, sizeof(char) * 255, 0);
 
-		log_info(logger, "NODO:%s\tIP:%s\nPUERTO:%d\tARCHIVO:%s\tENCARGADO:NO", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
+		log_info(logger, "[REDUCCION GLOBAL] %s\tIP:%s\tPUERTO:%d\tARCHIVO:%s", nodos[i].nombre, nodos[i].ip, nodos[i].puerto, nodos[i].archivoReducido);
 	}
 
 	char ruta[255];

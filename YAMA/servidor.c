@@ -5,37 +5,50 @@
  *      Author: utnso
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <pthread.h>
-#include "serializacion.h"
+
 #include "servidor.h"
-#include "mainYAMA.h"
-#include "yama.h"
-#include <protocoloComunicacion.h>
+#include <sockets.h>
 
-
-fd_set master;   // conjunto maestro de descriptores de fichero
 int listener;    // descriptor de socket a la escucha
 int fdmax;       // número máximo de descriptores de fichero
 fd_set read_fds; // conjunto temporal de descriptores de fichero para select()
 
 
 
+void yrecv(int socket, void* buffer, int size, int flags){
+	if(zrecv(socket, buffer, size, flags))
+		FD_CLR(socket, &master);
+}
+
+void ysend(int socket, void* buffer, int size, int flags){
+
+	if (send(socket, buffer, size, MSG_NOSIGNAL) == -1) {
+		SocketJob* job;
+		bool closure(void* sockJob){
+			SocketJob* sj = (SocketJob*) sockJob;
+			return sj->socket == socket;
+		}
+		job = (SocketJob*) list_find(socketJobs, closure);
+
+		if(job != NULL){
+			log_error(logger, "No se pudo enviar el mensaje. Socket %d colgo.", socket);
+		}
+		cabecera = 0;
+		close(socket);
+		FD_CLR(socket, &master);
+		desasociarSocketJob(socket);
+	}
+}
+
 void comprobarConexion(int numbytes, int socket){
 	if (numbytes <= 0) {
 		// error o conexión cerrada por el cliente
 		if (numbytes == 0) {
-			// conexión cerrada
-			printf("Servidor: socket %d colgo\n", socket);
+			log_info(logger, "Se desconecto un master.");// conexión cerrada
+			desasociarSocketJob(socket);
 			cabecera = 0;
 		} else {
+			desasociarSocketJob(socket);
 			perror("recv");
 		}
 		close(socket); // bye!
@@ -150,6 +163,7 @@ void iniciarServer(){
 
 	FD_ZERO(&master);    		// borra los conjuntos maestro y temporal
 
+	socketJobs = list_create();
 	setListener();
 
 	FD_SET(listener, &master);	// añadir listener al conjunto maestro

@@ -38,14 +38,14 @@ void reduccionGlobal(int socket_yama){
 
 			salteos++;
 
-			log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:SI\n", encargado.nombreNodo, encargado.ip, encargado.puerto, encargado.archivoReducido);
+			log_info(logger, "%s\tIP:%s\tPUERTO:%d\tARCHIVO:%s\tENCARGADO:SI", encargado.nombreNodo, encargado.ip, encargado.puerto, encargado.archivoReducido);
 		}else{
 			zrecv(socket_yama, operacionReduccion[i - salteos].nombreNodo, sizeof(char) * 100, 0);
 			zrecv(socket_yama, operacionReduccion[i - salteos].ip, sizeof(char) * 20, 0);
 			zrecv(socket_yama, &operacionReduccion[i - salteos].puerto, sizeof(encargado.puerto), 0);
 			zrecv(socket_yama, operacionReduccion[i - salteos].archivoReducido, sizeof(char) * 255, 0);
 
-			log_info(logger, "NODO:%s\nIP:%s\nPUERTO:%d\nARCHIVO:%s\nENCARGADO:NO\n", operacionReduccion[i - salteos].nombreNodo, operacionReduccion[i - salteos].ip, operacionReduccion[i - salteos].puerto, operacionReduccion[i - salteos].archivoReducido);
+			log_info(logger, "%s\tIP:%s\tPUERTO:%d\tARCHIVO:%s\tENCARGADO:NO", operacionReduccion[i - salteos].nombreNodo, operacionReduccion[i - salteos].ip, operacionReduccion[i - salteos].puerto, operacionReduccion[i - salteos].archivoReducido);
 		}
 	}
 
@@ -73,20 +73,20 @@ void reduccionGlobal(int socket_yama){
     enviarArchivo(socketNodo, reductor);
 
     int status;
-    if(recv(socketNodo, &status, sizeof(int), MSG_WAITALL) == -1 || status != 0){
+    if(recv(socketNodo, &status, sizeof(int), MSG_WAITALL) <= 0 || status != 0){
         int mensajeError = FALLOREDGLOBAL;
-        log_error(logger, "Fallo reduccion global en nodo %s\n", encargado.nombreNodo);
+        log_error(logger, "Fallo reduccion global en nodo %s", encargado.nombreNodo);
         zsend(socket_yama, &mensajeError, sizeof(int), 0);
         zsend(socket_yama, &jobId, sizeof(jobId), 0);
         int rtaYama;
         zrecv(socket_yama, &rtaYama, sizeof(int), 0);
         if(rtaYama == FALLOREDGLOBAL){
-        	log_error(logger,"[ABORTADO] Yama no puede replanificar Reduccion Global.\n");
+        	log_error(logger,"[ABORTADO] Yama no puede replanificar Reduccion Global.");
         	exit(1);
         }
     }else{
         int mensajeOK = REDGLOBALOK;
-        log_info(logger, "worker %d finalizó reduccion global\n", socketNodo);
+        log_info(logger, "Worker %d finalizó reduccion global", socketNodo);
         zsend(socket_yama, &mensajeOK, sizeof(int), 0);
         zsend(socket_yama, &jobId, sizeof(jobId), 0);
     }

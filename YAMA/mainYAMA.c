@@ -59,7 +59,7 @@ void signal2_handler(int sig){
 }
 
 void nuevoCliente(char* remoteHost, int newfd){
-	log_info(logger, "Nueva conexion de %s en socket %d\n", remoteHost, newfd);
+	log_info(logger, "Nueva conexion de %s en socket %d", remoteHost, newfd);
 	cabecera = 0;
 	//Y acá hacer algo con el nuevo cliente conectado
 }
