@@ -40,6 +40,7 @@ void infoNodos();
 void infoNodosLog();
 void bitmap(char * nodo);
 void doMv(char * nombreOriginal, char * nombreFinal);
+void listarArchivos();
 
 void hiloConsola(){
     printf("Consola disponible par uso\n");
@@ -290,6 +291,11 @@ void hiloConsola(){
             continue;
         }
 
+        if(strcmp("listarArchivos", linea[0]) == 0){
+            listarArchivos();
+            continue;
+        }
+
         printf("Error: comando desconocido\n");
         free(linea);
     }
@@ -537,6 +543,7 @@ void renameFs(char * nombreOriginal, char * nombreFinal){
                 dictionary_remove(archivos, descriptor->ruta);
 
                 obtenerNuevaRutaArchivo(descriptor->ruta, nombreFinal);
+                _agregarAlPrincipio(descriptor->ruta, "/");
 
                 dictionary_put(archivos, descriptor->ruta, descriptor);
             }
@@ -685,6 +692,11 @@ void mkdirConsola(char * dir){
 
     if(directorioPadre == -1){
         printf("No existe la ruta\n");
+    }
+
+    if(!nombreValido(directorioPadre, obtenerNombreArchivo(dir))){
+        printf("Ya existe un archivo o directorio con nombre %s\n", dir);
+        return;
     }
 
     int idDirectorio = obtenerIdDirectorio();
@@ -925,4 +937,11 @@ void bitmap(char * nodo){
     }
 
     printf("\n");
+}
+
+void listarArchivos(){
+    void iterador(char * key, void * value){
+        printf("%s\n", key);
+    }
+    dictionary_iterator(archivos, iterador);
 }
