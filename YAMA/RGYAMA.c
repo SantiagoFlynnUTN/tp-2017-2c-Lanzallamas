@@ -50,9 +50,9 @@ void reduccionGlobal(int socket, int jobId){
 
 	int tipoMensaje = SOLICITUDREDUCCIONGLOBAL;
 
-	zsend(socket, &tipoMensaje, sizeof(tipoMensaje), 0);
+	ysend(socket, &tipoMensaje, sizeof(tipoMensaje), 0);
 
-	zsend(socket, &cantidad, sizeof(cantidad), 0);
+	ysend(socket, &cantidad, sizeof(cantidad), 0);
 
 	int i;
 
@@ -63,11 +63,11 @@ void reduccionGlobal(int socket, int jobId){
 
 		int esEncargado = i == minIndex ? 1 : 0;
 
-		zsend(socket, &esEncargado, sizeof(esEncargado), 0);
-		zsend(socket, entradaNodo->nombreNodo, sizeof(char) * 100, 0);
-		zsend(socket, entradaNodo->ip, sizeof(char) * 20, 0);
-		zsend(socket, &entradaNodo->puerto, sizeof(entradaNodo->puerto), 0);
-		zsend(socket, entradaNodo->archivoTemporal, sizeof(char) * 255, 0);
+		ysend(socket, &esEncargado, sizeof(esEncargado), 0);
+		ysend(socket, entradaNodo->nombreNodo, sizeof(char) * 100, 0);
+		ysend(socket, entradaNodo->ip, sizeof(char) * 20, 0);
+		ysend(socket, &entradaNodo->puerto, sizeof(entradaNodo->puerto), 0);
+		ysend(socket, entradaNodo->archivoTemporal, sizeof(char) * 255, 0);
 
 
 		if(esEncargado){
@@ -84,7 +84,7 @@ void reduccionGlobal(int socket, int jobId){
 		}
 	}
 
-	zsend(socket, en->archivoTemporal, sizeof(char) * 255, 0);
+	ysend(socket, en->archivoTemporal, sizeof(char) * 255, 0);
 
 	list_add(tablaEstado, en);
 

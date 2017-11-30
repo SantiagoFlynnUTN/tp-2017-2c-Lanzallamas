@@ -1,11 +1,14 @@
+
+
+#ifndef YAMA_H_
+#define YAMA_H_
+
 #include <commons/collections/dictionary.h>
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/log.h>
 #include <stdint.h>
-
-#ifndef YAMA_H_
-#define YAMA_H_
+#include "servidor.h"
 
 /* ENUMS */
 typedef enum{TRANSFORMACION=1, REDUCCIONLOCAL, REDUCGLOBAL, ALMACENAMIENTOOP} TipoOperacion;
@@ -39,10 +42,12 @@ typedef struct t_TablaEstado{
 	int historicas;
 	uint16_t puerto;
 	int numeroBloque;
+	int tamBloque;
 	TipoOperacion etapa;
 	char archivoTemporal[255];
 	Estado estado;
 	InfoNodo * nodoCopia;
+	char bloqueArchivo[5];
 } __attribute__((packed)) EntradaTablaEstado;
 
 typedef struct{
@@ -113,6 +118,11 @@ typedef struct{
 }__attribute__((packed))
 NodoEncargado;
 
+typedef struct{
+	int jobId;
+	int socket;
+} SocketJob;
+
 /* VARIABLES GLOBALES Y DEFINES*/
 #define ARCHIVO_CONFIGURACION "yama.conf"
 #define ARCHIVO_LOGGER "yama.log"
@@ -132,6 +142,7 @@ AlgoritmoBalanceo algoritmoBalanceo;
 int retardoPlanificacion;
 int sock_fs;
 t_list* tablaEstado;
+t_list* socketJobs;
 int disponibilidad_base;
 int cantidadJobs;
 int cabecera;

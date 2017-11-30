@@ -5,11 +5,20 @@
  * @DESC: recibe controlando que no se produzcan errores.
  *
  */
-void zrecv(int socket, void* buffer, int size, int flags){
+int zrecv(int socket, void* buffer, int size, int flags){
 	int bytes;
 	bytes = recv(socket, buffer, size, MSG_WAITALL);
-	if(bytes == 0) printf("recv error: %d\n", bytes);
-	if(bytes == -1) printf("recv error: %d\n", bytes);
+	if(bytes == 0) {
+		printf("recv error: %d\n", bytes);
+		close(socket);
+		return 1;
+	}
+	if(bytes == -1) {
+		printf("recv error: %d\n", bytes);
+		close(socket);
+		return 1;
+	}
+	return 0;
 }
 
 /**
@@ -17,10 +26,12 @@ void zrecv(int socket, void* buffer, int size, int flags){
  * @DESC: envia controlando que no se produzcan errores.
  *
  */
-void zsend(int socket, void* buffer, int size, int flags){
-	if (send(socket, buffer, size, flags) == -1) {
-		printf("No se puedo enviar el mensaje.\n");
+int zsend(int socket, void* buffer, int size, int flags){
+	if (send(socket, buffer, size, MSG_NOSIGNAL) == -1) {
+		printf("No se pudo enviar el mensaje. Conexion cerrada.\n");
+		return 1;
 	}
+	return 0;
 }
 
 /* sendAll y recvAll: Te aseguran que se envio o recibio tod-o.

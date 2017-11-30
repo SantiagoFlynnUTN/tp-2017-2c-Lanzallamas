@@ -36,7 +36,7 @@ int respuestaSolicitud() {
 
 	if(cantidadWorkers == 0){
 		log_error(logger,
-				 "[ABORTADO] El archivo %s no está disponible en el FS.\n", pathArchivoFS);
+				 "[ABORTADO] El archivo %s no está disponible en el FS.", pathArchivoFS);
 		exit(1);
 	}
 
@@ -53,7 +53,7 @@ int conexionTransfWorker(int *sockfd, workerTransformacion t){
 		return(1);
 	}
 
-	log_info(logger, "ip: %s\nport: %d\n", t.ipWorker, t.puertoWorker);
+	log_info(logger, "ip: %s\tport: %d", t.ipWorker, t.puertoWorker);
 
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
 	their_addr.sin_port = t.puertoWorker;  // short, Ordenación de bytes de la red
@@ -85,7 +85,7 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 
 	gettimeofday(&tv1, NULL);
 	if (conexionTransfWorker(&socketWorker, *t)) {
-		log_error(logger, "No se pudo conectar al worker. Replanificar.\n");
+		log_error(logger, "No se pudo conectar al worker. Replanificar.");
 
 		int tipomensaje = FALLOTRANSFORMACION;
 		transfError mensajeError;
@@ -101,60 +101,62 @@ void mandarSolicitudTransformacion(workerTransformacion* t) {
 		zsend(socket_yama, &tipomensaje, sizeof(tipomensaje), 0);
 		zsend(socket_yama, &mensajeError, sizeof(mensajeError), 0);
 		pthread_mutex_unlock(&yamaMensajes);
-		return;
-	}
-
-	mensajeTransformacion mensaje;
-	tipoMensaje = 1;
-	mensaje.cantidadBytes = t->bytesOcupados;
-	mensaje.bloque = t->numBloque;
-	strcpy(mensaje.nombreTemp, t->rutaArchivo);
-
-	zsend(socketWorker, &tipoMensaje, sizeof(int), 0);
-	zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
-
-	enviarArchivo(socketWorker, transformador);
-
-	int status, bytes;
-	bytes = recv(socketWorker, &status, sizeof(int), MSG_WAITALL);
-	if (bytes == -1 || status != 0) {
-		int tipomensaje = FALLOTRANSFORMACION;
-		transfError mensajeError;
-		strcpy(mensajeError.nombreNodo, t->nombreNodo);
-		strcpy(mensajeError.nombreTemp, t->rutaArchivo);
-		mensajeError.numBloque = t->numBloque;
-		mensajeError.bytes = t->bytesOcupados;
-		log_error(logger, "fallo la transformacion en el nodo %s\n",
-				t->nombreNodo);
-		pthread_mutex_lock(&mutexTransformacion);
-		cantTransfActual--;
-		fallosTransf++;
-		pthread_mutex_unlock(&mutexTransformacion);
-		log_error(logger, "Fallo la transformacion envio un %d\n", tipomensaje);
-		pthread_mutex_lock(&yamaMensajes);
-		zsend(socket_yama, &tipomensaje, sizeof(tipomensaje), 0);
-		zsend(socket_yama, &mensajeError, sizeof(mensajeError), 0);
-		pthread_mutex_unlock(&yamaMensajes);
-
 	} else {
-		int mensajeOK = TRANSFORMACIONOK;
 
-		gettimeofday(&tv2, NULL);
-		log_info(logger, "worker %d finalizó transformación\n", socketWorker);
+		mensajeTransformacion mensaje;
+		tipoMensaje = 1;
+		mensaje.cantidadBytes = t->bytesOcupados;
+		mensaje.bloque = t->numBloque;
+		strcpy(mensaje.nombreTemp, t->rutaArchivo);
 
-		double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
-				+ (double) (tv2.tv_sec - tv1.tv_sec);
+		zsend(socketWorker, &tipoMensaje, sizeof(int), 0);
+		zsend(socketWorker, &mensaje, sizeof(mensaje), 0);
 
-		pthread_mutex_lock(&mutexTransformacion);
-		tiempoTotalTransf += tiempoTotal;
-		transformacionesOk++;
-		cantTransfActual--;
-		pthread_mutex_unlock(&mutexTransformacion);
-		pthread_mutex_lock(&yamaMensajes);
-		zsend(socket_yama, &mensajeOK, sizeof(int), 0);
-		zsend(socket_yama, &jobId, sizeof(jobId), 0);
-		zsend(socket_yama, mensaje.nombreTemp, sizeof(char) * 255, 0);
-		pthread_mutex_unlock(&yamaMensajes);
+		enviarArchivo(socketWorker, transformador);
+
+		int status, bytes;
+		bytes = recv(socketWorker, &status, sizeof(int), MSG_WAITALL);
+		if (bytes <= 0 || status != 0) {
+			int tipomensaje = FALLOTRANSFORMACION;
+			transfError mensajeError;
+			strcpy(mensajeError.nombreNodo, t->nombreNodo);
+			strcpy(mensajeError.nombreTemp, t->rutaArchivo);
+			mensajeError.numBloque = t->numBloque;
+			mensajeError.bytes = t->bytesOcupados;
+			log_error(logger, "Fallo la transformacion en el nodo %s",
+					t->nombreNodo);
+			pthread_mutex_lock(&mutexTransformacion);
+			cantTransfActual--;
+			fallosTransf++;
+			pthread_mutex_unlock(&mutexTransformacion);
+			log_error(logger, "Fallo la transformacion envio un %d",
+					tipomensaje);
+			pthread_mutex_lock(&yamaMensajes);
+			zsend(socket_yama, &tipomensaje, sizeof(tipomensaje), 0);
+			zsend(socket_yama, &mensajeError, sizeof(mensajeError), 0);
+			pthread_mutex_unlock(&yamaMensajes);
+
+		} else {
+			int mensajeOK = TRANSFORMACIONOK;
+
+			gettimeofday(&tv2, NULL);
+			log_info(logger, "Worker %d finalizó transformación",
+					socketWorker);
+
+			double tiempoTotal = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000
+					+ (double) (tv2.tv_sec - tv1.tv_sec);
+
+			pthread_mutex_lock(&mutexTransformacion);
+			tiempoTotalTransf += tiempoTotal;
+			transformacionesOk++;
+			cantTransfActual--;
+			pthread_mutex_unlock(&mutexTransformacion);
+			pthread_mutex_lock(&yamaMensajes);
+			zsend(socket_yama, &mensajeOK, sizeof(int), 0);
+			zsend(socket_yama, &jobId, sizeof(jobId), 0);
+			zsend(socket_yama, mensaje.nombreTemp, sizeof(char) * 255, 0);
+			pthread_mutex_unlock(&yamaMensajes);
+		}
 	}
 
 	pthread_exit(NULL);
@@ -174,7 +176,7 @@ void mandarReplanificado(){
 	rc = pthread_create(&tid, NULL, (void*) mandarSolicitudTransformacionConFree, t);
 
 	if (rc)
-		log_error(logger, "no pudo crear el hilo %d\n");
+		log_error(logger, "No pudo crear el hilo %d");
 }
 
 void mandarTransformacionNodo() {
@@ -201,7 +203,7 @@ void mandarTransformacionNodo() {
 				(void*) mandarSolicitudTransformacion, &t[cantidadWorkers]);
 
 		if (rc[cantidadWorkers])
-			log_error(logger, "no pudo crear el hilo %d\n", i);
+			log_error(logger, "No pudo crear el hilo %d", i);
 		i++;
 	}
 
@@ -217,12 +219,12 @@ void mandarTransformacionNodo() {
 				break;
 			case FALLOTRANSFORMACION:
 				log_error(logger,
-						"[ABORTADO] YAMA no pudo replanificar transformacion.\n");
+						"[ABORTADO] YAMA no pudo replanificar transformacion.");
 				exit(1);
 				break;
 			case FALLOREDLOCAL:
 				log_error(logger,
-						"[ABORTADO] YAMA no puede replanificar una reduccion.\n");
+						"[ABORTADO] YAMA no puede replanificar una reduccion.");
 				exit(1);
 				break;
 		}

@@ -19,8 +19,8 @@
 #include <stdio.h>
 
 
-void zrecv(int socket, void* buffer, int size, int flags);
-void zsend(int socket, void* buffer, int size, int flags);
+int zrecv(int socket, void* buffer, int size, int flags);
+int zsend(int socket, void* buffer, int size, int flags);
 
 int sendAll(int fd, char *cosa, int size, int flags);
 int recvAll(int fd, char *buffer, int size, int flags);

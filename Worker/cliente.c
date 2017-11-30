@@ -45,7 +45,7 @@ void conectarANodo(int* sockfd, char*ip, uint16_t puerto){
 		exit(1);
 	}
 
-	printf("Conectando a %s:%d\n", ip, puerto);
+	log_info(logger, "Conectando a %s:%d\n", ip, puerto);
 	their_addr.sin_family = AF_INET;    // Ordenación de bytes de la máquina
 	their_addr.sin_port = puerto;  // short, Ordenación de bytes de la red
 	their_addr.sin_addr.s_addr = inet_addr(ip);
