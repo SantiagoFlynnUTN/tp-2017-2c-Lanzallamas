@@ -26,6 +26,95 @@ void signal_handler(int signum){
 }
 
 void logEstadoNodos(){
+	/////// logTablaEstados
+
+	log_info(logger, "\n\nTabla Estados:\n");
+
+	void etapa(int etapa, char* etp){
+		switch (etapa) {
+		case 1:
+			strcpy(etp, "TRANSFORMACION");
+			break;
+		case 2:
+			strcpy(etp, "REDUCCION LOCAL");
+			break;
+		case 3:
+			strcpy(etp, "REDUC. GLOBAL");
+			break;
+		case 4:
+			strcpy(etp, "ALMACENAMIENTO");
+			break;
+		default:
+			strcpy(etp, "NI IDEA CHE");
+			break;
+		}
+	}
+
+	void state(int estado, char* est) {
+		switch (estado) {
+		case 1:
+			strcpy(est, "EN PROCESO");
+			break;
+		case 2:
+			strcpy(est, "ERROR     ");
+			break;
+		case 3:
+			strcpy(est, "FINALIZADO");
+			break;
+		default:
+			strcpy(est, "NI IDEA MAN");
+			break;
+		}
+	}
+
+	void logEn(void* entrada){
+
+		EntradaTablaEstado* en = (EntradaTablaEstado*) malloc(sizeof(*en));
+		en = (EntradaTablaEstado*) entrada;
+		char nombreCopia[260], archTemp[100], nombreNodo[100];
+		if (en->nombreNodo != NULL)
+			strcpy(nombreNodo, en->nombreNodo);
+		else
+			strcpy(nombreNodo, "no name");
+
+		if (en->archivoTemporal != NULL)
+			strcpy(archTemp, en->archivoTemporal);
+		else
+			strcpy(archTemp, "no temp");
+
+		char * estado, *etp;
+		estado = (char*) malloc(sizeof(char)*30);
+		etp = (char*) malloc(sizeof(char)*30);
+		state(en->estado, estado);
+		etapa(en->etapa, etp);
+
+		if (!cabecera) {
+			log_info(logger,
+					"   \tMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tCopia\tBloque\tEtapa\t\tTemporal");
+			cabecera = 1;
+		}
+		strcpy(nombreCopia, "-");
+		if (!strcmp("TRANSFORMACION", etp)) {
+			if (en->disponibilidad == 0) {
+				log_info(logger, "    \t%d\t%d\t\t%d\t%s\t%s\t%s\t%d\t%s\t%s",
+						en->masterId, en->jobId, 0, estado, nombreNodo, nombreCopia,
+						en->numeroBloque, etp, archTemp);
+			} else {
+				log_info(logger, "   \t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s",
+						en->masterId, en->jobId, en->disponibilidad, 0, estado, nombreNodo,
+						nombreCopia, en->numeroBloque, etp, archTemp);
+			}
+
+		} else {
+			log_info(logger, "   \t%d\t%d\t\t%d\t%s\t%s\t%s\t\t%s\t%s", en->masterId,
+					en->jobId, 0, estado, nombreNodo, nombreCopia,
+					etp, archTemp);
+		}
+	}
+
+	list_iterate(tablaEstado, logEn);
+	//////////
+
 	t_list * nodos = list_create();
 	list_clean(nodos);
 

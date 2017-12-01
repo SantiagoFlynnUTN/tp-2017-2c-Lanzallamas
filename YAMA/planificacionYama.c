@@ -146,9 +146,9 @@ void replanificar(int socket){
 					TamanoBloque * block = dictionary_get(en->nodoCopia->bloques, en->bloqueArchivo);
 
 					logEntrada(en->masterId, en->jobId, en->disponibilidad,
-							trabajoActual(transf.nombreNodo), "REPLANIFICANDO",
+							0, "REPLANIFICANDO",
 							en->nombreNodo, en->nodoCopia->nombre, en->numeroBloque,
-							"TRANSFORMACION", transf.nombreTemp);
+							"TRANSFORMACION", en->archivoTemporal);
 
 					ysend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 					_enviarAMaster(socket, en->nodoCopia, NULL, block,
@@ -285,6 +285,7 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 	if(bloqueArchivo!=NULL) strcpy(entradaTablaEstado->bloqueArchivo, bloqueArchivo);
 
 
+	list_add(tablaEstado, entradaTablaEstado);
 
 	logEntrada(entradaTablaEstado->masterId, entradaTablaEstado->jobId,
 			entradaTablaEstado->disponibilidad, trabajoActual(nodo->nombre), "EN PROCESO",
@@ -292,10 +293,6 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 			entradaTablaEstado->nodoCopia->nombre,
 			entradaTablaEstado->numeroBloque, "TRANSFORMACION",
 			entradaTablaEstado->archivoTemporal);
-
-	entradaTablaEstado->disponibilidad = 0;
-
-	list_add(tablaEstado, entradaTablaEstado);
 }
 
 void generarArchivoTemporal(char * nombre, char * file){

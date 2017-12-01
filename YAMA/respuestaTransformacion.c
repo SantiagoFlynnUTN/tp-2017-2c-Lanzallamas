@@ -79,16 +79,6 @@ void transformacionOK(int socket){
 
         if(list_all_satisfy(transformaciones, estanFinalizadas)){
             enviarSolicitudReduccion(socket, transformaciones);
-
-            void iterate(void * en){
-                EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)en;
-
-                if(entradaTablaEstado->jobId == jobId &&
-                   strcmp(entradaTablaEstado->nombreNodo, entradaFinalizada->nombreNodo) == 0 &&
-                   entradaTablaEstado->etapa == REDUCCIONLOCAL){
-                    entradaTablaEstado->estado = ERRORYAMA;
-                }
-            }
         }
     }else{
         log_error(logger, "NO ENCONTRO LA Transformacion\njob: %d\ntempFile: %s\n", jobId, tempFile);
@@ -110,8 +100,20 @@ void reduccionLocalOK(int socket){
 
     EntradaTablaEstado * entradaFinalizada = list_find(tablaEstado, criterioBusqueda);
 
+
     if(entradaFinalizada != NULL){
-        entradaFinalizada->estado = FINALIZADO;
+    	entradaFinalizada->estado = FINALIZADO;
+
+        void cancelarFinalizadasAnteriores(void* entrada){
+        	EntradaTablaEstado * en = (EntradaTablaEstado *)entrada;
+			if (en->jobId == jobId && en->etapa == REDUCCIONLOCAL
+					&& !strcmp(en->nombreNodo, entradaFinalizada->nombreNodo)
+					&& en->estado == FINALIZADO &&
+					strcmp(en->archivoTemporal, entradaFinalizada->archivoTemporal)) {
+				en->estado = ERRORYAMA;
+			}
+        }
+        list_iterate(tablaEstado, cancelarFinalizadasAnteriores);
 
         logEntrada(entradaFinalizada->masterId, entradaFinalizada->jobId,
         				entradaFinalizada->disponibilidad,
@@ -123,8 +125,10 @@ void reduccionLocalOK(int socket){
         bool criterioFilter(void * entrada){
             EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)entrada;
 
-            return entradaTablaEstado->jobId == jobId;
-        }
+			return entradaTablaEstado->jobId == jobId
+					&& !(entradaTablaEstado->etapa == REDUCCIONLOCAL
+							&& entradaTablaEstado->estado == ERRORYAMA);
+		}
 
         t_list * reducciones = list_filter(tablaEstado, criterioFilter);
 
@@ -135,13 +139,15 @@ void reduccionLocalOK(int socket){
                    (entradaTablaEstado->etapa == TRANSFORMACION && entradaTablaEstado->estado == ERRORYAMA);
         }
 
-        if(list_all_satisfy(reducciones, estanFinalizadas)){
-            reduccionGlobal(socket, jobId);
-        }
-    }else{
-        log_error(logger, "NO ENCONTRO LA Reduccion Local\njob: %d\ntempFile: %s\n", jobId, tempFile);
-        cabecera = 0;
-    }
+		if (list_all_satisfy(reducciones, estanFinalizadas))
+			reduccionGlobal(socket, jobId);
+
+	} else {
+		log_error(logger,
+				"NO ENCONTRO LA Reduccion Local\njob: %d\ntempFile: %s\n",
+				jobId, tempFile);
+		cabecera = 0;
+	}
 }
 
 void reduccionGlobalOk(int socket){
