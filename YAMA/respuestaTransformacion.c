@@ -79,6 +79,16 @@ void transformacionOK(int socket){
 
         if(list_all_satisfy(transformaciones, estanFinalizadas)){
             enviarSolicitudReduccion(socket, transformaciones);
+
+            void iterate(void * en){
+                EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)en;
+
+                if(entradaTablaEstado->jobId == jobId &&
+                   strcmp(entradaTablaEstado->nombreNodo, entradaFinalizada->nombreNodo) == 0 &&
+                   entradaTablaEstado->etapa == REDUCCIONLOCAL){
+                    entradaTablaEstado->estado = ERRORYAMA;
+                }
+            }
         }
     }else{
         log_error(logger, "NO ENCONTRO LA Transformacion\njob: %d\ntempFile: %s\n", jobId, tempFile);

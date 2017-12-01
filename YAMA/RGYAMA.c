@@ -14,7 +14,8 @@ void reduccionGlobal(int socket, int jobId){
 		EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)entrada;
 
 		return entradaTablaEstado->jobId == jobId &&
-			   entradaTablaEstado->etapa == REDUCCIONLOCAL;
+			   entradaTablaEstado->etapa == REDUCCIONLOCAL &&
+			   entradaTablaEstado->estado == FINALIZADO;
 	}
 
 	t_list * reducciones = list_filter(tablaEstado, criterioFilter);

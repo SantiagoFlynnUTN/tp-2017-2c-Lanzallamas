@@ -143,8 +143,7 @@ void replanificar(int socket){
 				usleep(retardoPlanificacion * 1000);
 				en->estado = ERRORYAMA;
 				if (en->nodoCopia != NULL) {
-					TamanoBloque * block = (TamanoBloque *) malloc(sizeof(*block));
-					block = dictionary_get(en->nodoCopia->bloques, en->bloqueArchivo);
+					TamanoBloque * block = dictionary_get(en->nodoCopia->bloques, en->bloqueArchivo);
 
 					logEntrada(en->masterId, en->jobId, en->disponibilidad,
 							trabajoActual(transf.nombreNodo), "REPLANIFICANDO",
@@ -154,8 +153,6 @@ void replanificar(int socket){
 					ysend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 					_enviarAMaster(socket, en->nodoCopia, NULL, block,
 							TRANSFORMACION, NULL);
-
-					free(block);
 				} else {
 					matarPorReplanificacion();
 					return;
