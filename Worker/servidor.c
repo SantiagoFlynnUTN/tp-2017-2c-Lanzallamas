@@ -48,6 +48,7 @@ void setServer(){
 
 	struct sockaddr_in remoteaddr; // dirección del cliente
 	int addrlen;
+	setsid();
 
 	// obtener socket a la escucha
 	if ((listener = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
