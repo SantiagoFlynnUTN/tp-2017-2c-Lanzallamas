@@ -87,7 +87,7 @@ void replanificar(int socket){
 			en->estado = ERRORYAMA;
 			nodoCopia = en->nodoCopia;
 			if(nodoCopia!=NULL)
-				bloque = dictionary_get(en->nodoCopia->bloques, en->bloqueArchivo);
+				bloque = dictionary_remove(en->nodoCopia->bloques, en->bloqueArchivo);
 
 			logEntrada(en->masterId, en->jobId, en->disponibilidad,
 					trabajoActual(transf.nombreNodo), "REPLANIFICANDO",
@@ -143,9 +143,9 @@ void replanificar(int socket){
 				usleep(retardoPlanificacion * 1000);
 				en->estado = ERRORYAMA;
 				if (en->nodoCopia != NULL) {
-					TamanoBloque * block = dictionary_get(en->nodoCopia->bloques, en->bloqueArchivo);
-
-					logEntrada(en->masterId, en->jobId, en->disponibilidad,
+					TamanoBloque * block = dictionary_remove(en->nodoCopia->bloques, en->bloqueArchivo);
+					if (block !=NULL){
+						logEntrada(en->masterId, en->jobId, en->disponibilidad,
 							0, "REPLANIFICANDO",
 							en->nombreNodo, en->nodoCopia->nombre, en->numeroBloque,
 							"TRANSFORMACION", en->archivoTemporal);
@@ -153,6 +153,8 @@ void replanificar(int socket){
 					ysend(socket, &tipoOperacion, sizeof(tipoOperacion), 0);
 					_enviarAMaster(socket, en->nodoCopia, NULL, block,
 							TRANSFORMACION, NULL);
+					}
+
 				} else {
 					matarPorReplanificacion();
 					return;
@@ -232,7 +234,7 @@ void logEntrada(int masterId, int jobId, int disp, int trabajo, char*estado,
 		char* archTemp) {
 	if (!cabecera) {
 		log_info(logger,
-				"   \tMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tCopia\tBloque\tEtapa\t\tTemporal");
+				"    \tMaster\tJobId\tDisp\tCarga\tEstado\t\tNodo\tCopia\tBloque\tEtapa\t\tTemporal");
 		cabecera = 1;
 	}
 	if (!strcmp("TRANSFORMACION", etapa)) {
@@ -241,13 +243,13 @@ void logEntrada(int masterId, int jobId, int disp, int trabajo, char*estado,
 					masterId, jobId, trabajo, estado, nombreNodo, nombreCopia,
 					numBloque, etapa, archTemp);
 		} else {
-			log_info(logger, "   \t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s",
+			log_info(logger, "    \t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%d\t%s\t%s",
 					masterId, jobId, disp, trabajo, estado, nombreNodo,
 					nombreCopia, numBloque, etapa, archTemp);
 		}
 
 	} else {
-		log_info(logger, "   \t%d\t%d\t\t%d\t%s\t%s\t%s\t\t%s\t%s", masterId,
+		log_info(logger, "    \t%d\t%d\t\t%d\t%s\t%s\t%s\t\t%s\t%s", masterId,
 				jobId, trabajo, estado, nombreNodo, nombreCopia,
 				etapa, archTemp);
 	}
@@ -269,8 +271,15 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 
 	EntradaTablaEstado * entradaTablaEstado = (EntradaTablaEstado *)malloc(sizeof(*entradaTablaEstado));
 
-	entradaTablaEstado->masterId = cantidadJobs;
-	entradaTablaEstado->jobId = cantidadJobs;
+	SocketJob* job;
+	bool closure(void* sockJob) {
+		SocketJob* sj = (SocketJob*) sockJob;
+		return sj->socket == socket_master;
+	}
+	job = (SocketJob*) list_find(socketJobs, closure);
+
+	entradaTablaEstado->masterId = job->jobId;
+	entradaTablaEstado->jobId = job->jobId;
 	entradaTablaEstado->estado = ENPROCESO;
 	strcpy(entradaTablaEstado->nombreNodo, nodo->nombre);
 	entradaTablaEstado->numeroBloque = bloque->bloque;
@@ -293,6 +302,9 @@ void _enviarAMaster(int socket_master, InfoNodo * nodo, InfoNodo * nodoCopia, Ta
 			entradaTablaEstado->nodoCopia->nombre,
 			entradaTablaEstado->numeroBloque, "TRANSFORMACION",
 			entradaTablaEstado->archivoTemporal);
+
+	entradaTablaEstado->disponibilidad = 0;
+
 }
 
 void generarArchivoTemporal(char * nombre, char * file){
